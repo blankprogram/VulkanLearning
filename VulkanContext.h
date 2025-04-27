@@ -5,8 +5,10 @@
 
 #define GLFW_INCLUDE_VULKAN
 #include "Pipeline.h"
+#include "Vertex.h"
 #include <GLFW/glfw3.h>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -38,6 +40,12 @@ private:
   void createSyncObjects();
   void drawFrame();
 
+  void createVertexBuffer();
+  void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags,
+                    VkBuffer &, VkDeviceMemory &);
+  uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags) const;
+  void copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size);
+
   GLFWwindow *window_;
   uint32_t width_, height_;
   std::string title_;
@@ -62,6 +70,9 @@ private:
   VkSemaphore imageAvailableSemaphore_;
   VkSemaphore renderFinishedSemaphore_;
 
+  VkBuffer vertexBuffer_;
+  VkDeviceMemory vertexBufferMemory_;
+  uint32_t vertexCount_;
   Pipeline graphicsPipeline_;
 
   const std::vector<const char *> deviceExtensions_ = {

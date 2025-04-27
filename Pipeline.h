@@ -1,5 +1,6 @@
 
 #pragma once
+#include "Vertex.h"
 #include <fstream>
 #include <stdexcept>
 #include <string>

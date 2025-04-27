@@ -43,11 +43,15 @@ void VulkanContext::initVulkan() {
   createImageViews();
   createRenderPass();
 
-  // — after renderPass_ is valid:
   graphicsPipeline_.Init(device_, swapchainExtent_, renderPass_);
 
-  createFramebuffers();
+  // ← move createCommandPool up here, before any buffer copies:
   createCommandPool(gf);
+
+  // now it's safe to stage & upload your vertex buffer
+  createVertexBuffer();
+
+  createFramebuffers();
   createCommandBuffers();
   createSyncObjects();
 }
@@ -242,36 +246,45 @@ void VulkanContext::createCommandPool(uint32_t gf) {
 
 void VulkanContext::createCommandBuffers() {
   commandBuffers_.resize(swapchainFramebuffers_.size());
-  VkCommandBufferAllocateInfo cbai{
+
+  VkCommandBufferAllocateInfo allocInfo{
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
-  cbai.commandPool = commandPool_;
-  cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  cbai.commandBufferCount = (uint32_t)commandBuffers_.size();
+  allocInfo.commandPool = commandPool_;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandBufferCount = (uint32_t)commandBuffers_.size();
+
   CHECK_VK_RESULT(
-      vkAllocateCommandBuffers(device_, &cbai, commandBuffers_.data()));
+      vkAllocateCommandBuffers(device_, &allocInfo, commandBuffers_.data()));
 
   for (size_t i = 0; i < commandBuffers_.size(); ++i) {
-    VkCommandBufferBeginInfo bi{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
-    vkBeginCommandBuffer(commandBuffers_[i], &bi);
+    VkCommandBuffer cmd = commandBuffers_[i]; // **alias** for clarity
 
-    VkClearValue cv{{{0.0f, 0.0f, 0.0f, 1.0f}}};
+    VkCommandBufferBeginInfo beginInfo{
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+    CHECK_VK_RESULT(vkBeginCommandBuffer(cmd, &beginInfo));
+
+    VkClearValue clearColor{{{0.0f, 0.0f, 0.0f, 1.0f}}};
     VkRenderPassBeginInfo rpbi{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
     rpbi.renderPass = renderPass_;
     rpbi.framebuffer = swapchainFramebuffers_[i];
     rpbi.renderArea.offset = {0, 0};
     rpbi.renderArea.extent = swapchainExtent_;
     rpbi.clearValueCount = 1;
-    rpbi.pClearValues = &cv;
+    rpbi.pClearValues = &clearColor;
 
-    vkCmdBeginRenderPass(commandBuffers_[i], &rpbi, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(cmd, &rpbi, VK_SUBPASS_CONTENTS_INLINE);
 
-    // bind & draw the triangle
-    vkCmdBindPipeline(commandBuffers_[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
+    vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
                       graphicsPipeline_.GetPipeline());
-    vkCmdDraw(commandBuffers_[i], 3, 1, 0, 0);
 
-    vkCmdEndRenderPass(commandBuffers_[i]);
-    vkEndCommandBuffer(commandBuffers_[i]);
+    // bind our vertex buffer and draw N vertices
+    VkBuffer bufs[] = {vertexBuffer_};
+    VkDeviceSize offs[] = {0};
+    vkCmdBindVertexBuffers(cmd, 0, 1, bufs, offs);
+    vkCmdDraw(cmd, vertexCount_, 1, 0, 0);
+
+    vkCmdEndRenderPass(cmd);
+    CHECK_VK_RESULT(vkEndCommandBuffer(cmd));
   }
 }
 
@@ -313,4 +326,106 @@ void VulkanContext::drawFrame() {
   vkQueuePresentKHR(graphicsQueue_, &pi);
 
   vkQueueWaitIdle(graphicsQueue_);
+}
+
+void VulkanContext::createVertexBuffer() {
+  // 1) define your triangle in C++
+  std::vector<Vertex> vertices = {
+      {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}}, // bottom, red
+      {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},  // top-right, green
+      {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}  // top-left, blue
+  };
+  vertexCount_ = static_cast<uint32_t>(vertices.size());
+  VkDeviceSize size = sizeof(vertices[0]) * vertices.size();
+
+  // 2) staging buffer (CPU visible)
+  VkBuffer stagingBuf;
+  VkDeviceMemory stagingMem;
+  createBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                   VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+               stagingBuf, stagingMem);
+
+  // 3) copy vertex data into it
+  void *data = nullptr;
+  vkMapMemory(device_, stagingMem, 0, size, 0, &data);
+  memcpy(data, vertices.data(), (size_t)size);
+  vkUnmapMemory(device_, stagingMem);
+
+  // 4) create device-local buffer
+  createBuffer(
+      size,
+      VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer_, vertexBufferMemory_);
+
+  // 5) copy from staging → device
+  copyBuffer(stagingBuf, vertexBuffer_, size);
+
+  // 6) clean up staging
+  vkDestroyBuffer(device_, stagingBuf, nullptr);
+  vkFreeMemory(device_, stagingMem, nullptr);
+}
+
+void VulkanContext::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+                                 VkMemoryPropertyFlags props, VkBuffer &buffer,
+                                 VkDeviceMemory &mem) {
+  VkBufferCreateInfo bci{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
+  bci.size = size;
+  bci.usage = usage;
+  bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  CHECK_VK_RESULT(vkCreateBuffer(device_, &bci, nullptr, &buffer));
+
+  VkMemoryRequirements mr;
+  vkGetBufferMemoryRequirements(device_, buffer, &mr);
+
+  VkMemoryAllocateInfo mai{VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO};
+  mai.allocationSize = mr.size;
+  mai.memoryTypeIndex = findMemoryType(mr.memoryTypeBits, props);
+
+  CHECK_VK_RESULT(vkAllocateMemory(device_, &mai, nullptr, &mem));
+  vkBindBufferMemory(device_, buffer, mem, 0);
+}
+
+uint32_t VulkanContext::findMemoryType(uint32_t typeFilter,
+                                       VkMemoryPropertyFlags props) const {
+  VkPhysicalDeviceMemoryProperties memProps;
+  vkGetPhysicalDeviceMemoryProperties(physicalDevice_, &memProps);
+  for (uint32_t i = 0; i < memProps.memoryTypeCount; ++i) {
+    if ((typeFilter & (1 << i)) &&
+        (memProps.memoryTypes[i].propertyFlags & props) == props) {
+      return i;
+    }
+  }
+  throw std::runtime_error("Failed to find suitable memory type");
+}
+
+void VulkanContext::copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize sz) {
+  VkCommandBufferAllocateInfo cabi{
+      VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
+  cabi.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  cabi.commandPool = commandPool_;
+  cabi.commandBufferCount = 1;
+
+  VkCommandBuffer cmd;
+  vkAllocateCommandBuffers(device_, &cabi, &cmd);
+
+  VkCommandBufferBeginInfo bb{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+  bb.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  vkBeginCommandBuffer(cmd, &bb);
+
+  VkBufferCopy copyRegion{};
+  copyRegion.srcOffset = 0;
+  copyRegion.dstOffset = 0;
+  copyRegion.size = sz;
+  vkCmdCopyBuffer(cmd, src, dst, 1, &copyRegion);
+
+  vkEndCommandBuffer(cmd);
+
+  VkSubmitInfo si{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+  si.commandBufferCount = 1;
+  si.pCommandBuffers = &cmd;
+  vkQueueSubmit(graphicsQueue_, 1, &si, VK_NULL_HANDLE);
+  vkQueueWaitIdle(graphicsQueue_);
+
+  vkFreeCommandBuffers(device_, commandPool_, 1, &cmd);
 }

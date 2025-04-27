@@ -46,8 +46,16 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent,
   stages[1].pName = "main";
 
   // 2) no vertex inputs, just hard-coded in shader
+  auto bindingDesc = Vertex::getBindingDesc();
+  auto attribDescs = Vertex::getAttributeDescs();
+
   VkPipelineVertexInputStateCreateInfo vertexInputCI{
       VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
+  vertexInputCI.vertexBindingDescriptionCount = 1;
+  vertexInputCI.pVertexBindingDescriptions = &bindingDesc;
+  vertexInputCI.vertexAttributeDescriptionCount =
+      static_cast<uint32_t>(attribDescs.size());
+  vertexInputCI.pVertexAttributeDescriptions = attribDescs.data();
 
   // 3) triangle list topology
   VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI{
