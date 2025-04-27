@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/VulkanLearning.dir/main.cpp.o -o VulkanLearning  /usr/lib/x86_64-linux-gnu/libvulkan.so -lglfw
