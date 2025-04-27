@@ -26,9 +26,9 @@ VkShaderModule Pipeline::createShaderModule(VkDevice device,
   return module;
 }
 
-void Pipeline::Init(VkDevice device, VkExtent2D extent,
-                    VkRenderPass renderPass) {
-  // 1) load SPIR-V
+void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
+                    VkDescriptorSetLayout descriptorSetLayout) {
+  // 1) load SPIR-V binaries
   auto vertCode = readFile("shaders/triangle.vert.spv");
   auto fragCode = readFile("shaders/triangle.frag.spv");
 
@@ -45,30 +45,28 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent,
   stages[1].module = fragShader;
   stages[1].pName = "main";
 
-  // 2) no vertex inputs, just hard-coded in shader
+  // 2) vertex input (binding + attributes from your Vertex struct)
   auto bindingDesc = Vertex::getBindingDesc();
   auto attribDescs = Vertex::getAttributeDescs();
-
   VkPipelineVertexInputStateCreateInfo vertexInputCI{
       VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
   vertexInputCI.vertexBindingDescriptionCount = 1;
   vertexInputCI.pVertexBindingDescriptions = &bindingDesc;
-  vertexInputCI.vertexAttributeDescriptionCount =
-      static_cast<uint32_t>(attribDescs.size());
+  vertexInputCI.vertexAttributeDescriptionCount = uint32_t(attribDescs.size());
   vertexInputCI.pVertexAttributeDescriptions = attribDescs.data();
 
-  // 3) triangle list topology
+  // 3) input assembly
   VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI{
       VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO};
   inputAssemblyCI.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
   inputAssemblyCI.primitiveRestartEnable = VK_FALSE;
 
-  // 4) viewport + scissor
+  // 4) viewport & scissor
   VkViewport viewport{};
   viewport.x = 0;
   viewport.y = 0;
-  viewport.width = (float)extent.width;
-  viewport.height = (float)extent.height;
+  viewport.width = float(extent.width);
+  viewport.height = float(extent.height);
   viewport.minDepth = 0.0f;
   viewport.maxDepth = 1.0f;
 
@@ -94,12 +92,12 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent,
   rasterCI.frontFace = VK_FRONT_FACE_CLOCKWISE;
   rasterCI.depthBiasEnable = VK_FALSE;
 
-  // 6) multisampling (off)
+  // 6) multisampling
   VkPipelineMultisampleStateCreateInfo msCI{
       VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO};
   msCI.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-  // 7) color blend (no blending)
+  // 7) color blending
   VkPipelineColorBlendAttachmentState blendAttach{};
   blendAttach.colorWriteMask =
       VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
@@ -111,10 +109,15 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent,
   blendCI.attachmentCount = 1;
   blendCI.pAttachments = &blendAttach;
 
-  // 8) pipeline layout (no descriptors)
+  // 8) pipeline layout (with your descriptor set layout)
   VkPipelineLayoutCreateInfo layoutCI{
       VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
-  vkCreatePipelineLayout(device, &layoutCI, nullptr, &pipelineLayout_);
+  layoutCI.setLayoutCount = 1;
+  layoutCI.pSetLayouts = &descriptorSetLayout;
+
+  if (vkCreatePipelineLayout(device, &layoutCI, nullptr, &pipelineLayout_) !=
+      VK_SUCCESS)
+    throw std::runtime_error("Failed to create pipeline layout");
 
   // 9) finally create the graphics pipeline
   VkGraphicsPipelineCreateInfo gpCI{
@@ -135,7 +138,7 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent,
                                 &graphicsPipeline_) != VK_SUCCESS)
     throw std::runtime_error("Failed to create graphics pipeline");
 
-  // clean up shader modules
+  // cleanup
   vkDestroyShaderModule(device, fragShader, nullptr);
   vkDestroyShaderModule(device, vertShader, nullptr);
 }

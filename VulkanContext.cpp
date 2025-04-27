@@ -43,7 +43,16 @@ void VulkanContext::initVulkan() {
   createImageViews();
   createRenderPass();
 
-  graphicsPipeline_.Init(device_, swapchainExtent_, renderPass_);
+  createDescriptorSetLayout();
+
+  createUniformBuffers();
+  createDescriptorPool();
+  createDescriptorSets();
+
+  graphicsPipeline_.Init(
+      device_, swapchainExtent_, renderPass_,
+      descriptorSetLayout_ // pass your context’s descriptor‐set layout
+  );
 
   // ← move createCommandPool up here, before any buffer copies:
   createCommandPool(gf);
@@ -65,17 +74,34 @@ void VulkanContext::mainLoop() {
 }
 
 void VulkanContext::cleanup() {
-  vkDestroySemaphore(device_, renderFinishedSemaphore_, nullptr);
-  vkDestroySemaphore(device_, imageAvailableSemaphore_, nullptr);
+  // wait for everything on the GPU to finish
+  vkDeviceWaitIdle(device_);
 
+  // destroy per-frame sync & uniform resources
+  for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
+    vkDestroySemaphore(device_, renderFinishedSemaphores_[i], nullptr);
+    vkDestroySemaphore(device_, imageAvailableSemaphores_[i], nullptr);
+    vkDestroyFence(device_, inFlightFences_[i], nullptr);
+
+    vkDestroyBuffer(device_, uniformBuffers_[i], nullptr);
+    vkFreeMemory(device_, uniformBuffersMemory_[i], nullptr);
+  }
+
+  // destroy descriptor‐set machinery
+  vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
+  vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
+
+  // framebuffers & image views
   for (auto fb : swapchainFramebuffers_)
     vkDestroyFramebuffer(device_, fb, nullptr);
   for (auto iv : swapchainImageViews_)
     vkDestroyImageView(device_, iv, nullptr);
 
+  // pipeline & renderpass
   graphicsPipeline_.Cleanup(device_);
-
   vkDestroyRenderPass(device_, renderPass_, nullptr);
+
+  // swapchain, command pool, device, surface, instance
   vkDestroySwapchainKHR(device_, swapchain_, nullptr);
   vkDestroyCommandPool(device_, commandPool_, nullptr);
   vkDestroyDevice(device_, nullptr);
@@ -277,6 +303,12 @@ void VulkanContext::createCommandBuffers() {
     vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
                       graphicsPipeline_.GetPipeline());
 
+    vkCmdBindDescriptorSets(
+        cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
+        graphicsPipeline_.GetLayout(), // your VkPipelineLayout
+        0,                             // firstSet
+        1, &descriptorSets_[currentFrame_], 0, nullptr);
+
     // bind our vertex buffer and draw N vertices
     VkBuffer bufs[] = {vertexBuffer_};
     VkDeviceSize offs[] = {0};
@@ -289,43 +321,59 @@ void VulkanContext::createCommandBuffers() {
 }
 
 void VulkanContext::createSyncObjects() {
-  VkSemaphoreCreateInfo sci{VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
-  CHECK_VK_RESULT(
-      vkCreateSemaphore(device_, &sci, nullptr, &imageAvailableSemaphore_));
-  CHECK_VK_RESULT(
-      vkCreateSemaphore(device_, &sci, nullptr, &renderFinishedSemaphore_));
+  VkSemaphoreCreateInfo semInfo{VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
+  VkFenceCreateInfo fenceInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+  fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT; // start signaled
+
+  for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    CHECK_VK_RESULT(vkCreateSemaphore(device_, &semInfo, nullptr,
+                                      &imageAvailableSemaphores_[i]));
+    CHECK_VK_RESULT(vkCreateSemaphore(device_, &semInfo, nullptr,
+                                      &renderFinishedSemaphores_[i]));
+    CHECK_VK_RESULT(
+        vkCreateFence(device_, &fenceInfo, nullptr, &inFlightFences_[i]));
+  }
 }
 
 void VulkanContext::drawFrame() {
-  uint32_t idx;
+  vkWaitForFences(device_, 1, &inFlightFences_[currentFrame_], VK_TRUE,
+                  UINT64_MAX);
+  vkResetFences(device_, 1, &inFlightFences_[currentFrame_]);
+
+  uint32_t imageIndex;
   vkAcquireNextImageKHR(device_, swapchain_, UINT64_MAX,
-                        imageAvailableSemaphore_, VK_NULL_HANDLE, &idx);
+                        imageAvailableSemaphores_[currentFrame_],
+                        VK_NULL_HANDLE, &imageIndex);
 
-  VkSubmitInfo si{VK_STRUCTURE_TYPE_SUBMIT_INFO};
-  VkSemaphore waits[] = {imageAvailableSemaphore_};
-  VkPipelineStageFlags stages[] = {
+  // update uniforms for this frame:
+  updateUniformBuffer(currentFrame_);
+
+  VkSubmitInfo submitInfo{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+  VkSemaphore waitSemaphores[] = {imageAvailableSemaphores_[currentFrame_]};
+  VkPipelineStageFlags waitStages[] = {
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-  si.waitSemaphoreCount = 1;
-  si.pWaitSemaphores = waits;
-  si.pWaitDstStageMask = stages;
-  si.commandBufferCount = 1;
-  si.pCommandBuffers = &commandBuffers_[idx];
+  submitInfo.waitSemaphoreCount = 1;
+  submitInfo.pWaitSemaphores = waitSemaphores;
+  submitInfo.pWaitDstStageMask = waitStages;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &commandBuffers_[imageIndex];
+  VkSemaphore signalSemaphores[] = {renderFinishedSemaphores_[currentFrame_]};
+  submitInfo.signalSemaphoreCount = 1;
+  submitInfo.pSignalSemaphores = signalSemaphores;
 
-  VkSemaphore signals[] = {renderFinishedSemaphore_};
-  si.signalSemaphoreCount = 1;
-  si.pSignalSemaphores = signals;
+  CHECK_VK_RESULT(vkQueueSubmit(graphicsQueue_, 1, &submitInfo,
+                                inFlightFences_[currentFrame_]));
 
-  vkQueueSubmit(graphicsQueue_, 1, &si, VK_NULL_HANDLE);
+  VkPresentInfoKHR presentInfo{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
+  presentInfo.waitSemaphoreCount = 1;
+  presentInfo.pWaitSemaphores = signalSemaphores;
+  presentInfo.swapchainCount = 1;
+  presentInfo.pSwapchains = &swapchain_;
+  presentInfo.pImageIndices = &imageIndex;
 
-  VkPresentInfoKHR pi{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
-  pi.waitSemaphoreCount = 1;
-  pi.pWaitSemaphores = signals;
-  pi.swapchainCount = 1;
-  pi.pSwapchains = &swapchain_;
-  pi.pImageIndices = &idx;
-  vkQueuePresentKHR(graphicsQueue_, &pi);
+  vkQueuePresentKHR(graphicsQueue_, &presentInfo);
 
-  vkQueueWaitIdle(graphicsQueue_);
+  currentFrame_ = (currentFrame_ + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
 void VulkanContext::createVertexBuffer() {
@@ -428,4 +476,101 @@ void VulkanContext::copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize sz) {
   vkQueueWaitIdle(graphicsQueue_);
 
   vkFreeCommandBuffers(device_, commandPool_, 1, &cmd);
+}
+
+void VulkanContext::updateUniformBuffer(uint32_t frameIndex) {
+  static auto start = std::chrono::high_resolution_clock::now();
+  auto now = std::chrono::high_resolution_clock::now();
+  float t = std::chrono::duration<float>(now - start).count();
+
+  UBO ubo{};
+  ubo.model = glm::rotate(glm::mat4(1.0f), t * glm::radians(90.0f),
+                          glm::vec3(0.0f, 1.0f, 0.0f));
+  ubo.view =
+      glm::lookAt(glm::vec3(2, 2, 2), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+  ubo.proj = glm::perspective(
+      glm::radians(45.0f),
+      swapchainExtent_.width / float(swapchainExtent_.height), 0.1f, 10.0f);
+  ubo.proj[1][1] *= -1; // GLM → Vulkan
+
+  void *data;
+  vkMapMemory(device_, uniformBuffersMemory_[frameIndex], 0, sizeof(ubo), 0,
+              &data);
+  std::memcpy(data, &ubo, sizeof(ubo));
+  vkUnmapMemory(device_, uniformBuffersMemory_[frameIndex]);
+}
+
+void VulkanContext::createDescriptorSetLayout() {
+  VkDescriptorSetLayoutBinding uboBinding{};
+  uboBinding.binding = 0;
+  uboBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  uboBinding.descriptorCount = 1;
+  uboBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+  uboBinding.pImmutableSamplers = nullptr;
+
+  VkDescriptorSetLayoutCreateInfo layoutInfo{
+      VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO};
+  layoutInfo.bindingCount = 1;
+  layoutInfo.pBindings = &uboBinding;
+
+  CHECK_VK_RESULT(vkCreateDescriptorSetLayout(device_, &layoutInfo, nullptr,
+                                              &descriptorSetLayout_));
+}
+
+void VulkanContext::createUniformBuffers() {
+  VkDeviceSize bufferSize = sizeof(UBO);
+  for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
+    createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                     VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                 uniformBuffers_[i], uniformBuffersMemory_[i]);
+  }
+}
+
+void VulkanContext::createDescriptorPool() {
+  VkDescriptorPoolSize poolSize{};
+  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  poolSize.descriptorCount = MAX_FRAMES_IN_FLIGHT;
+
+  VkDescriptorPoolCreateInfo poolInfo{
+      VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
+  poolInfo.poolSizeCount = 1;
+  poolInfo.pPoolSizes = &poolSize;
+  poolInfo.maxSets = MAX_FRAMES_IN_FLIGHT;
+
+  CHECK_VK_RESULT(
+      vkCreateDescriptorPool(device_, &poolInfo, nullptr, &descriptorPool_));
+}
+
+void VulkanContext::createDescriptorSets() {
+  std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT,
+                                             descriptorSetLayout_);
+  VkDescriptorSetAllocateInfo allocInfo{
+      VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
+  allocInfo.descriptorPool = descriptorPool_;
+  allocInfo.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
+  allocInfo.pSetLayouts = layouts.data();
+
+  CHECK_VK_RESULT(
+      vkAllocateDescriptorSets(device_, &allocInfo, descriptorSets_.data()));
+  // initial update
+  for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+    updateDescriptorSet(i);
+}
+
+void VulkanContext::updateDescriptorSet(uint32_t idx) {
+  VkDescriptorBufferInfo bufferInfo{};
+  bufferInfo.buffer = uniformBuffers_[idx];
+  bufferInfo.offset = 0;
+  bufferInfo.range = sizeof(UBO);
+
+  VkWriteDescriptorSet descriptorWrite{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
+  descriptorWrite.dstSet = descriptorSets_[idx];
+  descriptorWrite.dstBinding = 0;
+  descriptorWrite.dstArrayElement = 0;
+  descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorWrite.descriptorCount = 1;
+  descriptorWrite.pBufferInfo = &bufferInfo;
+
+  vkUpdateDescriptorSets(device_, 1, &descriptorWrite, 0, nullptr);
 }
