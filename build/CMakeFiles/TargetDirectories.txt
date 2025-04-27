@@ -1,0 +1,3 @@
+/home/jam/Documents/code/VulkanLearning/build/CMakeFiles/VulkanLearning.dir
+/home/jam/Documents/code/VulkanLearning/build/CMakeFiles/edit_cache.dir
+/home/jam/Documents/code/VulkanLearning/build/CMakeFiles/rebuild_cache.dir
