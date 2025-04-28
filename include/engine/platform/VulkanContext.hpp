@@ -53,8 +53,6 @@ private:
   void createSyncObjects();
   void drawFrame();
   void onResize(int w, int h);
-  void createVertexBuffer();
-
   void createGlobalDescriptorSetLayout();
   void createMaterialDescriptorSetLayout();
   void createDescriptorPool(); // unchanged
@@ -111,10 +109,8 @@ private:
   std::array<VkBuffer, MAX_FRAMES_IN_FLIGHT> uniformBuffers_;
   std::array<VkDeviceMemory, MAX_FRAMES_IN_FLIGHT> uniformBuffersMemory_;
 
-  size_t currentFrame_ = 0;
-  VkBuffer vertexBuffer_;
-  VkDeviceMemory vertexBufferMemory_;
-  uint32_t vertexCount_;
+  void onMouseMoved(float xpos, float ypos);
+  void processInput(float dt);
 
   struct UBO {
     glm::mat4 view;
@@ -125,9 +121,6 @@ private:
   VkDeviceMemory depthImageMemory_;
   VkImageView depthImageView_;
 
-  VkBuffer indexBuffer_;
-  VkDeviceMemory indexBufferMemory_;
-  uint32_t indexCount_;
   VkDebugUtilsMessengerEXT debugMessenger_;
   const std::vector<const char *> deviceExtensions_ = {
       VK_KHR_SWAPCHAIN_EXTENSION_NAME};
@@ -139,10 +132,13 @@ private:
   int newWidth_ = 0;
   int newHeight_ = 0;
 
+  float lastX_ = width_ / 2.0f, lastY_ = height_ / 2.0f;
+  bool firstMouse_ = true;
+
   float cameraAspect_;
   entt::registry registry_;
   std::unique_ptr<Renderer> renderer_;
-
+  int currentFrame_;
   std::vector<std::unique_ptr<Mesh>> meshes_;
   std::vector<std::unique_ptr<Material>> materials_;
 };

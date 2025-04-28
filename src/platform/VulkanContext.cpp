@@ -20,8 +20,8 @@ VulkanContext::VulkanContext(uint32_t w, uint32_t h, const std::string &t)
       wireframePipeline_); // spawn one camera in our ECS:
   auto camE = registry_.create();
   registry_.emplace<CameraComponent>(camE, cameraAspect_);
-  registry_.get<CameraComponent>(camE).cam.LookAt({3, 3, 3}, {0, 0, 0},
-                                                  {0, 1, 0});
+  // registry_.get<CameraComponent>(camE).cam.LookAt({3, 3, 3}, {0, 0, 0},
+  //                                                 {0, 1, 0});
 
   std::vector<Vertex> cubeVerts = {
       // front
@@ -77,6 +77,7 @@ VulkanContext::~VulkanContext() { cleanup(); }
 void VulkanContext::Run() { mainLoop(); }
 
 void VulkanContext::initWindow() {
+  // 1) initialize GLFW, create a no-API window
   if (!glfwInit())
     throw std::runtime_error("Failed to init GLFW");
   if (auto *s = std::getenv("XDG_SESSION_TYPE");
@@ -87,14 +88,58 @@ void VulkanContext::initWindow() {
   if (!window_)
     throw std::runtime_error("Failed to create window");
 
+  // 2) hide & capture the cursor so we get relative mouse motion
+  glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+  // 3) stash `this` pointer and install callbacks
   glfwSetWindowUserPointer(window_, this);
+
+  // resize callback (unchanged)
   glfwSetFramebufferSizeCallback(window_, [](GLFWwindow *w, int width,
                                              int height) {
     auto app = reinterpret_cast<VulkanContext *>(glfwGetWindowUserPointer(w));
     app->onResize(width, height);
   });
+
+  // mouse-move callback
+  glfwSetCursorPosCallback(window_, [](GLFWwindow *w, double xpos,
+                                       double ypos) {
+    auto app = reinterpret_cast<VulkanContext *>(glfwGetWindowUserPointer(w));
+    app->onMouseMoved(static_cast<float>(xpos), static_cast<float>(ypos));
+  });
 }
 
+void VulkanContext::onMouseMoved(float xpos, float ypos) {
+  if (firstMouse_) {
+    lastX_ = xpos;
+    lastY_ = ypos;
+    firstMouse_ = false;
+  }
+  float xoffset = xpos - lastX_;
+  float yoffset =
+      lastY_ - ypos; // reversed: y-coordinates go from bottom to top
+  lastX_ = xpos;
+  lastY_ = ypos;
+
+  auto view = registry_.view<CameraComponent>();
+  for (auto e : view) {
+    view.get<CameraComponent>(e).cam.ProcessMouseMovement(xoffset, yoffset);
+  }
+}
+void VulkanContext::processInput(float dt) {
+  auto view = registry_.view<CameraComponent>();
+  for (auto e : view) {
+    auto &cam = view.get<CameraComponent>(e).cam;
+    if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS)
+      cam.ProcessKeyboard(FORWARD, dt);
+    if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS)
+      cam.ProcessKeyboard(BACKWARD, dt);
+    if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS)
+      cam.ProcessKeyboard(LEFT, dt);
+    if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS)
+      cam.ProcessKeyboard(RIGHT, dt);
+  }
+}
 void VulkanContext::onResize(int newW, int newH) {
   framebufferResized_ = true;
   newWidth_ = newW;
@@ -142,17 +187,20 @@ void VulkanContext::initVulkan() {
       materialDescriptorSetLayout_, "assets/shaders/triangle.vert.spv",
       "assets/shaders/wireframe.frag.spv", VK_POLYGON_MODE_LINE);
 
-  // now it's safe to stage & upload your vertex buffer
-  createVertexBuffer();
-
   createFramebuffers();
   createCommandBuffers();
   createSyncObjects();
 }
 
 void VulkanContext::mainLoop() {
+  auto last = std::chrono::high_resolution_clock::now();
   while (!glfwWindowShouldClose(window_)) {
+    auto now = std::chrono::high_resolution_clock::now();
+    float dt = std::chrono::duration<float>(now - last).count();
+    last = now;
+
     glfwPollEvents();
+    processInput(dt);
     drawFrame();
   }
   vkDeviceWaitIdle(device_);
@@ -560,112 +608,6 @@ void VulkanContext::drawFrame() {
 
   // 7) next frame
   currentFrame_ = (currentFrame_ + 1) % MAX_FRAMES_IN_FLIGHT;
-}
-
-void VulkanContext::createVertexBuffer() {
-  // Cube vertices
-
-  std::vector<Vertex> vertices = {
-      // Front face
-      {{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},
-      {{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {0.0f, 1.0f}},
-
-      // Back face
-      {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
-      {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
-      {{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
-      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},
-
-      // Left face
-      {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
-      {{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f}},
-      {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
-
-      // Right face
-      {{0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
-      {{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},
-      {{0.5f, 0.5f, 0.5f}, {0.0f, 1.0f}},
-      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},
-
-      // Top face
-      {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
-      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f}},
-
-      // Bottom face
-      {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}},
-      {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}},
-      {{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},
-      {{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},
-  };
-
-  std::vector<uint16_t> indices = {
-      0,  1,  2,  2,  3,  0,  // Front
-      4,  6,  5,  6,  4,  7,  // Back (flipped)
-      8,  9,  10, 10, 11, 8,  // Left
-      12, 14, 13, 14, 12, 15, // Right (flipped)
-      16, 18, 17, 18, 16, 19, // Top (flipped)
-      20, 21, 22, 22, 23, 20  // Bottom
-  };
-
-  vertexCount_ = static_cast<uint32_t>(vertices.size());
-  indexCount_ = static_cast<uint32_t>(indices.size());
-
-  VkDeviceSize vertexSize = sizeof(vertices[0]) * vertices.size();
-  VkDeviceSize indexSize = sizeof(indices[0]) * indices.size();
-
-  // Vertex buffer staging
-  VkBuffer stagingVertexBuffer;
-  VkDeviceMemory stagingVertexMemory;
-  createBuffer(device_, physicalDevice_, vertexSize,
-               VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                   VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-               stagingVertexBuffer, stagingVertexMemory);
-
-  void *data;
-  vkMapMemory(device_, stagingVertexMemory, 0, vertexSize, 0, &data);
-  memcpy(data, vertices.data(), (size_t)vertexSize);
-  vkUnmapMemory(device_, stagingVertexMemory);
-
-  createBuffer(
-      device_, physicalDevice_, vertexSize,
-      VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer_, vertexBufferMemory_);
-
-  copyBuffer(device_, commandPool_, graphicsQueue_, stagingVertexBuffer,
-             vertexBuffer_, vertexSize);
-
-  vkDestroyBuffer(device_, stagingVertexBuffer, nullptr);
-  vkFreeMemory(device_, stagingVertexMemory, nullptr);
-
-  // Index buffer staging
-  VkBuffer stagingIndexBuffer;
-  VkDeviceMemory stagingIndexMemory;
-  createBuffer(device_, physicalDevice_, indexSize,
-               VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-               VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-                   VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-               stagingIndexBuffer, stagingIndexMemory);
-
-  vkMapMemory(device_, stagingIndexMemory, 0, indexSize, 0, &data);
-  memcpy(data, indices.data(), (size_t)indexSize);
-  vkUnmapMemory(device_, stagingIndexMemory);
-
-  createBuffer(
-      device_, physicalDevice_, indexSize,
-      VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer_, indexBufferMemory_);
-
-  copyBuffer(device_, commandPool_, graphicsQueue_, stagingIndexBuffer,
-             indexBuffer_, indexSize);
-
-  vkDestroyBuffer(device_, stagingIndexBuffer, nullptr);
-  vkFreeMemory(device_, stagingIndexMemory, nullptr);
 }
 
 void VulkanContext::createDepthResources() {

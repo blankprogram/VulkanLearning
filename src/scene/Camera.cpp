@@ -1,32 +1,78 @@
 
 // src/scene/Camera.cpp
 #include "engine/scene/Camera.hpp"
-#include <glm/gtc/matrix_transform.hpp>
 
-Camera::Camera(float aspect) : aspect_(aspect) {
-  RecalcProj();
-  RecalcView();
+Camera::Camera(float aspect, glm::vec3 position, glm::vec3 up, float yaw,
+               float pitch)
+    : Position(position), WorldUp(up), Yaw(yaw), Pitch(pitch), Aspect(aspect) {
+  // initialize Front, Right, Up
+  Front = glm::vec3(0.0f, 0.0f, -1.0f);
+  updateCameraVectors();
+  updateProjMatrix();
+  updateViewMatrix();
 }
 
 void Camera::SetAspect(float aspect) {
-  aspect_ = aspect;
-  RecalcProj();
+  Aspect = aspect;
+  updateProjMatrix();
 }
 
-void Camera::LookAt(const glm::vec3 &eye_, const glm::vec3 &center_,
-                    const glm::vec3 &up_) {
-  this->eye_ = eye_;
-  this->center_ = center_;
-  this->up_ = up_;
-  RecalcView();
+void Camera::ProcessKeyboard(CameraMovement dir, float dt) {
+  float velocity = MovementSpeed * dt;
+  if (dir == FORWARD)
+    Position += Front * velocity;
+  if (dir == BACKWARD)
+    Position -= Front * velocity;
+  if (dir == LEFT)
+    Position -= Right * velocity;
+  if (dir == RIGHT)
+    Position += Right * velocity;
+  updateViewMatrix();
 }
 
-const glm::mat4 &Camera::GetView() const { return view_; }
-const glm::mat4 &Camera::GetProj() const { return proj_; }
+void Camera::ProcessMouseMovement(float xoffset, float yoffset,
+                                  bool constrainPitch) {
+  xoffset *= MouseSensitivity;
+  yoffset *= MouseSensitivity;
 
-void Camera::RecalcProj() {
-  proj_ = glm::perspective(fovY_, aspect_, zNear_, zFar_);
+  Yaw += xoffset;
+  Pitch += yoffset;
+  if (constrainPitch) {
+    if (Pitch > 89.0f)
+      Pitch = 89.0f;
+    if (Pitch < -89.0f)
+      Pitch = -89.0f;
+  }
+
+  updateCameraVectors();
+  updateViewMatrix();
+}
+
+void Camera::ProcessMouseScroll(float yoffset) {
+  Zoom -= yoffset;
+  if (Zoom < 1.0f)
+    Zoom = 1.0f;
+  if (Zoom > 45.0f)
+    Zoom = 45.0f;
+  updateProjMatrix();
+}
+
+void Camera::updateCameraVectors() {
+  glm::vec3 front;
+  front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+  front.y = sin(glm::radians(Pitch));
+  front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+  Front = glm::normalize(front);
+
+  Right = glm::normalize(glm::cross(Front, WorldUp));
+  Up = glm::normalize(glm::cross(Right, Front));
+}
+
+void Camera::updateViewMatrix() {
+  view_ = glm::lookAt(Position, Position + Front, Up);
+}
+
+void Camera::updateProjMatrix() {
+  proj_ = glm::perspective(glm::radians(Zoom), Aspect, ZNear, ZFar);
   proj_[1][1] *= -1;
 }
-
-void Camera::RecalcView() { view_ = glm::lookAt(eye_, center_, up_); }

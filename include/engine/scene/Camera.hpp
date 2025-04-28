@@ -1,22 +1,56 @@
 
 // include/engine/scene/Camera.hpp
 #pragma once
+
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+/// keys for ProcessKeyboard()
+enum CameraMovement { FORWARD, BACKWARD, LEFT, RIGHT };
 
 class Camera {
 public:
-  Camera(float aspect);
+  /// ctor: supply your aspect or use defaults
+  Camera(float aspect, glm::vec3 position = {2.0f, 2.0f, 2.0f},
+         glm::vec3 up = {0.0f, 1.0f, 0.0f}, float yaw = -90.0f,
+         float pitch = 0.0f);
+
+  /// must call on resize
   void SetAspect(float aspect);
-  void LookAt(const glm::vec3 &eye, const glm::vec3 &center,
-              const glm::vec3 &up);
-  const glm::mat4 &GetView() const;
-  const glm::mat4 &GetProj() const;
+
+  /// WASD movement
+  void ProcessKeyboard(CameraMovement direction, float deltaTime);
+
+  /// mouse-look
+  void ProcessMouseMovement(float xoffset, float yoffset,
+                            bool constrainPitch = true);
+
+  /// scroll-wheel zoom
+  void ProcessMouseScroll(float yoffset);
+
+  /// what you bind into your UBO
+  const glm::mat4 &GetView() const { return view_; }
+  const glm::mat4 &GetProj() const { return proj_; }
 
 private:
-  void RecalcProj();
-  void RecalcView();
+  void updateCameraVectors();
+  void updateViewMatrix();
+  void updateProjMatrix();
 
-  float aspect_, fovY_ = glm::radians(45.0f), zNear_ = 0.1f, zFar_ = 10.0f;
-  glm::vec3 eye_{2, 2, 2}, center_{0, 0, 0}, up_{0, 0, 1};
-  glm::mat4 view_{1.0f}, proj_{1.0f};
+  // camera state
+  glm::vec3 Position, Front, Up, Right, WorldUp;
+  float Yaw, Pitch;
+
+  // options
+  float MovementSpeed = 2.5f;
+  float MouseSensitivity = 0.1f;
+  float Zoom = 45.0f; // fovY in degrees
+
+  // projection params
+  float Aspect;
+  float ZNear = 0.1f, ZFar = 100.0f;
+
+  // cached matrices
+  glm::mat4 view_{1.0f};
+  glm::mat4 proj_{1.0f};
 };
