@@ -19,6 +19,9 @@ void createBuffer(VkDevice device, VkPhysicalDevice physicalDevice,
                   VkMemoryPropertyFlags properties, VkBuffer &buffer,
                   VkDeviceMemory &bufferMemory);
 
+void copyBuffer(VkDevice device, VkCommandPool pool, VkQueue graphicsQueue,
+                VkBuffer src, VkBuffer dst, VkDeviceSize size);
+
 // Find memory type on GPU matching requirements
 uint32_t findMemoryType(VkPhysicalDevice physicalDevice, uint32_t typeFilter,
                         VkMemoryPropertyFlags properties);

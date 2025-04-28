@@ -38,6 +38,19 @@ void createBuffer(VkDevice device, VkPhysicalDevice physicalDevice,
   vkBindBufferMemory(device, buffer, bufferMemory, 0);
 }
 
+void copyBuffer(VkDevice device, VkCommandPool pool, VkQueue graphicsQueue,
+                VkBuffer src, VkBuffer dst, VkDeviceSize size) {
+  // record
+  VkCommandBuffer cmd = beginSingleTimeCommands(device, pool);
+
+  VkBufferCopy region{};
+  region.size = size;
+  vkCmdCopyBuffer(cmd, src, dst, 1, &region);
+
+  // submit & cleanup
+  endSingleTimeCommands(device, graphicsQueue, pool, cmd);
+}
+
 VkCommandBuffer beginSingleTimeCommands(VkDevice device,
                                         VkCommandPool commandPool) {
   VkCommandBufferAllocateInfo allocInfo{

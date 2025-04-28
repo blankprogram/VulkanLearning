@@ -17,12 +17,11 @@ struct Vertex {
 
   static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescs() {
     std::array<VkVertexInputAttributeDescription, 2> a{};
-    // position → location 0
     a[0].location = 0;
     a[0].binding = 0;
     a[0].format = VK_FORMAT_R32G32B32_SFLOAT;
     a[0].offset = offsetof(Vertex, pos);
-    // UV → location 1
+
     a[1].location = 1;
     a[1].binding = 0;
     a[1].format = VK_FORMAT_R32G32_SFLOAT;

@@ -2,12 +2,13 @@
 #ifndef VULKAN_CONTEXT_H
 #define VULKAN_CONTEXT_H
 
-static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 #define GLFW_INCLUDE_VULKAN
 #include "../render/Pipeline.hpp"
 #include "../render/Vertex.hpp"
+#include "engine/render/Renderer.hpp"
 #include "engine/resources/Texture.hpp"
 #include "engine/utils/VulkanHelpers.hpp"
+#include "thirdparty/entt.hpp"
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <cstdlib>
@@ -19,6 +20,7 @@ static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
+
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
@@ -52,19 +54,18 @@ private:
   void drawFrame();
   void onResize(int w, int h);
   void createVertexBuffer();
-  void copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size);
 
-  void createDescriptorSetLayout();
-  void createUniformBuffers();
-  void createDescriptorPool();
-  void createDescriptorSets();
+  void createGlobalDescriptorSetLayout();
+  void createMaterialDescriptorSetLayout();
+  void createDescriptorPool(); // unchanged
+  void createGlobalDescriptorSets();
   void updateDescriptorSet(uint32_t frameIndex);
   void updateUniformBuffer(uint32_t frameIndex);
 
   void createDepthResources();
   void recordCommandBuffer(VkCommandBuffer cmd, uint32_t imageIndex,
                            uint32_t frameIndex);
-
+  void createUniformBuffers();
   void recreateSwapchain(uint32_t width, uint32_t height);
   void cleanupSwapchain();
   void setupDebugMessenger();
@@ -99,7 +100,10 @@ private:
   std::array<VkSemaphore, MAX_FRAMES_IN_FLIGHT> renderFinishedSemaphores_;
   std::array<VkFence, MAX_FRAMES_IN_FLIGHT> inFlightFences_;
 
-  VkDescriptorSetLayout descriptorSetLayout_;
+  // set 0: global UBO + texture
+  VkDescriptorSetLayout globalDescriptorSetLayout_;
+  // set 1: per‐material sampler only
+  VkDescriptorSetLayout materialDescriptorSetLayout_;
   VkDescriptorPool descriptorPool_;
   std::array<VkDescriptorSet, MAX_FRAMES_IN_FLIGHT> descriptorSets_;
 
@@ -113,7 +117,6 @@ private:
   uint32_t vertexCount_;
 
   struct UBO {
-    glm::mat4 model;
     glm::mat4 view;
     glm::mat4 proj;
   };
@@ -135,7 +138,13 @@ private:
 
   int newWidth_ = 0;
   int newHeight_ = 0;
-  float cameraAspect_ = float(width_) / float(height_);
+
+  float cameraAspect_;
+  entt::registry registry_;
+  std::unique_ptr<Renderer> renderer_;
+
+  std::vector<std::unique_ptr<Mesh>> meshes_;
+  std::vector<std::unique_ptr<Material>> materials_;
 };
 
 #endif // VULKAN_CONTEXT_H

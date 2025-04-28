@@ -1,5 +1,5 @@
 
-add_library(engine
+add_library(engine STATIC
   core/Application.cpp
   core/Window.cpp
   math/Math.cpp
@@ -7,19 +7,16 @@ add_library(engine
   render/Mesh.cpp
   render/Pipeline.cpp
   render/Renderer.cpp
-  render/Shader.cpp
   resources/Texture.cpp
   scene/Camera.cpp
-  scene/Scene.cpp
   utils/VulkanHelpers.cpp
+  render/Material.cpp
 )
 
-# expose <project-root>/include so all engine sources pick up #include <engine/...>
 target_include_directories(engine PUBLIC
   ${CMAKE_SOURCE_DIR}/include
 )
 
-# pull in Vulkan, GLFW, GLM to engine itself
 target_link_libraries(engine PUBLIC
   Vulkan::Vulkan
   ${GLFW_LIBRARIES}

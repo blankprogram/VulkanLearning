@@ -2,7 +2,7 @@
 #include <iostream>
 int main() {
   try {
-    VulkanContext app{800, 600, "Vulkan Triangle"};
+    VulkanContext app{800, 600, "Vulkan Not triangle"};
     app.Run();
   } catch (const std::exception &e) {
     std::cerr << "Fatal error: " << e.what() << std::endl;

@@ -2,6 +2,7 @@
 #pragma once
 #include "Vertex.hpp"
 #include <fstream>
+#include <glm/glm.hpp>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -10,8 +11,10 @@
 class Pipeline {
 public:
   // Call once after you have device, swapchainExtent & renderPass
+
   void Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
-            VkDescriptorSetLayout dsLayout, const std::string &vertPath,
+            VkDescriptorSetLayout globalLayout,
+            VkDescriptorSetLayout materialLayout, const std::string &vertPath,
             const std::string &fragPath, VkPolygonMode polygonMode);
 
   // Call during cleanup

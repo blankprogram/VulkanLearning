@@ -10,11 +10,68 @@
   }
 
 VulkanContext::VulkanContext(uint32_t w, uint32_t h, const std::string &t)
-    : width_(w), height_(h), title_(t) {
+    : width_(w), height_(h), title_(t), cameraAspect_(float(w) / float(h)) {
   initWindow();
   initVulkan();
-}
 
+  // now that device_, renderPass_, dsLayout_, pipelines exist:
+  renderer_ = std::make_unique<Renderer>(
+      device_, renderPass_, globalDescriptorSetLayout_, filledPipeline_,
+      wireframePipeline_); // spawn one camera in our ECS:
+  auto camE = registry_.create();
+  registry_.emplace<CameraComponent>(camE, cameraAspect_);
+  registry_.get<CameraComponent>(camE).cam.LookAt({3, 3, 3}, {0, 0, 0},
+                                                  {0, 1, 0});
+
+  std::vector<Vertex> cubeVerts = {
+      // front
+      {{-0.5f, -0.5f, 0.5f}, {0, 0}},
+      {{0.5f, -0.5f, 0.5f}, {1, 0}},
+      {{0.5f, 0.5f, 0.5f}, {1, 1}},
+      {{-0.5f, 0.5f, 0.5f}, {0, 1}},
+      // back
+      {{-0.5f, -0.5f, -0.5f}, {1, 0}},
+      {{0.5f, -0.5f, -0.5f}, {0, 0}},
+      {{0.5f, 0.5f, -0.5f}, {0, 1}},
+      {{-0.5f, 0.5f, -0.5f}, {1, 1}},
+      // left
+      {{-0.5f, -0.5f, -0.5f}, {0, 0}},
+      {{-0.5f, -0.5f, 0.5f}, {1, 0}},
+      {{-0.5f, 0.5f, 0.5f}, {1, 1}},
+      {{-0.5f, 0.5f, -0.5f}, {0, 1}},
+      // right
+      {{0.5f, -0.5f, -0.5f}, {1, 0}},
+      {{0.5f, -0.5f, 0.5f}, {0, 0}},
+      {{0.5f, 0.5f, 0.5f}, {0, 1}},
+      {{0.5f, 0.5f, -0.5f}, {1, 1}},
+      // top
+      {{-0.5f, 0.5f, -0.5f}, {0, 1}},
+      {{0.5f, 0.5f, -0.5f}, {1, 1}},
+      {{0.5f, 0.5f, 0.5f}, {1, 0}},
+      {{-0.5f, 0.5f, 0.5f}, {0, 0}},
+      // bottom
+      {{-0.5f, -0.5f, -0.5f}, {1, 1}},
+      {{0.5f, -0.5f, -0.5f}, {0, 1}},
+      {{0.5f, -0.5f, 0.5f}, {0, 0}},
+      {{-0.5f, -0.5f, 0.5f}, {1, 0}},
+  };
+  std::vector<uint32_t> cubeIdx = {
+      0,  1,  2,  2,  3,  0,  4,  6,  5,  6,  4,  7,  8,  9,  10, 10, 11, 8,
+      12, 14, 13, 14, 12, 15, 16, 18, 17, 18, 16, 19, 20, 21, 22, 22, 23, 20};
+
+  // 2) create Mesh + Material and keep them alive
+  meshes_.emplace_back(std::make_unique<Mesh>(device_, physicalDevice_,
+                                              commandPool_, graphicsQueue_,
+                                              cubeVerts, cubeIdx));
+  materials_.emplace_back(std::make_unique<Material>(
+      device_, descriptorPool_, materialDescriptorSetLayout_, &texture_));
+
+  // 3) spawn an entity and attach components
+  auto cube = registry_.create();
+  registry_.emplace<Transform>(cube, Transform{glm::mat4(1.0f)});
+  registry_.emplace<MeshRef>(cube, meshes_.back().get());
+  registry_.emplace<MaterialRef>(cube, materials_.back().get());
+}
 VulkanContext::~VulkanContext() { cleanup(); }
 
 void VulkanContext::Run() { mainLoop(); }
@@ -38,11 +95,17 @@ void VulkanContext::initWindow() {
   });
 }
 
-void VulkanContext::onResize(int width, int height) {
-  // remember the new size and flag that we need to rebuild
-  newWidth_ = width;
-  newHeight_ = height;
+void VulkanContext::onResize(int newW, int newH) {
   framebufferResized_ = true;
+  newWidth_ = newW;
+  newHeight_ = newH;
+  cameraAspect_ = float(newW) / float(newH);
+
+  // update every CameraComponent in the registry:
+  auto view = registry_.view<CameraComponent>();
+  for (auto e : view) {
+    view.get<CameraComponent>(e).cam.SetAspect(cameraAspect_);
+  }
 }
 
 void VulkanContext::initVulkan() {
@@ -57,27 +120,27 @@ void VulkanContext::initVulkan() {
   createDepthResources();
   createRenderPass();
 
-  createDescriptorSetLayout();
-
+  createGlobalDescriptorSetLayout();
   createUniformBuffers();
   createDescriptorPool();
   createCommandPool(gf);
 
   texture_.Load(device_, physicalDevice_, commandPool_, graphicsQueue_,
                 "assets/textures/cobble.png");
-  createDescriptorSets();
+  createGlobalDescriptorSets();
 
-  // textured
-  filledPipeline_.Init(device_, swapchainExtent_, renderPass_,
-                       descriptorSetLayout_, "assets/shaders/triangle.vert.spv",
-                       "assets/shaders/triangle.frag.spv",
-                       VK_POLYGON_MODE_FILL);
+  createMaterialDescriptorSetLayout();
 
-  // flat‐white wireframe
+  // pipelines now built with two sets: {global, material}
+  filledPipeline_.Init(
+      device_, swapchainExtent_, renderPass_, globalDescriptorSetLayout_,
+      materialDescriptorSetLayout_, "assets/shaders/triangle.vert.spv",
+      "assets/shaders/triangle.frag.spv", VK_POLYGON_MODE_FILL);
+
   wireframePipeline_.Init(
-      device_, swapchainExtent_, renderPass_, descriptorSetLayout_,
-      "assets/shaders/triangle.vert.spv", "assets/shaders/wireframe.frag.spv",
-      VK_POLYGON_MODE_LINE);
+      device_, swapchainExtent_, renderPass_, globalDescriptorSetLayout_,
+      materialDescriptorSetLayout_, "assets/shaders/triangle.vert.spv",
+      "assets/shaders/wireframe.frag.spv", VK_POLYGON_MODE_LINE);
 
   // now it's safe to stage & upload your vertex buffer
   createVertexBuffer();
@@ -116,7 +179,7 @@ void VulkanContext::cleanup() {
 
   // destroy descriptor‐set machinery
   vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
-  vkDestroyDescriptorSetLayout(device_, descriptorSetLayout_, nullptr);
+  vkDestroyDescriptorSetLayout(device_, globalDescriptorSetLayout_, nullptr);
 
   // framebuffers & image views
   for (auto fb : swapchainFramebuffers_)
@@ -383,13 +446,12 @@ void VulkanContext::createCommandBuffers() {
 void VulkanContext::recordCommandBuffer(VkCommandBuffer cmd,
                                         uint32_t imageIndex,
                                         uint32_t frameIndex) {
-  vkResetCommandBuffer(cmd, /*flags=*/0);
-
+  vkResetCommandBuffer(cmd, 0);
   VkCommandBufferBeginInfo bi{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
   vkBeginCommandBuffer(cmd, &bi);
 
   std::array<VkClearValue, 2> clears{};
-  clears[0].color = {0, 0, 0, 1};
+  clears[0].color = {{0, 0, 0, 1}};
   clears[1].depthStencil = {1.0f, 0};
 
   VkRenderPassBeginInfo rpbi{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
@@ -400,31 +462,21 @@ void VulkanContext::recordCommandBuffer(VkCommandBuffer cmd,
   rpbi.pClearValues = clears.data();
   vkCmdBeginRenderPass(cmd, &rpbi, VK_SUBPASS_CONTENTS_INLINE);
 
-  // bind the correct pipeline for this frame
-  VkPipeline pipe = useWireframe_ ? wireframePipeline_.GetPipeline()
-                                  : filledPipeline_.GetPipeline();
-  VkPipelineLayout layout = useWireframe_ ? wireframePipeline_.GetLayout()
-                                          : filledPipeline_.GetLayout();
-  vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipe);
+  // choose pipeline & layout
+  auto &pipeline = useWireframe_ ? wireframePipeline_ : filledPipeline_;
+  VkPipelineLayout layout = pipeline.GetLayout();
+  VkPipeline handle = pipeline.GetPipeline();
 
-  // vertex + index
-  VkDeviceSize off = 0;
-  vkCmdBindVertexBuffers(cmd, 0, 1, &vertexBuffer_, &off);
-  vkCmdBindIndexBuffer(cmd, indexBuffer_, 0, VK_INDEX_TYPE_UINT16);
-
-  // bind the descriptor set for *this* frame
+  // bind it:
+  vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, handle);
   vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1,
                           &descriptorSets_[frameIndex], 0, nullptr);
 
-  // dynamic viewport & scissor
-  VkViewport vp{
-      0, 0, float(swapchainExtent_.width), float(swapchainExtent_.height),
-      0, 1};
-  vkCmdSetViewport(cmd, 0, 1, &vp);
-  VkRect2D sc{{0, 0}, swapchainExtent_};
-  vkCmdSetScissor(cmd, 0, 1, &sc);
-
-  vkCmdDrawIndexed(cmd, indexCount_, 1, 0, 0, 0);
+  // now your Renderer needs to know which layout to use for push-constants &
+  // materials, or you can pass the chosen layout into Renderer::Render as an
+  // extra param.
+  renderer_->Render(registry_, cmd, swapchainExtent_, descriptorSets_,
+                    frameIndex, useWireframe_);
 
   vkCmdEndRenderPass(cmd);
   vkEndCommandBuffer(cmd);
@@ -585,7 +637,8 @@ void VulkanContext::createVertexBuffer() {
       VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer_, vertexBufferMemory_);
 
-  copyBuffer(stagingVertexBuffer, vertexBuffer_, vertexSize);
+  copyBuffer(device_, commandPool_, graphicsQueue_, stagingVertexBuffer,
+             vertexBuffer_, vertexSize);
 
   vkDestroyBuffer(device_, stagingVertexBuffer, nullptr);
   vkFreeMemory(device_, stagingVertexMemory, nullptr);
@@ -608,7 +661,8 @@ void VulkanContext::createVertexBuffer() {
       VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
       VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer_, indexBufferMemory_);
 
-  copyBuffer(stagingIndexBuffer, indexBuffer_, indexSize);
+  copyBuffer(device_, commandPool_, graphicsQueue_, stagingIndexBuffer,
+             indexBuffer_, indexSize);
 
   vkDestroyBuffer(device_, stagingIndexBuffer, nullptr);
   vkFreeMemory(device_, stagingIndexMemory, nullptr);
@@ -660,40 +714,19 @@ void VulkanContext::createDepthResources() {
       vkCreateImageView(device_, &viewInfo, nullptr, &depthImageView_));
 }
 
-void VulkanContext::copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size) {
-  VkCommandBuffer commandBuffer =
-      beginSingleTimeCommands(device_, commandPool_);
-
-  VkBufferCopy copyRegion{};
-  copyRegion.size = size;
-  vkCmdCopyBuffer(commandBuffer, src, dst, 1, &copyRegion);
-
-  endSingleTimeCommands(device_, graphicsQueue_, commandPool_, commandBuffer);
-}
-
 void VulkanContext::updateUniformBuffer(uint32_t frameIndex) {
-  static auto start = std::chrono::high_resolution_clock::now();
-  auto now = std::chrono::high_resolution_clock::now();
-  float t = std::chrono::duration<float>(now - start).count();
+  // grab the first camera we created
+  auto view = registry_.view<CameraComponent>();
+  if (view.empty())
+    return;
+
+  auto &cc = view.get<CameraComponent>(*view.begin());
 
   UBO ubo{};
-  // model animation
-  ubo.model =
-      glm::rotate(glm::mat4(1.0f), t * glm::radians(45.0f), glm::vec3(1, 0, 0));
-  ubo.model =
-      glm::rotate(ubo.model, t * glm::radians(30.0f), glm::vec3(0, 1, 0));
-  ubo.model =
-      glm::rotate(ubo.model, t * glm::radians(15.0f), glm::vec3(0, 0, 1));
+  ubo.view = cc.cam.GetView();
+  ubo.proj = cc.cam.GetProj();
+  // model → per-entity via push-constant
 
-  // camera
-  ubo.view =
-      glm::lookAt(glm::vec3(2, 2, 2), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-
-  // projection with correct aspect
-  ubo.proj = glm::perspective(glm::radians(45.0f), cameraAspect_, 0.1f, 10.0f);
-  ubo.proj[1][1] *= -1; // GLM → Vulkan
-
-  // upload
   void *data = nullptr;
   vkMapMemory(device_, uniformBuffersMemory_[frameIndex], 0, sizeof(ubo), 0,
               &data);
@@ -701,29 +734,62 @@ void VulkanContext::updateUniformBuffer(uint32_t frameIndex) {
   vkUnmapMemory(device_, uniformBuffersMemory_[frameIndex]);
 }
 
-void VulkanContext::createDescriptorSetLayout() {
-
+void VulkanContext::createGlobalDescriptorSetLayout() {
   std::array<VkDescriptorSetLayoutBinding, 2> bindings{};
 
+  // binding 0 = UBO
   bindings[0].binding = 0;
   bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
   bindings[0].descriptorCount = 1;
   bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 
+  // binding 1 = combined image sampler (per‐frame)
   bindings[1].binding = 1;
   bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
   bindings[1].descriptorCount = 1;
   bindings[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-  VkDescriptorSetLayoutCreateInfo layoutInfo{
+  VkDescriptorSetLayoutCreateInfo info{
       VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO};
-  layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-  layoutInfo.pBindings = bindings.data();
+  info.bindingCount = static_cast<uint32_t>(bindings.size());
+  info.pBindings = bindings.data();
 
-  CHECK_VK_RESULT(vkCreateDescriptorSetLayout(device_, &layoutInfo, nullptr,
-                                              &descriptorSetLayout_));
+  CHECK_VK_RESULT(vkCreateDescriptorSetLayout(device_, &info, nullptr,
+                                              &globalDescriptorSetLayout_));
 }
 
+// — new: material‐only layout (set 1)
+void VulkanContext::createMaterialDescriptorSetLayout() {
+  VkDescriptorSetLayoutBinding b{};
+  b.binding = 0;
+  b.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  b.descriptorCount = 1;
+  b.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+  VkDescriptorSetLayoutCreateInfo info{
+      VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO};
+  info.bindingCount = 1;
+  info.pBindings = &b;
+
+  CHECK_VK_RESULT(vkCreateDescriptorSetLayout(device_, &info, nullptr,
+                                              &materialDescriptorSetLayout_));
+}
+
+// — allocate your *global* per-frame sets (set 0):
+void VulkanContext::createGlobalDescriptorSets() {
+  std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT,
+                                             globalDescriptorSetLayout_);
+  VkDescriptorSetAllocateInfo alloc{
+      VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
+  alloc.descriptorPool = descriptorPool_;
+  alloc.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
+  alloc.pSetLayouts = layouts.data();
+
+  CHECK_VK_RESULT(
+      vkAllocateDescriptorSets(device_, &alloc, descriptorSets_.data()));
+  for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
+    updateDescriptorSet(i);
+}
 void VulkanContext::createUniformBuffers() {
   VkDeviceSize bufferSize = sizeof(UBO);
   for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
@@ -736,38 +802,27 @@ void VulkanContext::createUniformBuffers() {
 }
 
 void VulkanContext::createDescriptorPool() {
-  std::array<VkDescriptorPoolSize, 2> poolSizes{};
+  // We need one UBO set per in-flight frame, plus one combined-image-sampler
+  // set for our cube material (adjust materialCount as you add more materials).
+  const uint32_t materialCount = 1;
 
+  std::array<VkDescriptorPoolSize, 2> poolSizes{};
   poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  poolSizes[0].descriptorCount = MAX_FRAMES_IN_FLIGHT;
+  poolSizes[0].descriptorCount = MAX_FRAMES_IN_FLIGHT; // UBO sets
 
   poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  poolSizes[1].descriptorCount = MAX_FRAMES_IN_FLIGHT;
+  poolSizes[1].descriptorCount =
+      MAX_FRAMES_IN_FLIGHT + materialCount; // per-frame texture + material sets
 
   VkDescriptorPoolCreateInfo poolInfo{
       VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
   poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
   poolInfo.pPoolSizes = poolSizes.data();
-  poolInfo.maxSets = MAX_FRAMES_IN_FLIGHT;
+  poolInfo.maxSets =
+      MAX_FRAMES_IN_FLIGHT + materialCount; // total descriptor sets
 
   CHECK_VK_RESULT(
       vkCreateDescriptorPool(device_, &poolInfo, nullptr, &descriptorPool_));
-}
-
-void VulkanContext::createDescriptorSets() {
-  std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT,
-                                             descriptorSetLayout_);
-  VkDescriptorSetAllocateInfo allocInfo{
-      VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
-  allocInfo.descriptorPool = descriptorPool_;
-  allocInfo.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
-  allocInfo.pSetLayouts = layouts.data();
-
-  CHECK_VK_RESULT(
-      vkAllocateDescriptorSets(device_, &allocInfo, descriptorSets_.data()));
-  // initial update
-  for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i)
-    updateDescriptorSet(i);
 }
 
 void VulkanContext::updateDescriptorSet(uint32_t idx) {

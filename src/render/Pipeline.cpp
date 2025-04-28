@@ -28,9 +28,10 @@ VkShaderModule Pipeline::createShaderModule(VkDevice device,
 }
 
 void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
-                    VkDescriptorSetLayout dsLayout, const std::string &vertPath,
-                    const std::string &fragPath, VkPolygonMode polygonMode) {
-  // 1) Load SPIR-V from the two passed-in files
+                    VkDescriptorSetLayout globalLayout,
+                    VkDescriptorSetLayout materialLayout,
+                    const std::string &vertPath, const std::string &fragPath,
+                    VkPolygonMode polygonMode) {
   auto vertCode = readFile(vertPath);
   auto fragCode = readFile(fragPath);
   VkShaderModule vertShader = createShaderModule(device, vertCode);
@@ -41,6 +42,7 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
   stages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
   stages[0].module = vertShader;
   stages[0].pName = "main";
+
   stages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
   stages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
   stages[1].module = fragShader;
@@ -77,7 +79,6 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
       VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO};
   vpCI.viewportCount = 1;
   vpCI.scissorCount = 1;
-  // (we use dynamic viewport/scissor, so no pViewports/pScissors)
 
   // 5) Rasterizer
   VkPipelineRasterizationStateCreateInfo rsCI{
@@ -86,8 +87,8 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
   rsCI.rasterizerDiscardEnable = VK_FALSE;
   rsCI.polygonMode = polygonMode;
   rsCI.lineWidth = 1.0f;
-  rsCI.cullMode = VK_CULL_MODE_BACK_BIT;
-  rsCI.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+  rsCI.cullMode = VK_CULL_MODE_NONE;
+  rsCI.frontFace = VK_FRONT_FACE_CLOCKWISE;
   rsCI.depthBiasEnable = VK_FALSE;
 
   // 6) Multisampling
@@ -110,16 +111,22 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
                             VK_COLOR_COMPONENT_G_BIT |
                             VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
   cbAttach.blendEnable = VK_FALSE;
+
   VkPipelineColorBlendStateCreateInfo cbCI{
       VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO};
   cbCI.attachmentCount = 1;
   cbCI.pAttachments = &cbAttach;
 
-  // 9) Pipeline layout
+  // 9) Pipeline layout: use TWO set layouts
+  VkPushConstantRange pcRange{VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4)};
+  VkDescriptorSetLayout setLayouts[] = {globalLayout, materialLayout};
   VkPipelineLayoutCreateInfo layoutCI{
       VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
-  layoutCI.setLayoutCount = 1;
-  layoutCI.pSetLayouts = &dsLayout;
+  layoutCI.setLayoutCount = 2;
+  layoutCI.pSetLayouts = setLayouts;
+  layoutCI.pushConstantRangeCount = 1;
+  layoutCI.pPushConstantRanges = &pcRange;
+
   if (vkCreatePipelineLayout(device, &layoutCI, nullptr, &pipelineLayout_) !=
       VK_SUCCESS)
     throw std::runtime_error("Failed to create pipeline layout");
@@ -145,11 +152,10 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
                                 &graphicsPipeline_) != VK_SUCCESS)
     throw std::runtime_error("Failed to create graphics pipeline");
 
-  // 11) Cleanup shader modules
+  // cleanup...
   vkDestroyShaderModule(device, fragShader, nullptr);
   vkDestroyShaderModule(device, vertShader, nullptr);
 }
-
 void Pipeline::Cleanup(VkDevice device) {
   vkDestroyPipeline(device, graphicsPipeline_, nullptr);
   vkDestroyPipelineLayout(device, pipelineLayout_, nullptr);
