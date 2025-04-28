@@ -91,7 +91,7 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
       VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO};
   rasterCI.depthClampEnable = VK_FALSE;
   rasterCI.rasterizerDiscardEnable = VK_FALSE;
-  rasterCI.polygonMode = VK_POLYGON_MODE_LINE;
+  rasterCI.polygonMode = VK_POLYGON_MODE_FILL;
   rasterCI.lineWidth = 1.0f;
   rasterCI.cullMode = VK_CULL_MODE_BACK_BIT;
   rasterCI.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
@@ -133,6 +133,11 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
       VK_SUCCESS)
     throw std::runtime_error("Failed to create pipeline layout");
 
+  VkPipelineViewportStateCreateInfo viewportStateCI{
+      VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO};
+  viewportStateCI.viewportCount = 1;
+  viewportStateCI.scissorCount = 1;
+
   // 10) Graphics pipeline create
   VkGraphicsPipelineCreateInfo gpCI{
       VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO};
@@ -147,6 +152,7 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
   gpCI.layout = pipelineLayout_;
   gpCI.renderPass = renderPass;
 
+  gpCI.pViewportState = &viewportStateCI;
   gpCI.pDynamicState = &dynamicStateCI;
   gpCI.subpass = 0;
 

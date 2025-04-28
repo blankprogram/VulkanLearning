@@ -1,7 +1,7 @@
 
-// VulkanContext.h
 #ifndef VULKAN_CONTEXT_H
 #define VULKAN_CONTEXT_H
+
 static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 #define GLFW_INCLUDE_VULKAN
 #include "../render/Pipeline.hpp"
@@ -17,6 +17,12 @@ static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
+
+#ifdef NDEBUG
+const bool enableValidationLayers = false;
+#else
+const bool enableValidationLayers = true;
+#endif
 class VulkanContext {
 public:
   VulkanContext(uint32_t w, uint32_t h, const std::string &t);
@@ -60,6 +66,15 @@ private:
   VkCommandBuffer beginSingleTimeCommands();
   void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
+  void recreateSwapchain();
+  void cleanupSwapchain();
+  void setupDebugMessenger();
+  static VKAPI_ATTR VkBool32 VKAPI_CALL
+  debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                VkDebugUtilsMessageTypeFlagsEXT messageType,
+                const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                void *pUserData);
+  bool framebufferResized_ = false;
   GLFWwindow *window_;
   uint32_t width_, height_;
   std::string title_;
@@ -112,7 +127,7 @@ private:
   VkBuffer indexBuffer_;
   VkDeviceMemory indexBufferMemory_;
   uint32_t indexCount_;
-
+  VkDebugUtilsMessengerEXT debugMessenger_;
   const std::vector<const char *> deviceExtensions_ = {
       VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 };

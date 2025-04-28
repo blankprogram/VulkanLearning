@@ -29,6 +29,13 @@ void VulkanContext::initWindow() {
   window_ = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
   if (!window_)
     throw std::runtime_error("Failed to create window");
+
+  glfwSetWindowUserPointer(window_, this);
+  glfwSetFramebufferSizeCallback(window_, [](GLFWwindow *window, int, int) {
+    auto app =
+        reinterpret_cast<VulkanContext *>(glfwGetWindowUserPointer(window));
+    app->framebufferResized_ = true;
+  });
 }
 
 void VulkanContext::initVulkan() {
@@ -122,12 +129,32 @@ void VulkanContext::createInstance() {
 
   uint32_t ec = 0;
   const char **exts = glfwGetRequiredInstanceExtensions(&ec);
+
+  std::vector<const char *> extensions(exts, exts + ec);
+  if (enableValidationLayers) {
+    extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+  }
+
   VkInstanceCreateInfo ci{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
   ci.pApplicationInfo = &ai;
-  ci.enabledExtensionCount = ec;
-  ci.ppEnabledExtensionNames = exts;
+  ci.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+  ci.ppEnabledExtensionNames = extensions.data();
+
+  const std::vector<const char *> validationLayers = {
+      "VK_LAYER_KHRONOS_validation"};
+
+  if (enableValidationLayers) {
+    ci.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+    ci.ppEnabledLayerNames = validationLayers.data();
+  } else {
+    ci.enabledLayerCount = 0;
+  }
 
   CHECK_VK_RESULT(vkCreateInstance(&ci, nullptr, &instance_));
+
+  if (enableValidationLayers) {
+    setupDebugMessenger();
+  }
 }
 
 void VulkanContext::pickPhysicalDevice() {
@@ -259,6 +286,13 @@ void VulkanContext::createRenderPass() {
 
   std::array<VkAttachmentDescription, 2> attachments = {colorAttachment,
                                                         depthAttachment};
+  VkSubpassDependency dependency{};
+  dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+  dependency.dstSubpass = 0;
+  dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependency.srcAccessMask = 0;
+  dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
   VkRenderPassCreateInfo renderPassInfo{
       VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO};
@@ -266,6 +300,8 @@ void VulkanContext::createRenderPass() {
   renderPassInfo.pAttachments = attachments.data();
   renderPassInfo.subpassCount = 1;
   renderPassInfo.pSubpasses = &subpass;
+  renderPassInfo.dependencyCount = 1; // <--- ADD THIS
+  renderPassInfo.pDependencies = &dependency;
 
   CHECK_VK_RESULT(
       vkCreateRenderPass(device_, &renderPassInfo, nullptr, &renderPass_));
@@ -415,7 +451,15 @@ void VulkanContext::drawFrame() {
   presentInfo.pSwapchains = &swapchain_;
   presentInfo.pImageIndices = &imageIndex;
 
-  vkQueuePresentKHR(graphicsQueue_, &presentInfo);
+  VkResult result = vkQueuePresentKHR(graphicsQueue_, &presentInfo);
+
+  if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||
+      framebufferResized_) {
+    framebufferResized_ = false;
+    recreateSwapchain();
+  } else if (result != VK_SUCCESS) {
+    throw std::runtime_error("Failed to present swap chain image!");
+  }
 
   currentFrame_ = (currentFrame_ + 1) % MAX_FRAMES_IN_FLIGHT;
 }
@@ -742,4 +786,71 @@ void VulkanContext::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
   vkQueueWaitIdle(graphicsQueue_);
 
   vkFreeCommandBuffers(device_, commandPool_, 1, &commandBuffer);
+}
+
+void VulkanContext::recreateSwapchain() {
+  int width = 0, height = 0;
+  glfwGetFramebufferSize(window_, &width, &height);
+  while (width == 0 || height == 0) {
+    glfwGetFramebufferSize(window_, &width, &height);
+    glfwWaitEvents();
+  }
+
+  vkDeviceWaitIdle(device_);
+
+  cleanupSwapchain();
+
+  createSwapchain(findGraphicsQueueFamily());
+  createImageViews();
+  createDepthResources();
+  createFramebuffers();
+
+  // 🎯 ADD THIS:
+  vkFreeCommandBuffers(device_, commandPool_, commandBuffers_.size(),
+                       commandBuffers_.data());
+  createCommandBuffers();
+}
+
+void VulkanContext::cleanupSwapchain() {
+  for (auto framebuffer : swapchainFramebuffers_)
+    vkDestroyFramebuffer(device_, framebuffer, nullptr);
+
+  for (auto imageView : swapchainImageViews_)
+    vkDestroyImageView(device_, imageView, nullptr);
+
+  vkDestroyImageView(device_, depthImageView_, nullptr);
+  vkDestroyImage(device_, depthImage_, nullptr);
+  vkFreeMemory(device_, depthImageMemory_, nullptr);
+
+  vkDestroySwapchainKHR(device_, swapchain_, nullptr);
+}
+
+void VulkanContext::setupDebugMessenger() {
+  VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+  createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+  createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                               VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+  createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                           VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                           VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+  createInfo.pfnUserCallback = debugCallback;
+  createInfo.pUserData = nullptr;
+
+  auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+      instance_, "vkCreateDebugUtilsMessengerEXT");
+  if (func != nullptr) {
+    CHECK_VK_RESULT(func(instance_, &createInfo, nullptr, &debugMessenger_));
+  } else {
+    throw std::runtime_error("failed to set up debug messenger!");
+  }
+}
+
+VKAPI_ATTR VkBool32 VKAPI_CALL VulkanContext::debugCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+    VkDebugUtilsMessageTypeFlagsEXT messageType,
+    const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+    void *pUserData) {
+
+  std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+  return VK_FALSE;
 }
