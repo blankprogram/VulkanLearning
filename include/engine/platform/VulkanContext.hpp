@@ -4,8 +4,8 @@
 #define VULKAN_CONTEXT_H
 static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 #define GLFW_INCLUDE_VULKAN
-#include "Pipeline.h"
-#include "Vertex.h"
+#include "../render/Pipeline.hpp"
+#include "../render/Vertex.hpp"
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <cstdlib>
@@ -54,6 +54,9 @@ private:
   void createDescriptorSets();
   void updateDescriptorSet(uint32_t frameIndex);
   void updateUniformBuffer(uint32_t frameIndex);
+
+  void createDepthResources();
+
   GLFWwindow *window_;
   uint32_t width_, height_;
   std::string title_;
@@ -98,6 +101,10 @@ private:
     glm::mat4 view;
     glm::mat4 proj;
   };
+
+  VkImage depthImage_;
+  VkDeviceMemory depthImageMemory_;
+  VkImageView depthImageView_;
 
   const std::vector<const char *> deviceExtensions_ = {
       VK_KHR_SWAPCHAIN_EXTENSION_NAME};

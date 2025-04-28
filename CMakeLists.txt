@@ -1,45 +1,30 @@
-cmake_minimum_required(VERSION 3.10)
-project(VulkanLearning)
 
+cmake_minimum_required(VERSION 3.10)
+project(VulkanEngine LANGUAGES CXX)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# — find Vulkan
-find_package(Vulkan REQUIRED)
+find_package(Vulkan     REQUIRED)
+find_package(glm        REQUIRED)     # if GLM is installed via your distro
+find_package(PkgConfig  REQUIRED)
+pkg_search_module(GLFW   REQUIRED glfw3)
 
-# — find GLFW via pkg-config
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLFW REQUIRED glfw3)
+add_subdirectory(src)      # <-- builds the `engine` static‐lib
 
-# — list all of our sources
-set(SOURCES
-  main.cpp
-  VulkanContext.cpp
-  Pipeline.cpp
+add_executable(app main.cpp)
+target_include_directories(app PRIVATE
+  ${CMAKE_SOURCE_DIR}/include
 )
-
-# — create the executable
-add_executable(${PROJECT_NAME} ${SOURCES})
-
-# — include directories (Vulkan + GLFW + project root)
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${Vulkan_INCLUDE_DIRS}
-  ${GLFW_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-# — link against Vulkan and GLFW
-target_link_libraries(${PROJECT_NAME} PRIVATE
+target_link_libraries(app PRIVATE
+  engine
   Vulkan::Vulkan
   ${GLFW_LIBRARIES}
+  glm::glm
 )
 
-# — platform‐specific Vulkan surface macros
-if (WIN32)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE VK_USE_PLATFORM_WIN32_KHR)
-elseif (UNIX)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE
-    VK_USE_PLATFORM_WAYLAND_KHR
-    VK_USE_PLATFORM_XLIB_KHR
-  )
-endif()
+add_custom_command(TARGET app POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/assets/shaders
+    $<TARGET_FILE_DIR:app>/shaders
+)
