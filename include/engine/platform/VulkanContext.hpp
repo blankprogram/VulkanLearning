@@ -50,7 +50,7 @@ private:
   void createCommandBuffers();
   void createSyncObjects();
   void drawFrame();
-
+  void onResize(int w, int h);
   void createVertexBuffer();
   void copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size);
 
@@ -65,7 +65,7 @@ private:
   void recordCommandBuffer(VkCommandBuffer cmd, uint32_t imageIndex,
                            uint32_t frameIndex);
 
-  void recreateSwapchain();
+  void recreateSwapchain(uint32_t width, uint32_t height);
   void cleanupSwapchain();
   void setupDebugMessenger();
   static VKAPI_ATTR VkBool32 VKAPI_CALL
@@ -132,6 +132,10 @@ private:
   Pipeline filledPipeline_;
   Pipeline wireframePipeline_;
   bool useWireframe_ = false;
+
+  int newWidth_ = 0;
+  int newHeight_ = 0;
+  float cameraAspect_ = float(width_) / float(height_);
 };
 
 #endif // VULKAN_CONTEXT_H

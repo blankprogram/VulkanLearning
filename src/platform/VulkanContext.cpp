@@ -31,11 +31,18 @@ void VulkanContext::initWindow() {
     throw std::runtime_error("Failed to create window");
 
   glfwSetWindowUserPointer(window_, this);
-  glfwSetFramebufferSizeCallback(window_, [](GLFWwindow *window, int, int) {
-    auto app =
-        reinterpret_cast<VulkanContext *>(glfwGetWindowUserPointer(window));
-    app->framebufferResized_ = true;
+  glfwSetFramebufferSizeCallback(window_, [](GLFWwindow *w, int width,
+                                             int height) {
+    auto app = reinterpret_cast<VulkanContext *>(glfwGetWindowUserPointer(w));
+    app->onResize(width, height);
   });
+}
+
+void VulkanContext::onResize(int width, int height) {
+  // remember the new size and flag that we need to rebuild
+  newWidth_ = width;
+  newHeight_ = height;
+  framebufferResized_ = true;
 }
 
 void VulkanContext::initVulkan() {
@@ -439,23 +446,31 @@ void VulkanContext::createSyncObjects() {
 }
 
 void VulkanContext::drawFrame() {
-  // 1) wait & reset fence for this slot
+  // 1) wait & reset fence
   vkWaitForFences(device_, 1, &inFlightFences_[currentFrame_], VK_TRUE,
                   UINT64_MAX);
+
+  // 1a) handle any queued resize
+  if (framebufferResized_) {
+    vkDeviceWaitIdle(device_);
+    recreateSwapchain(uint32_t(newWidth_), uint32_t(newHeight_));
+    cameraAspect_ = float(newWidth_) / float(newHeight_);
+    framebufferResized_ = false;
+  }
+
   vkResetFences(device_, 1, &inFlightFences_[currentFrame_]);
 
-  // 2) grab next image
+  // 2) acquire next image
   uint32_t imageIndex;
   vkAcquireNextImageKHR(device_, swapchain_, UINT64_MAX,
                         imageAvailableSemaphores_[currentFrame_],
                         VK_NULL_HANDLE, &imageIndex);
 
-  // 3) update *this* slot’s UBO
+  // 3) update UBO for this frame
   updateUniformBuffer(currentFrame_);
 
-  // 4) record into this slot’s command-buffer, targeting the acquired
-  // framebuffer:
-  VkCommandBuffer cmd = commandBuffers_[currentFrame_];
+  // 4) record commands
+  auto cmd = commandBuffers_[currentFrame_];
   recordCommandBuffer(cmd, imageIndex, currentFrame_);
 
   // 5) submit
@@ -483,16 +498,15 @@ void VulkanContext::drawFrame() {
   pi.pSwapchains = &swapchain_;
   pi.pImageIndices = &imageIndex;
 
-  VkResult res = vkQueuePresentKHR(graphicsQueue_, &pi);
-  if (res == VK_ERROR_OUT_OF_DATE_KHR || res == VK_SUBOPTIMAL_KHR ||
-      framebufferResized_) {
-    framebufferResized_ = false;
-    recreateSwapchain();
+  auto res = vkQueuePresentKHR(graphicsQueue_, &pi);
+  if (res == VK_ERROR_OUT_OF_DATE_KHR || res == VK_SUBOPTIMAL_KHR) {
+    // defer to next frame’s resize logic
+    framebufferResized_ = true;
   } else if (res != VK_SUCCESS) {
     throw std::runtime_error("Failed to present swapchain image!");
   }
 
-  // advance to next in‐flight slot
+  // 7) next frame
   currentFrame_ = (currentFrame_ + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
@@ -663,22 +677,24 @@ void VulkanContext::updateUniformBuffer(uint32_t frameIndex) {
   float t = std::chrono::duration<float>(now - start).count();
 
   UBO ubo{};
+  // model animation
+  ubo.model =
+      glm::rotate(glm::mat4(1.0f), t * glm::radians(45.0f), glm::vec3(1, 0, 0));
+  ubo.model =
+      glm::rotate(ubo.model, t * glm::radians(30.0f), glm::vec3(0, 1, 0));
+  ubo.model =
+      glm::rotate(ubo.model, t * glm::radians(15.0f), glm::vec3(0, 0, 1));
 
-  ubo.model = glm::rotate(glm::mat4(1.0f), t * glm::radians(45.0f),
-                          glm::vec3(1.0f, 0.0f, 0.0f)); // rotate around X
-  ubo.model = glm::rotate(ubo.model, t * glm::radians(30.0f),
-                          glm::vec3(0.0f, 1.0f, 0.0f)); // rotate around Y
-  ubo.model = glm::rotate(ubo.model, t * glm::radians(15.0f),
-                          glm::vec3(0.0f, 0.0f, 1.0f)); // rotate around Z
-
+  // camera
   ubo.view =
       glm::lookAt(glm::vec3(2, 2, 2), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-  ubo.proj = glm::perspective(
-      glm::radians(45.0f),
-      swapchainExtent_.width / float(swapchainExtent_.height), 0.1f, 10.0f);
+
+  // projection with correct aspect
+  ubo.proj = glm::perspective(glm::radians(45.0f), cameraAspect_, 0.1f, 10.0f);
   ubo.proj[1][1] *= -1; // GLM → Vulkan
 
-  void *data;
+  // upload
+  void *data = nullptr;
   vkMapMemory(device_, uniformBuffersMemory_[frameIndex], 0, sizeof(ubo), 0,
               &data);
   std::memcpy(data, &ubo, sizeof(ubo));
@@ -790,25 +806,21 @@ void VulkanContext::updateDescriptorSet(uint32_t idx) {
                          descriptorWrites.data(), 0, nullptr);
 }
 
-void VulkanContext::recreateSwapchain() {
-  int width = 0, height = 0;
-  glfwGetFramebufferSize(window_, &width, &height);
-  while (width == 0 || height == 0) {
-    glfwGetFramebufferSize(window_, &width, &height);
-    glfwWaitEvents();
-  }
+void VulkanContext::recreateSwapchain(uint32_t width, uint32_t height) {
+  // update the official extent
+  swapchainExtent_ = {width, height};
 
-  vkDeviceWaitIdle(device_);
-
+  // destroy old swapchain stuff
   cleanupSwapchain();
 
+  // re-create at the new size
   createSwapchain(findGraphicsQueueFamily());
   createImageViews();
   createDepthResources();
   createFramebuffers();
 
-  // 🎯 ADD THIS:
-  vkFreeCommandBuffers(device_, commandPool_, commandBuffers_.size(),
+  // free & re-alloc your command buffers so your renderArea / scissor match
+  vkFreeCommandBuffers(device_, commandPool_, uint32_t(commandBuffers_.size()),
                        commandBuffers_.data());
   createCommandBuffers();
 }
