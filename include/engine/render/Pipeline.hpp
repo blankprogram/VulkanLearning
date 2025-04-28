@@ -10,8 +10,9 @@
 class Pipeline {
 public:
   // Call once after you have device, swapchainExtent & renderPass
-  void Init(VkDevice device, VkExtent2D swapchainExtent,
-            VkRenderPass renderPass, VkDescriptorSetLayout descriptorSetLayout);
+  void Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
+            VkDescriptorSetLayout descriptorSetLayout,
+            VkPolygonMode polygonMode);
 
   // Call during cleanup
   void Cleanup(VkDevice device);

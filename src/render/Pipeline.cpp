@@ -28,8 +28,8 @@ VkShaderModule Pipeline::createShaderModule(VkDevice device,
 }
 
 void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
-                    VkDescriptorSetLayout descriptorSetLayout) {
-  // 1) Load SPIR-V binaries
+                    VkDescriptorSetLayout descriptorSetLayout,
+                    VkPolygonMode polygonMode) { // 1) Load SPIR-V binaries
   auto vertCode = readFile("assets/shaders/triangle.vert.spv");
   auto fragCode = readFile("assets/shaders/triangle.frag.spv");
 
@@ -49,12 +49,13 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
   // 2) Vertex input
   auto bindingDesc = Vertex::getBindingDesc();
   auto attribDescs = Vertex::getAttributeDescs();
-  VkPipelineVertexInputStateCreateInfo vertexInputCI{
+  VkPipelineVertexInputStateCreateInfo viCI{
       VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
-  vertexInputCI.vertexBindingDescriptionCount = 1;
-  vertexInputCI.pVertexBindingDescriptions = &bindingDesc;
-  vertexInputCI.vertexAttributeDescriptionCount = uint32_t(attribDescs.size());
-  vertexInputCI.pVertexAttributeDescriptions = attribDescs.data();
+  viCI.vertexBindingDescriptionCount = 1;
+  viCI.pVertexBindingDescriptions = &bindingDesc;
+  viCI.vertexAttributeDescriptionCount =
+      uint32_t(attribDescs.size()); // <-- now 2
+  viCI.pVertexAttributeDescriptions = attribDescs.data();
 
   // 3) Input assembly
   VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI{
@@ -87,11 +88,12 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
   dynamicStateCI.pDynamicStates = dynamicStates.data();
 
   // 5) Rasterizer
+
   VkPipelineRasterizationStateCreateInfo rasterCI{
       VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO};
   rasterCI.depthClampEnable = VK_FALSE;
   rasterCI.rasterizerDiscardEnable = VK_FALSE;
-  rasterCI.polygonMode = VK_POLYGON_MODE_FILL;
+  rasterCI.polygonMode = polygonMode; // <--- use passed‐in
   rasterCI.lineWidth = 1.0f;
   rasterCI.cullMode = VK_CULL_MODE_BACK_BIT;
   rasterCI.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
@@ -143,7 +145,7 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
       VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO};
   gpCI.stageCount = 2;
   gpCI.pStages = stages;
-  gpCI.pVertexInputState = &vertexInputCI;
+  gpCI.pVertexInputState = &viCI;
   gpCI.pInputAssemblyState = &inputAssemblyCI;
   gpCI.pRasterizationState = &rasterCI;
   gpCI.pMultisampleState = &msCI;

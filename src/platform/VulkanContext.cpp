@@ -60,13 +60,15 @@ void VulkanContext::initVulkan() {
                 "assets/textures/cobble.jpg");
   createDescriptorSets();
 
-  graphicsPipeline_.Init(
-      device_, swapchainExtent_, renderPass_,
-      descriptorSetLayout_ // pass your context’s descriptor‐set layout
+  filledPipeline_.Init(device_, swapchainExtent_, renderPass_,
+                       descriptorSetLayout_,
+                       VK_POLYGON_MODE_FILL // textured fill
   );
 
-  // ← move createCommandPool up here, before any buffer copies:
-
+  wireframePipeline_.Init(device_, swapchainExtent_, renderPass_,
+                          descriptorSetLayout_,
+                          VK_POLYGON_MODE_LINE // wireframe
+  );
   // now it's safe to stage & upload your vertex buffer
   createVertexBuffer();
 
@@ -113,7 +115,8 @@ void VulkanContext::cleanup() {
     vkDestroyImageView(device_, iv, nullptr);
 
   // pipeline & renderpass
-  graphicsPipeline_.Cleanup(device_);
+  filledPipeline_.Cleanup(device_);
+  wireframePipeline_.Cleanup(device_);
   vkDestroyRenderPass(device_, renderPass_, nullptr);
 
   // swapchain, command pool, device, surface, instance
@@ -360,62 +363,67 @@ void VulkanContext::createCommandBuffers() {
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
   allocInfo.commandPool = commandPool_;
   allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-  allocInfo.commandBufferCount = (uint32_t)commandBuffers_.size();
-
+  allocInfo.commandBufferCount = uint32_t(commandBuffers_.size());
   CHECK_VK_RESULT(
       vkAllocateCommandBuffers(device_, &allocInfo, commandBuffers_.data()));
 
   for (size_t i = 0; i < commandBuffers_.size(); ++i) {
     VkCommandBuffer cmd = commandBuffers_[i];
 
+    // — begin recording —
     VkCommandBufferBeginInfo beginInfo{
         VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     CHECK_VK_RESULT(vkBeginCommandBuffer(cmd, &beginInfo));
 
-    std::array<VkClearValue, 2> clearValues{};
-    clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
-    clearValues[1].depthStencil = {1.0f, 0};
+    // — clear + begin render pass —
+    std::array<VkClearValue, 2> clears{};
+    clears[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+    clears[1].depthStencil = {1.0f, 0};
 
     VkRenderPassBeginInfo rpbi{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
     rpbi.renderPass = renderPass_;
     rpbi.framebuffer = swapchainFramebuffers_[i];
-    rpbi.renderArea.offset = {0, 0};
-    rpbi.renderArea.extent = swapchainExtent_;
-    rpbi.clearValueCount = static_cast<uint32_t>(clearValues.size());
-    rpbi.pClearValues = clearValues.data();
+    rpbi.renderArea = {{0, 0}, swapchainExtent_};
+    rpbi.clearValueCount = uint32_t(clears.size());
+    rpbi.pClearValues = clears.data();
 
     vkCmdBeginRenderPass(cmd, &rpbi, VK_SUBPASS_CONTENTS_INLINE);
 
-    vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                      graphicsPipeline_.GetPipeline());
+    // — choose & bind pipeline + matching layout —
+    const VkPipeline pipe = useWireframe_ ? wireframePipeline_.GetPipeline()
+                                          : filledPipeline_.GetPipeline();
+    const VkPipelineLayout layout = useWireframe_
+                                        ? wireframePipeline_.GetLayout()
+                                        : filledPipeline_.GetLayout();
 
-    VkBuffer vertexBuffers[] = {vertexBuffer_};
-    VkDeviceSize offsets[] = {0};
-    vkCmdBindVertexBuffers(cmd, 0, 1, vertexBuffers, offsets);
+    vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, pipe);
 
+    // — bind vertex & index buffers —
+    VkBuffer vb[] = {vertexBuffer_};
+    VkDeviceSize offset = 0;
+    vkCmdBindVertexBuffers(cmd, 0, 1, vb, &offset);
     vkCmdBindIndexBuffer(cmd, indexBuffer_, 0, VK_INDEX_TYPE_UINT16);
 
-    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS,
-                            graphicsPipeline_.GetLayout(), 0, 1,
+    // — bind descriptor set with that layout —
+    vkCmdBindDescriptorSets(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 1,
                             &descriptorSets_[currentFrame_], 0, nullptr);
 
-    VkViewport viewport{};
-    viewport.x = 0.0f;
-    viewport.y = 0.0f;
-    viewport.width = (float)swapchainExtent_.width;
-    viewport.height = (float)swapchainExtent_.height;
-    viewport.minDepth = 0.0f;
-    viewport.maxDepth = 1.0f;
+    // — dynamic viewport & scissor —
+    VkViewport vp{0.0f,
+                  0.0f,
+                  float(swapchainExtent_.width),
+                  float(swapchainExtent_.height),
+                  0.0f,
+                  1.0f};
+    vkCmdSetViewport(cmd, 0, 1, &vp);
 
-    VkRect2D scissor{};
-    scissor.offset = {0, 0};
-    scissor.extent = swapchainExtent_;
+    VkRect2D sc{{0, 0}, swapchainExtent_};
+    vkCmdSetScissor(cmd, 0, 1, &sc);
 
-    vkCmdSetViewport(cmd, 0, 1, &viewport);
-    vkCmdSetScissor(cmd, 0, 1, &scissor);
-
+    // — draw indexed —
     vkCmdDrawIndexed(cmd, indexCount_, 1, 0, 0, 0);
 
+    // — end render pass & finish —
     vkCmdEndRenderPass(cmd);
     CHECK_VK_RESULT(vkEndCommandBuffer(cmd));
   }
@@ -490,35 +498,40 @@ void VulkanContext::createVertexBuffer() {
 
   std::vector<Vertex> vertices = {
       // Front face
-      {{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-      {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+      {{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},
+      {{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},
+      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f}},
+      {{-0.5f, 0.5f, 0.5f}, {0.0f, 1.0f}},
+
       // Back face
-      {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-      {{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+      {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
+      {{0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+      {{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
+      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},
+
       // Left face
-      {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-      {{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+      {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+      {{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},
+      {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f}},
+      {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
+
       // Right face
-      {{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-      {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+      {{0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
+      {{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},
+      {{0.5f, 0.5f, 0.5f}, {0.0f, 1.0f}},
+      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},
+
       // Top face
-      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+      {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f}},
+      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f}},
+      {{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f}},
+      {{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f}},
+
       // Bottom face
-      {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
-      {{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-      {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
-      {{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+      {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}},
+      {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}},
+      {{0.5f, -0.5f, 0.5f}, {0.0f, 0.0f}},
+      {{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f}},
   };
 
   std::vector<uint16_t> indices = {

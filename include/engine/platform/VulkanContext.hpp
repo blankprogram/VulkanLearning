@@ -115,7 +115,6 @@ private:
   VkBuffer vertexBuffer_;
   VkDeviceMemory vertexBufferMemory_;
   uint32_t vertexCount_;
-  Pipeline graphicsPipeline_;
 
   struct UBO {
     glm::mat4 model;
@@ -133,6 +132,10 @@ private:
   VkDebugUtilsMessengerEXT debugMessenger_;
   const std::vector<const char *> deviceExtensions_ = {
       VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+  Pipeline filledPipeline_;
+  Pipeline wireframePipeline_;
+  bool useWireframe_ = false;
 };
 
 #endif // VULKAN_CONTEXT_H
