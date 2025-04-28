@@ -57,6 +57,9 @@ private:
 
   void createDepthResources();
 
+  VkCommandBuffer beginSingleTimeCommands();
+  void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+
   GLFWwindow *window_;
   uint32_t width_, height_;
   std::string title_;
@@ -105,6 +108,10 @@ private:
   VkImage depthImage_;
   VkDeviceMemory depthImageMemory_;
   VkImageView depthImageView_;
+
+  VkBuffer indexBuffer_;
+  VkDeviceMemory indexBufferMemory_;
+  uint32_t indexCount_;
 
   const std::vector<const char *> deviceExtensions_ = {
       VK_KHR_SWAPCHAIN_EXTENSION_NAME};

@@ -75,23 +75,19 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
   scissor.offset = {0, 0};
   scissor.extent = extent;
 
-  std::vector<VkDynamicState> dynamicStates = {
-      VK_DYNAMIC_STATE_VIEWPORT,
-      VK_DYNAMIC_STATE_SCISSOR,
-  };
-
-  VkPipelineDynamicStateCreateInfo dynamicStateCI{};
-  dynamicStateCI.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-  dynamicStateCI.dynamicStateCount =
-      static_cast<uint32_t>(dynamicStates.size());
-  dynamicStateCI.pDynamicStates = dynamicStates.data();
+  VkPipelineViewportStateCreateInfo vpCI{
+      VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO};
+  vpCI.viewportCount = 1;
+  vpCI.pViewports = &viewport;
+  vpCI.scissorCount = 1;
+  vpCI.pScissors = &scissor;
 
   // 5) Rasterizer
   VkPipelineRasterizationStateCreateInfo rasterCI{
       VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO};
   rasterCI.depthClampEnable = VK_FALSE;
   rasterCI.rasterizerDiscardEnable = VK_FALSE;
-  rasterCI.polygonMode = VK_POLYGON_MODE_LINE;
+  rasterCI.polygonMode = VK_POLYGON_MODE_FILL;
   rasterCI.lineWidth = 1.0f;
   rasterCI.cullMode = VK_CULL_MODE_BACK_BIT;
   rasterCI.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
@@ -140,14 +136,13 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
   gpCI.pStages = stages;
   gpCI.pVertexInputState = &vertexInputCI;
   gpCI.pInputAssemblyState = &inputAssemblyCI;
+  gpCI.pViewportState = &vpCI;
   gpCI.pRasterizationState = &rasterCI;
   gpCI.pMultisampleState = &msCI;
   gpCI.pDepthStencilState = &depthStencilCI; // <- Important new line
   gpCI.pColorBlendState = &blendCI;
   gpCI.layout = pipelineLayout_;
   gpCI.renderPass = renderPass;
-
-  gpCI.pDynamicState = &dynamicStateCI;
   gpCI.subpass = 0;
 
   if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &gpCI, nullptr,
