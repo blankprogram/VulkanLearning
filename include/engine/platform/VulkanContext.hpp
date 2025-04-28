@@ -6,6 +6,7 @@ static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 #define GLFW_INCLUDE_VULKAN
 #include "../render/Pipeline.hpp"
 #include "../render/Vertex.hpp"
+#include "engine/resources/Texture.hpp"
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <cstdlib>
@@ -28,6 +29,8 @@ public:
   VulkanContext(uint32_t w, uint32_t h, const std::string &t);
   ~VulkanContext();
   void Run();
+
+  Texture texture_;
 
 private:
   void initWindow();

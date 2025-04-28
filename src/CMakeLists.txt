@@ -8,9 +8,10 @@ add_library(engine
   render/Pipeline.cpp
   render/Renderer.cpp
   render/Shader.cpp
-  resources/ResourceManager.cpp
+  resources/Texture.cpp
   scene/Camera.cpp
   scene/Scene.cpp
+  utils/VulkanHelpers.cpp
 )
 
 # expose <project-root>/include so all engine sources pick up #include <engine/...>

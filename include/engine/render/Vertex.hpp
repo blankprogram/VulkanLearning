@@ -6,6 +6,7 @@
 struct Vertex {
   float pos[3];   // Now 3D: x, y, z
   float color[3]; // RGB color
+  float uv[2];
 
   static VkVertexInputBindingDescription getBindingDesc() {
     VkVertexInputBindingDescription binding{};
@@ -15,8 +16,8 @@ struct Vertex {
     return binding;
   }
 
-  static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescs() {
-    std::array<VkVertexInputAttributeDescription, 2> attrs{};
+  static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescs() {
+    std::array<VkVertexInputAttributeDescription, 3> attrs{};
 
     // location 0: position
     attrs[0].location = 0;
@@ -29,6 +30,12 @@ struct Vertex {
     attrs[1].binding = 0;
     attrs[1].format = VK_FORMAT_R32G32B32_SFLOAT;
     attrs[1].offset = offsetof(Vertex, color);
+
+    // location 2: UV
+    attrs[2].location = 2;
+    attrs[2].binding = 0;
+    attrs[2].format = VK_FORMAT_R32G32_SFLOAT;
+    attrs[2].offset = offsetof(Vertex, uv);
 
     return attrs;
   }

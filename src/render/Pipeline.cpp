@@ -30,8 +30,8 @@ VkShaderModule Pipeline::createShaderModule(VkDevice device,
 void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
                     VkDescriptorSetLayout descriptorSetLayout) {
   // 1) Load SPIR-V binaries
-  auto vertCode = readFile("shaders/triangle.vert.spv");
-  auto fragCode = readFile("shaders/triangle.frag.spv");
+  auto vertCode = readFile("assets/shaders/triangle.vert.spv");
+  auto fragCode = readFile("assets/shaders/triangle.frag.spv");
 
   VkShaderModule vertShader = createShaderModule(device, vertCode);
   VkShaderModule fragShader = createShaderModule(device, fragCode);

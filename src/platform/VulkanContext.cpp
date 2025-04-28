@@ -54,6 +54,10 @@ void VulkanContext::initVulkan() {
 
   createUniformBuffers();
   createDescriptorPool();
+  createCommandPool(gf);
+
+  texture_.Load(device_, physicalDevice_, commandPool_, graphicsQueue_,
+                "assets/textures/cobble.jpg");
   createDescriptorSets();
 
   graphicsPipeline_.Init(
@@ -62,7 +66,6 @@ void VulkanContext::initVulkan() {
   );
 
   // ← move createCommandPool up here, before any buffer copies:
-  createCommandPool(gf);
 
   // now it's safe to stage & upload your vertex buffer
   createVertexBuffer();
@@ -95,6 +98,8 @@ void VulkanContext::cleanup() {
     vkDestroyImage(device_, depthImage_, nullptr);
     vkFreeMemory(device_, depthImageMemory_, nullptr);
     vkFreeMemory(device_, uniformBuffersMemory_[i], nullptr);
+
+    texture_.Cleanup(device_);
   }
 
   // destroy descriptor‐set machinery
@@ -182,18 +187,34 @@ uint32_t VulkanContext::findGraphicsQueueFamily() {
 }
 
 void VulkanContext::createLogicalDevice(uint32_t qf) {
-  float p = 1.0f;
+  // 1) Set up the queue info exactly as before
+  float priority = 1.0f;
   VkDeviceQueueCreateInfo qci{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO};
   qci.queueFamilyIndex = qf;
   qci.queueCount = 1;
-  qci.pQueuePriorities = &p;
+  qci.pQueuePriorities = &priority;
 
+  // 2) Query what the physical device supports
+  VkPhysicalDeviceFeatures deviceFeatures{};
+  vkGetPhysicalDeviceFeatures(physicalDevice_, &deviceFeatures);
+
+  // 3) Enable sampler anisotropy if available
+  if (deviceFeatures.samplerAnisotropy) {
+    deviceFeatures.samplerAnisotropy = VK_TRUE;
+  } else {
+    std::cerr << "Warning: samplerAnisotropy not supported; disabling it.\n";
+    deviceFeatures.samplerAnisotropy = VK_FALSE;
+  }
+
+  // 4) Fill in your VkDeviceCreateInfo, including pEnabledFeatures
   VkDeviceCreateInfo di{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO};
   di.queueCreateInfoCount = 1;
   di.pQueueCreateInfos = &qci;
   di.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions_.size());
   di.ppEnabledExtensionNames = deviceExtensions_.data();
+  di.pEnabledFeatures = &deviceFeatures; // ← make sure this is set!
 
+  // 5) Create the device and grab the graphics queue
   CHECK_VK_RESULT(vkCreateDevice(physicalDevice_, &di, nullptr, &device_));
   vkGetDeviceQueue(device_, qf, 0, &graphicsQueue_);
 }
@@ -468,41 +489,36 @@ void VulkanContext::createVertexBuffer() {
   // Cube vertices
 
   std::vector<Vertex> vertices = {
-      // Front face (red)
-      {{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
-      {{0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
-
-      // Back face (green)
-      {{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-      {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-      {{0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-      {{-0.5f, 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-
-      // Left face (blue)
-      {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}},
-      {{-0.5f, -0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-      {{-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}},
-
-      // Right face (yellow)
-      {{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 0.0f}},
-      {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 0.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 0.0f}},
-      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 0.0f}},
-
-      // Top face (magenta)
-      {{-0.5f, 0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}},
-      {{0.5f, 0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}},
-      {{0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 1.0f}},
-      {{-0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 1.0f}},
-
-      // Bottom face (cyan)
-      {{-0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 1.0f}},
-      {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 1.0f}},
-      {{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 1.0f}},
-      {{-0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 1.0f}},
+      // Front face
+      {{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+      {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+      {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+      // Back face
+      {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+      {{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+      // Left face
+      {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+      {{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+      {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+      // Right face
+      {{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+      {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+      // Top face
+      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+      {{0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+      {{0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+      {{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+      // Bottom face
+      {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+      {{0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+      {{0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+      {{-0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
   };
 
   std::vector<uint16_t> indices = {
@@ -683,17 +699,23 @@ void VulkanContext::updateUniformBuffer(uint32_t frameIndex) {
 }
 
 void VulkanContext::createDescriptorSetLayout() {
-  VkDescriptorSetLayoutBinding uboBinding{};
-  uboBinding.binding = 0;
-  uboBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  uboBinding.descriptorCount = 1;
-  uboBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-  uboBinding.pImmutableSamplers = nullptr;
+
+  std::array<VkDescriptorSetLayoutBinding, 2> bindings{};
+
+  bindings[0].binding = 0;
+  bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  bindings[0].descriptorCount = 1;
+  bindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+  bindings[1].binding = 1;
+  bindings[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  bindings[1].descriptorCount = 1;
+  bindings[1].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
   VkDescriptorSetLayoutCreateInfo layoutInfo{
       VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO};
-  layoutInfo.bindingCount = 1;
-  layoutInfo.pBindings = &uboBinding;
+  layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+  layoutInfo.pBindings = bindings.data();
 
   CHECK_VK_RESULT(vkCreateDescriptorSetLayout(device_, &layoutInfo, nullptr,
                                               &descriptorSetLayout_));
@@ -710,14 +732,18 @@ void VulkanContext::createUniformBuffers() {
 }
 
 void VulkanContext::createDescriptorPool() {
-  VkDescriptorPoolSize poolSize{};
-  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  poolSize.descriptorCount = MAX_FRAMES_IN_FLIGHT;
+  std::array<VkDescriptorPoolSize, 2> poolSizes{};
+
+  poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  poolSizes[0].descriptorCount = MAX_FRAMES_IN_FLIGHT;
+
+  poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  poolSizes[1].descriptorCount = MAX_FRAMES_IN_FLIGHT;
 
   VkDescriptorPoolCreateInfo poolInfo{
       VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
-  poolInfo.poolSizeCount = 1;
-  poolInfo.pPoolSizes = &poolSize;
+  poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+  poolInfo.pPoolSizes = poolSizes.data();
   poolInfo.maxSets = MAX_FRAMES_IN_FLIGHT;
 
   CHECK_VK_RESULT(
@@ -746,15 +772,34 @@ void VulkanContext::updateDescriptorSet(uint32_t idx) {
   bufferInfo.offset = 0;
   bufferInfo.range = sizeof(UBO);
 
-  VkWriteDescriptorSet descriptorWrite{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
-  descriptorWrite.dstSet = descriptorSets_[idx];
-  descriptorWrite.dstBinding = 0;
-  descriptorWrite.dstArrayElement = 0;
-  descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  descriptorWrite.descriptorCount = 1;
-  descriptorWrite.pBufferInfo = &bufferInfo;
+  VkDescriptorImageInfo imageInfo{};
+  imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-  vkUpdateDescriptorSets(device_, 1, &descriptorWrite, 0, nullptr);
+  imageInfo.imageView = texture_.GetImageView();
+  imageInfo.sampler = texture_.GetSampler();
+
+  std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+
+  descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  descriptorWrites[0].dstSet = descriptorSets_[idx];
+  descriptorWrites[0].dstBinding = 0;
+  descriptorWrites[0].dstArrayElement = 0;
+  descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  descriptorWrites[0].descriptorCount = 1;
+  descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+  descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+  descriptorWrites[1].dstSet = descriptorSets_[idx];
+  descriptorWrites[1].dstBinding = 1;
+  descriptorWrites[1].dstArrayElement = 0;
+  descriptorWrites[1].descriptorType =
+      VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  descriptorWrites[1].descriptorCount = 1;
+  descriptorWrites[1].pImageInfo = &imageInfo;
+
+  vkUpdateDescriptorSets(device_,
+                         static_cast<uint32_t>(descriptorWrites.size()),
+                         descriptorWrites.data(), 0, nullptr);
 }
 
 VkCommandBuffer VulkanContext::beginSingleTimeCommands() {
