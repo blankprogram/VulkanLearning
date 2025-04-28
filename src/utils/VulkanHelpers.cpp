@@ -1,25 +1,20 @@
 
 #include "engine/utils/VulkanHelpers.hpp"
-#include <iostream>
-#include <stdexcept>
-#include <vulkan/vulkan.h>
 
-// Implement findMemoryType
 uint32_t findMemoryType(VkPhysicalDevice physicalDevice, uint32_t typeFilter,
                         VkMemoryPropertyFlags properties) {
   VkPhysicalDeviceMemoryProperties memProperties;
   vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
 
-  for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+  for (uint32_t i = 0; i < memProperties.memoryTypeCount; ++i) {
     if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags &
                                     properties) == properties) {
       return i;
     }
   }
-  throw std::runtime_error("failed to find suitable memory type!");
+  throw std::runtime_error("Failed to find suitable memory type");
 }
 
-// Implement createBuffer
 void createBuffer(VkDevice device, VkPhysicalDevice physicalDevice,
                   VkDeviceSize size, VkBufferUsageFlags usage,
                   VkMemoryPropertyFlags properties, VkBuffer &buffer,
@@ -43,7 +38,6 @@ void createBuffer(VkDevice device, VkPhysicalDevice physicalDevice,
   vkBindBufferMemory(device, buffer, bufferMemory, 0);
 }
 
-// These two need a context (you'll need to inject device and commandPool)
 VkCommandBuffer beginSingleTimeCommands(VkDevice device,
                                         VkCommandPool commandPool) {
   VkCommandBufferAllocateInfo allocInfo{

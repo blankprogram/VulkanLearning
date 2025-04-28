@@ -7,6 +7,7 @@ static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 #include "../render/Pipeline.hpp"
 #include "../render/Vertex.hpp"
 #include "engine/resources/Texture.hpp"
+#include "engine/utils/VulkanHelpers.hpp"
 #include <GLFW/glfw3.h>
 #include <chrono>
 #include <cstdlib>
@@ -18,7 +19,6 @@ static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
-
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
@@ -52,9 +52,6 @@ private:
   void drawFrame();
 
   void createVertexBuffer();
-  void createBuffer(VkDeviceSize, VkBufferUsageFlags, VkMemoryPropertyFlags,
-                    VkBuffer &, VkDeviceMemory &);
-  uint32_t findMemoryType(uint32_t, VkMemoryPropertyFlags) const;
   void copyBuffer(VkBuffer src, VkBuffer dst, VkDeviceSize size);
 
   void createDescriptorSetLayout();
@@ -65,9 +62,8 @@ private:
   void updateUniformBuffer(uint32_t frameIndex);
 
   void createDepthResources();
-
-  VkCommandBuffer beginSingleTimeCommands();
-  void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+  void recordCommandBuffer(VkCommandBuffer cmd, uint32_t imageIndex,
+                           uint32_t frameIndex);
 
   void recreateSwapchain();
   void cleanupSwapchain();

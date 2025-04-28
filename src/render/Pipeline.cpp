@@ -28,11 +28,11 @@ VkShaderModule Pipeline::createShaderModule(VkDevice device,
 }
 
 void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
-                    VkDescriptorSetLayout descriptorSetLayout,
-                    VkPolygonMode polygonMode) { // 1) Load SPIR-V binaries
-  auto vertCode = readFile("assets/shaders/triangle.vert.spv");
-  auto fragCode = readFile("assets/shaders/triangle.frag.spv");
-
+                    VkDescriptorSetLayout dsLayout, const std::string &vertPath,
+                    const std::string &fragPath, VkPolygonMode polygonMode) {
+  // 1) Load SPIR-V from the two passed-in files
+  auto vertCode = readFile(vertPath);
+  auto fragCode = readFile(fragPath);
   VkShaderModule vertShader = createShaderModule(device, vertCode);
   VkShaderModule fragShader = createShaderModule(device, fragCode);
 
@@ -53,109 +53,92 @@ void Pipeline::Init(VkDevice device, VkExtent2D extent, VkRenderPass renderPass,
       VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
   viCI.vertexBindingDescriptionCount = 1;
   viCI.pVertexBindingDescriptions = &bindingDesc;
-  viCI.vertexAttributeDescriptionCount =
-      uint32_t(attribDescs.size()); // <-- now 2
+  viCI.vertexAttributeDescriptionCount = uint32_t(attribDescs.size());
   viCI.pVertexAttributeDescriptions = attribDescs.data();
 
   // 3) Input assembly
-  VkPipelineInputAssemblyStateCreateInfo inputAssemblyCI{
+  VkPipelineInputAssemblyStateCreateInfo iaCI{
       VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO};
-  inputAssemblyCI.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-  inputAssemblyCI.primitiveRestartEnable = VK_FALSE;
+  iaCI.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+  iaCI.primitiveRestartEnable = VK_FALSE;
 
-  // 4) Viewport & scissor
-  VkViewport viewport{};
-  viewport.x = 0.0f;
-  viewport.y = 0.0f;
-  viewport.width = float(extent.width);
-  viewport.height = float(extent.height);
-  viewport.minDepth = 0.0f;
-  viewport.maxDepth = 1.0f;
+  // 4) Viewport + scissor (dynamic)
+  VkViewport viewport{0.0f, 0.0f, float(extent.width), float(extent.height),
+                      0.0f, 1.0f};
+  VkRect2D scissor{{0, 0}, extent};
+  std::vector<VkDynamicState> dynStates = {VK_DYNAMIC_STATE_VIEWPORT,
+                                           VK_DYNAMIC_STATE_SCISSOR};
+  VkPipelineDynamicStateCreateInfo dynCI{
+      VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO};
+  dynCI.dynamicStateCount = uint32_t(dynStates.size());
+  dynCI.pDynamicStates = dynStates.data();
 
-  VkRect2D scissor{};
-  scissor.offset = {0, 0};
-  scissor.extent = extent;
-
-  std::vector<VkDynamicState> dynamicStates = {
-      VK_DYNAMIC_STATE_VIEWPORT,
-      VK_DYNAMIC_STATE_SCISSOR,
-  };
-
-  VkPipelineDynamicStateCreateInfo dynamicStateCI{};
-  dynamicStateCI.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-  dynamicStateCI.dynamicStateCount =
-      static_cast<uint32_t>(dynamicStates.size());
-  dynamicStateCI.pDynamicStates = dynamicStates.data();
+  VkPipelineViewportStateCreateInfo vpCI{
+      VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO};
+  vpCI.viewportCount = 1;
+  vpCI.scissorCount = 1;
+  // (we use dynamic viewport/scissor, so no pViewports/pScissors)
 
   // 5) Rasterizer
-
-  VkPipelineRasterizationStateCreateInfo rasterCI{
+  VkPipelineRasterizationStateCreateInfo rsCI{
       VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO};
-  rasterCI.depthClampEnable = VK_FALSE;
-  rasterCI.rasterizerDiscardEnable = VK_FALSE;
-  rasterCI.polygonMode = polygonMode; // <--- use passed‐in
-  rasterCI.lineWidth = 1.0f;
-  rasterCI.cullMode = VK_CULL_MODE_BACK_BIT;
-  rasterCI.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-  rasterCI.depthBiasEnable = VK_FALSE;
+  rsCI.depthClampEnable = VK_FALSE;
+  rsCI.rasterizerDiscardEnable = VK_FALSE;
+  rsCI.polygonMode = polygonMode;
+  rsCI.lineWidth = 1.0f;
+  rsCI.cullMode = VK_CULL_MODE_BACK_BIT;
+  rsCI.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+  rsCI.depthBiasEnable = VK_FALSE;
 
   // 6) Multisampling
   VkPipelineMultisampleStateCreateInfo msCI{
       VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO};
   msCI.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-  // 7) Depth & stencil
-  VkPipelineDepthStencilStateCreateInfo depthStencilCI{
+  // 7) Depth + stencil
+  VkPipelineDepthStencilStateCreateInfo dsCI{
       VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO};
-  depthStencilCI.depthTestEnable = VK_TRUE;
-  depthStencilCI.depthWriteEnable = VK_TRUE;
-  depthStencilCI.depthCompareOp = VK_COMPARE_OP_LESS;
-  depthStencilCI.depthBoundsTestEnable = VK_FALSE;
-  depthStencilCI.stencilTestEnable = VK_FALSE;
+  dsCI.depthTestEnable = VK_TRUE;
+  dsCI.depthWriteEnable = VK_TRUE;
+  dsCI.depthCompareOp = VK_COMPARE_OP_LESS;
+  dsCI.depthBoundsTestEnable = VK_FALSE;
+  dsCI.stencilTestEnable = VK_FALSE;
 
   // 8) Color blending
-  VkPipelineColorBlendAttachmentState blendAttach{};
-  blendAttach.colorWriteMask =
-      VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
-      VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-  blendAttach.blendEnable = VK_FALSE;
-
-  VkPipelineColorBlendStateCreateInfo blendCI{
+  VkPipelineColorBlendAttachmentState cbAttach{};
+  cbAttach.colorWriteMask = VK_COLOR_COMPONENT_R_BIT |
+                            VK_COLOR_COMPONENT_G_BIT |
+                            VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+  cbAttach.blendEnable = VK_FALSE;
+  VkPipelineColorBlendStateCreateInfo cbCI{
       VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO};
-  blendCI.attachmentCount = 1;
-  blendCI.pAttachments = &blendAttach;
+  cbCI.attachmentCount = 1;
+  cbCI.pAttachments = &cbAttach;
 
   // 9) Pipeline layout
   VkPipelineLayoutCreateInfo layoutCI{
       VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO};
   layoutCI.setLayoutCount = 1;
-  layoutCI.pSetLayouts = &descriptorSetLayout;
-
+  layoutCI.pSetLayouts = &dsLayout;
   if (vkCreatePipelineLayout(device, &layoutCI, nullptr, &pipelineLayout_) !=
       VK_SUCCESS)
     throw std::runtime_error("Failed to create pipeline layout");
 
-  VkPipelineViewportStateCreateInfo viewportStateCI{
-      VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO};
-  viewportStateCI.viewportCount = 1;
-  viewportStateCI.scissorCount = 1;
-
-  // 10) Graphics pipeline create
+  // 10) Graphics pipeline
   VkGraphicsPipelineCreateInfo gpCI{
       VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO};
   gpCI.stageCount = 2;
   gpCI.pStages = stages;
   gpCI.pVertexInputState = &viCI;
-  gpCI.pInputAssemblyState = &inputAssemblyCI;
-  gpCI.pRasterizationState = &rasterCI;
+  gpCI.pInputAssemblyState = &iaCI;
+  gpCI.pViewportState = &vpCI;
+  gpCI.pRasterizationState = &rsCI;
   gpCI.pMultisampleState = &msCI;
-  gpCI.pDepthStencilState = &depthStencilCI; // <- Important new line
-  gpCI.pColorBlendState = &blendCI;
+  gpCI.pDepthStencilState = &dsCI;
+  gpCI.pColorBlendState = &cbCI;
+  gpCI.pDynamicState = &dynCI;
   gpCI.layout = pipelineLayout_;
   gpCI.renderPass = renderPass;
-
-  gpCI.pViewportState = &viewportStateCI;
-  gpCI.pDynamicState = &dynamicStateCI;
   gpCI.subpass = 0;
 
   if (vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &gpCI, nullptr,
