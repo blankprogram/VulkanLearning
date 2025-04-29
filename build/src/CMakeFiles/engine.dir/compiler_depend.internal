@@ -7,6 +7,7 @@ src/CMakeFiles/engine.dir/core/Application.cpp.o
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/CommandBufferRecorder.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/InputManager.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp
@@ -517,6 +518,7 @@ src/CMakeFiles/engine.dir/main.cpp.o
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/CommandBufferRecorder.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/InputManager.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp
