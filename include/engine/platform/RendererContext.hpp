@@ -47,8 +47,8 @@ private:
   VkCommandBuffer commandBuffers_[MAX_FRAMES_IN_FLIGHT]{};
 
   DescriptorManager descriptorMgr_;
-  std::vector<VkBuffer> uniformBuffers_;
-  std::vector<VkDeviceMemory> uniformMemories_;
+  VkBuffer uniformBuffer_;
+  VkDeviceMemory uniformMemory_;
   engine::render::Camera cam_;
 
   VkRenderPass renderPass_{VK_NULL_HANDLE};
