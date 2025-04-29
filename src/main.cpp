@@ -1,17 +1,8 @@
 
-#include "engine/platform/WindowManager.hpp"
-#include <GLFW/glfw3.h>
+#include "engine/core/Application.hpp"
 
 int main() {
-  WindowManager windowManager(1280, 720, "Hello Vulkan");
-  GLFWwindow *window = windowManager.getWindow();
-
-  // Main loop
-  while (!windowManager.shouldClose()) {
-    glfwPollEvents();
-    glfwSwapBuffers(window);
-    // drawFrame(); (future)
-  }
-
+  Application app;
+  app.Run();
   return 0;
 }

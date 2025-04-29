@@ -1,4 +1,4 @@
-
+add_definitions(-DSPIRV_OUT="${SPIRV_OUT}")
 cmake_minimum_required(VERSION 3.10)
 project(VulkanEngine LANGUAGES CXX)
 

@@ -29,9 +29,10 @@ void RendererContext::init(GLFWwindow *window) {
   createRenderPass();
   createFramebuffers();
 
-  std::string shaderDir = "/assets/shaders"; // or wherever CMake writes them
+  createUniforms();
   pipeline_.init(device_->device, renderPass_, descriptorMgr_.getLayout(),
-                 shaderDir + "/vert.spv", shaderDir + "/frag.spv");
+                 std::string(SPIRV_OUT) + "/vert.spv",
+                 std::string(SPIRV_OUT) + "/frag.spv");
 
   // 2) allocate command buffers
   VkCommandBufferAllocateInfo allocInfo{
