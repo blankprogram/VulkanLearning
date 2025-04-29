@@ -14,64 +14,34 @@ VulkanContext::VulkanContext(uint32_t w, uint32_t h, const std::string &t)
   initWindow();
   initVulkan();
 
-  // now that device_, renderPass_, dsLayout_, pipelines exist:
-  renderer_ = std::make_unique<Renderer>(
-      device_, renderPass_, globalDescriptorSetLayout_, filledPipeline_,
-      wireframePipeline_); // spawn one camera in our ECS:
+  // --- create Renderer (needs Vulkan stuff ready first) ---
+  renderer_ = std::make_unique<Renderer>(device_, renderPass_,
+                                         globalDescriptorSetLayout_,
+                                         filledPipeline_, wireframePipeline_);
+
+  // --- create Camera entity ---
   auto camE = registry_.create();
   registry_.emplace<CameraComponent>(camE, cameraAspect_);
-  // registry_.get<CameraComponent>(camE).cam.LookAt({3, 3, 3}, {0, 0, 0},
-  //                                                 {0, 1, 0});
 
-  std::vector<Vertex> cubeVerts = {
-      // front
-      {{-0.5f, -0.5f, 0.5f}, {0, 0}},
-      {{0.5f, -0.5f, 0.5f}, {1, 0}},
-      {{0.5f, 0.5f, 0.5f}, {1, 1}},
-      {{-0.5f, 0.5f, 0.5f}, {0, 1}},
-      // back
-      {{-0.5f, -0.5f, -0.5f}, {1, 0}},
-      {{0.5f, -0.5f, -0.5f}, {0, 0}},
-      {{0.5f, 0.5f, -0.5f}, {0, 1}},
-      {{-0.5f, 0.5f, -0.5f}, {1, 1}},
-      // left
-      {{-0.5f, -0.5f, -0.5f}, {0, 0}},
-      {{-0.5f, -0.5f, 0.5f}, {1, 0}},
-      {{-0.5f, 0.5f, 0.5f}, {1, 1}},
-      {{-0.5f, 0.5f, -0.5f}, {0, 1}},
-      // right
-      {{0.5f, -0.5f, -0.5f}, {1, 0}},
-      {{0.5f, -0.5f, 0.5f}, {0, 0}},
-      {{0.5f, 0.5f, 0.5f}, {0, 1}},
-      {{0.5f, 0.5f, -0.5f}, {1, 1}},
-      // top
-      {{-0.5f, 0.5f, -0.5f}, {0, 1}},
-      {{0.5f, 0.5f, -0.5f}, {1, 1}},
-      {{0.5f, 0.5f, 0.5f}, {1, 0}},
-      {{-0.5f, 0.5f, 0.5f}, {0, 0}},
-      // bottom
-      {{-0.5f, -0.5f, -0.5f}, {1, 1}},
-      {{0.5f, -0.5f, -0.5f}, {0, 1}},
-      {{0.5f, -0.5f, 0.5f}, {0, 0}},
-      {{-0.5f, -0.5f, 0.5f}, {1, 0}},
-  };
-  std::vector<uint32_t> cubeIdx = {
-      0,  1,  2,  2,  3,  0,  4,  6,  5,  6,  4,  7,  8,  9,  10, 10, 11, 8,
-      12, 14, 13, 14, 12, 15, 16, 18, 17, 18, 16, 19, 20, 21, 22, 22, 23, 20};
+  // --- Create a Chunk and keep it alive ---
+  chunks_.emplace_back(std::make_unique<Chunk>(device_, physicalDevice_,
+                                               commandPool_, graphicsQueue_));
+  chunks_.back()->generateMesh();
 
-  // 2) create Mesh + Material and keep them alive
-  meshes_.emplace_back(std::make_unique<Mesh>(device_, physicalDevice_,
-                                              commandPool_, graphicsQueue_,
-                                              cubeVerts, cubeIdx));
+  // now we grab the mesh properly
+  meshes_.emplace_back(chunks_.back()->getMesh());
+
+  // also create a simple Material
   materials_.emplace_back(std::make_unique<Material>(
       device_, descriptorPool_, materialDescriptorSetLayout_, &texture_));
 
-  // 3) spawn an entity and attach components
-  auto cube = registry_.create();
-  registry_.emplace<Transform>(cube, Transform{glm::mat4(1.0f)});
-  registry_.emplace<MeshRef>(cube, meshes_.back().get());
-  registry_.emplace<MaterialRef>(cube, materials_.back().get());
+  // create an entity for the chunk
+  auto chunkEntity = registry_.create();
+  registry_.emplace<Transform>(chunkEntity, Transform{glm::mat4(1.0f)});
+  registry_.emplace<MeshRef>(chunkEntity, meshes_.back().get());
+  registry_.emplace<MaterialRef>(chunkEntity, materials_.back().get());
 }
+
 VulkanContext::~VulkanContext() { cleanup(); }
 
 void VulkanContext::Run() { mainLoop(); }

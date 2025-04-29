@@ -8,6 +8,7 @@
 #include "engine/render/Renderer.hpp"
 #include "engine/resources/Texture.hpp"
 #include "engine/utils/VulkanHelpers.hpp"
+#include "engine/voxel/Chunk.hpp"
 #include "thirdparty/entt.hpp"
 #include <GLFW/glfw3.h>
 #include <chrono>
@@ -127,7 +128,7 @@ private:
 
   Pipeline filledPipeline_;
   Pipeline wireframePipeline_;
-  bool useWireframe_ = false;
+  bool useWireframe_ = true;
 
   int newWidth_ = 0;
   int newHeight_ = 0;
@@ -141,6 +142,8 @@ private:
   int currentFrame_;
   std::vector<std::unique_ptr<Mesh>> meshes_;
   std::vector<std::unique_ptr<Material>> materials_;
+
+  std::vector<std::unique_ptr<Chunk>> chunks_;
 };
 
 #endif // VULKAN_CONTEXT_H
