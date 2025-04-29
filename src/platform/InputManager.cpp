@@ -21,16 +21,18 @@ void InputManager::mouseCallback(GLFWwindow *w, double xpos, double ypos) {
   }
 
   float dx = float(xpos) - self->lastX_;
-  float dy = float(self->lastY_) - float(ypos);
+  float dy = self->lastY_ - float(ypos);
   self->lastX_ = float(xpos);
   self->lastY_ = float(ypos);
 
-  // update camera yaw/pitch
-  float yaw = dx * self->mouseSens_;
-  float pitch = dy * self->mouseSens_;
-  // accumulate
-  self->cam_.setRotation(self->cam_.getYaw() + yaw,
-                         self->cam_.getPitch() + pitch);
+  // scale by sensitivity
+  float yawDelta = dx * self->mouseSens_;
+  float pitchDelta = dy * self->mouseSens_;
+
+  // accumulate & let Camera::setRotation clamp for us
+  float newYaw = self->cam_.getYaw() + yawDelta;
+  float newPitch = self->cam_.getPitch() + pitchDelta;
+  self->cam_.setRotation(newYaw, newPitch);
 }
 
 void InputManager::processInput(float dt) {

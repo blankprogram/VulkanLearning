@@ -17,44 +17,47 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
     return inBounds(x, y, z) ? vol.at(x, y, z).solid : false;
   };
 
-  // for each voxel
+  struct Face {
+    glm::ivec3 offset; // neighbour check
+    glm::vec3 dir;     // outward normal
+    glm::vec3 u, v;    // quad axes
+  };
+  static const Face faces[6] = {
+      {{0, 0, -1}, {0, 0, -1}, {1, 0, 0}, {0, 1, 0}}, // back
+      {{0, 0, +1}, {0, 0, +1}, {1, 0, 0}, {0, 1, 0}}, // front
+      {{-1, 0, 0}, {-1, 0, 0}, {0, 0, 1}, {0, 1, 0}}, // left
+      {{+1, 0, 0}, {+1, 0, 0}, {0, 0, 1}, {0, 1, 0}}, // right
+      {{0, -1, 0}, {0, -1, 0}, {1, 0, 0}, {0, 0, 1}}, // bottom
+      {{0, +1, 0}, {0, +1, 0}, {1, 0, 0}, {0, 0, 1}}, // top
+  };
+
   for (int z = 0; z < vol.extent.z; ++z)
     for (int y = 0; y < vol.extent.y; ++y)
       for (int x = 0; x < vol.extent.x; ++x) {
         if (!isSolid(x, y, z))
           continue;
-        glm::vec3 p(x, y, z);
-        // check 6 faces
-        struct Face {
-          glm::ivec3 offset;
-          glm::vec3 dir;
-          glm::vec3 u, v;
-        };
-        static Face faces[6] = {
-            {{0, 0, -1}, {0, 0, -1}, {1, 0, 0}, {0, 1, 0}}, // back
-            {{0, 0, 1}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}},   // front
-            {{-1, 0, 0}, {-1, 0, 0}, {0, 0, 1}, {0, 1, 0}}, // left
-            {{1, 0, 0}, {1, 0, 0}, {0, 0, 1}, {0, 1, 0}},   // right
-            {{0, -1, 0}, {0, -1, 0}, {1, 0, 0}, {0, 0, 1}}, // bottom
-            {{0, 1, 0}, {0, 1, 0}, {1, 0, 0}, {0, 0, 1}}    // top
-        };
+        glm::vec3 p{float(x), float(y), float(z)};
+
         for (int f = 0; f < 6; ++f) {
-          auto &face = faces[f];
-          int nx = x + face.offset.x;
-          int ny = y + face.offset.y;
-          int nz = z + face.offset.z;
-          if (isSolid(nx, ny, nz))
+          const Face &face = faces[f];
+          // skip if neighbour is solid
+          if (isSolid(x + face.offset.x, y + face.offset.y, z + face.offset.z))
             continue;
-          // add face quad
-          uint32_t base = verts.size();
-          glm::vec3 normal = face.dir;
-          glm::vec3 corners[4] = {p, p + face.u, p + face.u + face.v,
-                                  p + face.v};
+
+          // place the quad **only** at +1 along the positive axes
+          glm::vec3 origin = p + glm::vec3(face.dir.x > 0 ? 1.f : 0.f,
+                                           face.dir.y > 0 ? 1.f : 0.f,
+                                           face.dir.z > 0 ? 1.f : 0.f);
+
+          uint32_t base = uint32_t(verts.size());
+          glm::vec3 corners[4] = {origin, origin + face.u,
+                                  origin + face.u + face.v, origin + face.v};
           glm::vec2 uvs[4] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
-          for (int i = 0; i < 4; ++i) {
-            verts.push_back({corners[i], normal, uvs[i]});
-          }
-          // two triangles
+
+          for (int i = 0; i < 4; ++i)
+            verts.push_back({corners[i], face.dir, uvs[i]});
+
+          // two CCW triangles
           idxs.insert(idxs.end(),
                       {base, base + 1, base + 2, base, base + 2, base + 3});
         }

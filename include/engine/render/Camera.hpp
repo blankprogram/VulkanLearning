@@ -10,9 +10,13 @@ public:
   Camera(float fovY, float aspect, float nearPlane, float farPlane);
 
   void setPosition(const glm::vec3 &pos) { position = pos; }
-  void setRotation(float yawRadians, float pitchRadians) {
-    yaw = yawRadians;
-    pitch = pitchRadians;
+
+  void setRotation(float newYaw, float newPitch) {
+    yaw = newYaw;
+
+    // clamp pitch to just under ±90°
+    constexpr float limit = glm::radians(89.0f);
+    pitch = glm::clamp(newPitch, -limit, +limit);
   }
 
   const glm::vec3 &getPosition() const { return position; }
