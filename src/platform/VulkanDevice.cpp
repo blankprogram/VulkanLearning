@@ -92,20 +92,28 @@ void VulkanDevice::pickPhysicalDevice() {
 
 void VulkanDevice::createLogicalDevice() {
   float queuePriority = 1.0f;
-
   VkDeviceQueueCreateInfo queueCreateInfo{};
   queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
   queueCreateInfo.queueFamilyIndex = graphicsQueueFamilyIndex;
   queueCreateInfo.queueCount = 1;
   queueCreateInfo.pQueuePriorities = &queuePriority;
 
-  VkPhysicalDeviceFeatures deviceFeatures{}; // Customize if needed
+  // — the swapchain extension is *mandatory* if you want to create a swapchain
+  const std::vector<const char *> deviceExtensions = {
+      VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+
+  VkPhysicalDeviceFeatures deviceFeatures{}; // as before
 
   VkDeviceCreateInfo createInfo{};
   createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
   createInfo.pQueueCreateInfos = &queueCreateInfo;
   createInfo.queueCreateInfoCount = 1;
   createInfo.pEnabledFeatures = &deviceFeatures;
+
+  // <-- enable swapchain here
+  createInfo.enabledExtensionCount =
+      static_cast<uint32_t>(deviceExtensions.size());
+  createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
   if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) !=
       VK_SUCCESS) {
