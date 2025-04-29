@@ -183,6 +183,28 @@ void RendererContext::endFrame() {
   currentFrame_ = (currentFrame_ + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
+void RendererContext::createFramebuffers() {
+  framebuffers_.clear();
+  auto &views = swapchain_->getImageViews();
+  framebuffers_.resize(views.size());
+
+  for (size_t i = 0; i < views.size(); ++i) {
+    VkImageView attachments[] = {views[i]};
+    VkFramebufferCreateInfo fci{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
+    fci.renderPass = renderPass_;
+    fci.attachmentCount = 1;
+    fci.pAttachments = attachments;
+    fci.width = extent_.width;
+    fci.height = extent_.height;
+    fci.layers = 1;
+
+    if (vkCreateFramebuffer(device_->device, &fci, nullptr,
+                            &framebuffers_[i]) != VK_SUCCESS) {
+      throw std::runtime_error("Failed to create framebuffer");
+    }
+  }
+}
+
 void RendererContext::recreateSwapchain() {
   vkDeviceWaitIdle(device_->device);
   swapchain_->cleanup();
