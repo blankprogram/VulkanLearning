@@ -11,7 +11,7 @@ add_library(engine STATIC
   scene/Camera.cpp
   utils/VulkanHelpers.cpp
   render/Material.cpp
-  voxel/Chunk.cpp
+  voxel/VoxelVolume.cpp
 )
 
 target_include_directories(engine PUBLIC

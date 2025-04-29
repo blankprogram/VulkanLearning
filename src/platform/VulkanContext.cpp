@@ -2,7 +2,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include "engine/platform/VulkanContext.hpp"
 #include <GLFW/glfw3.h>
-
+#include <random>
 #define CHECK_VK_RESULT(x)                                                     \
   if ((x) != VK_SUCCESS) {                                                     \
     std::cerr << "Vulkan error at line " << __LINE__ << std::endl;             \
@@ -23,23 +23,14 @@ VulkanContext::VulkanContext(uint32_t w, uint32_t h, const std::string &t)
   auto camE = registry_.create();
   registry_.emplace<CameraComponent>(camE, cameraAspect_);
 
-  // --- Create a Chunk and keep it alive ---
-  chunks_.emplace_back(std::make_unique<Chunk>(device_, physicalDevice_,
-                                               commandPool_, graphicsQueue_));
-  chunks_.back()->generateMesh();
+  // --- NOW generate world terrain chunks! ---
 
-  // now we grab the mesh properly
-  meshes_.emplace_back(chunks_.back()->getMesh());
+  // If you still want to keep a small test volume, you can (optional)
 
-  // also create a simple Material
   materials_.emplace_back(std::make_unique<Material>(
       device_, descriptorPool_, materialDescriptorSetLayout_, &texture_));
 
-  // create an entity for the chunk
-  auto chunkEntity = registry_.create();
-  registry_.emplace<Transform>(chunkEntity, Transform{glm::mat4(1.0f)});
-  registry_.emplace<MeshRef>(chunkEntity, meshes_.back().get());
-  registry_.emplace<MaterialRef>(chunkEntity, materials_.back().get());
+  initChunks(); // ✅ ✅ ✅ ADD THIS LINE
 }
 
 VulkanContext::~VulkanContext() { cleanup(); }
@@ -834,4 +825,82 @@ VKAPI_ATTR VkBool32 VKAPI_CALL VulkanContext::debugCallback(
 
   std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
   return VK_FALSE;
+}
+
+Voxel VulkanContext::generateTerrainVoxel(int wx, int wy, int wz) {
+  noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+
+  float n = noise.GetNoise((float)wx * 0.05f, (float)wz * 0.05f);
+  int groundHeight = 8 + (int)(5.0f * n);
+
+  if (wy <= groundHeight) {
+    // Random brown color
+    static std::mt19937 rng(wx * 73856093 ^ wy * 19349663 ^ wz * 83492791);
+    static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+    float r = 0.4f + 0.2f * dist(rng); // 0.4 - 0.6
+    float g = 0.2f + 0.2f * dist(rng); // 0.2 - 0.4
+    float b = 0.1f + 0.1f * dist(rng); // 0.1 - 0.2
+
+    return Voxel{{r, g, b}, 1.0f, true};
+  } else {
+    return Voxel{{0.0f, 0.0f, 0.0f}, 1.0f, false};
+  }
+}
+
+void VulkanContext::initChunks() {
+  const int range = 1; // how many chunks around (0,0,0)
+
+  for (int cx = -range; cx <= range; ++cx) {
+    for (int cz = -range; cz <= range; ++cz) {
+      glm::ivec3 chunkCoord = {cx, 0, cz};
+      Chunk chunk;
+      chunk.chunkPos = chunkCoord;
+      chunk.volume = std::make_unique<VoxelVolume>();
+
+      for (int x = 0; x < 32; ++x) {
+        for (int y = 0; y < 32; ++y) {
+          for (int z = 0; z < 32; ++z) {
+            int wx = cx * 32 + x;
+            int wy = y;
+            int wz = cz * 32 + z;
+
+            Voxel voxel = generateTerrainVoxel(wx, wy, wz);
+            if (voxel.solid)
+              chunk.volume->insert({x, y, z}, voxel);
+          }
+        }
+      }
+
+      std::vector<Vertex> verts;
+      std::vector<uint32_t> inds;
+      chunk.volume->generateMesh(verts, inds);
+      chunk.mesh = std::make_unique<Mesh>(
+          device_, physicalDevice_, commandPool_, graphicsQueue_, verts, inds);
+      chunk.dirty = false;
+
+      // Store the chunk
+      chunks_[chunkCoord] = std::move(chunk);
+
+      // ➡️ Now create an ECS entity for this chunk
+      auto voxelEntity = registry_.create();
+
+      // Set the world transform (position based on chunk coordinate)
+
+      const float voxelScale = 0.25f;
+      glm::vec3 worldPos =
+          glm::vec3(chunkCoord.x * 32 * voxelScale,
+                    chunkCoord.y * 32 * voxelScale * voxelScale,
+                    chunkCoord.z * 32 * voxelScale);
+
+      registry_.emplace<Transform>(
+          voxelEntity, Transform{glm::translate(glm::mat4(1.0f), worldPos)});
+
+      // Attach the mesh pointer
+      registry_.emplace<MeshRef>(voxelEntity, chunks_[chunkCoord].mesh.get());
+
+      // Attach the material (just reuse the first material you made)
+      registry_.emplace<MaterialRef>(voxelEntity, materials_.back().get());
+    }
+  }
 }

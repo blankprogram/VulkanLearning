@@ -7,8 +7,11 @@
 #include "../render/Vertex.hpp"
 #include "engine/render/Renderer.hpp"
 #include "engine/resources/Texture.hpp"
+#include "engine/utils/Hash.hpp"
 #include "engine/utils/VulkanHelpers.hpp"
-#include "engine/voxel/Chunk.hpp"
+#include "engine/voxel/VoxelVolume.hpp"
+#include "engine/world/Chunk.hpp"
+#include "thirdparty/FastNoiseLite.h"
 #include "thirdparty/entt.hpp"
 #include <GLFW/glfw3.h>
 #include <chrono>
@@ -21,7 +24,6 @@
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
-
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
@@ -32,7 +34,7 @@ public:
   VulkanContext(uint32_t w, uint32_t h, const std::string &t);
   ~VulkanContext();
   void Run();
-
+  FastNoiseLite noise;
   Texture texture_;
 
 private:
@@ -73,6 +75,9 @@ private:
                 VkDebugUtilsMessageTypeFlagsEXT messageType,
                 const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
                 void *pUserData);
+
+  Voxel generateTerrainVoxel(int wx, int wy, int wz);
+  void initChunks();
   bool framebufferResized_ = false;
   GLFWwindow *window_;
   uint32_t width_, height_;
@@ -128,7 +133,7 @@ private:
 
   Pipeline filledPipeline_;
   Pipeline wireframePipeline_;
-  bool useWireframe_ = true;
+  bool useWireframe_ = false;
 
   int newWidth_ = 0;
   int newHeight_ = 0;
@@ -143,7 +148,9 @@ private:
   std::vector<std::unique_ptr<Mesh>> meshes_;
   std::vector<std::unique_ptr<Material>> materials_;
 
-  std::vector<std::unique_ptr<Chunk>> chunks_;
+  std::unique_ptr<VoxelVolume> volume_;
+
+  std::unordered_map<glm::ivec3, Chunk> chunks_;
 };
 
 #endif // VULKAN_CONTEXT_H
