@@ -19,6 +19,7 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -784,6 +785,8 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/glm/ext/matrix_double3x3.hpp:
 
+/usr/include/glm/ext/matrix_double3x2_precision.hpp:
+
 /usr/include/glm/detail/func_geometric.inl:
 
 /usr/include/glm/ext/vector_double3.hpp:
@@ -898,12 +901,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/memory_resource.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h:
-
-/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
-
-/usr/include/c++/14/bits/vector.tcc:
-
 /usr/include/c++/14/bits/max_size_type.h:
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
@@ -935,6 +932,16 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/glm/detail/qualifier.hpp:
 
 /usr/include/glm/detail/type_mat2x3.hpp:
+
+/usr/include/c++/14/bits/ranges_uninitialized.h:
+
+/usr/include/c++/14/bits/specfun.h:
+
+/usr/include/x86_64-linux-gnu/bits/waitflags.h:
+
+/usr/include/c++/14/bits/hash_bytes.h:
+
+/usr/include/c++/14/bits/char_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
@@ -1000,11 +1007,9 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bit:
 
+/home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h:
+
 /usr/include/c++/14/bits/allocator.h:
-
-/usr/include/linux/limits.h:
-
-/usr/include/c++/14/bits/atomic_lockfree_defines.h:
 
 /usr/include/glm/ext/vector_uint2.hpp:
 
@@ -1015,16 +1020,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/c++/14/bits/cpp_type_traits.h:
 
 /usr/include/c++/14/array:
-
-/usr/include/c++/14/bits/ranges_uninitialized.h:
-
-/usr/include/c++/14/bits/specfun.h:
-
-/usr/include/x86_64-linux-gnu/bits/waitflags.h:
-
-/usr/include/c++/14/bits/hash_bytes.h:
-
-/usr/include/c++/14/bits/char_traits.h:
 
 /home/jam/Documents/code/VulkanLearning/include/engine/core/Application.hpp:
 
@@ -1059,6 +1054,10 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/c++/14/bits/stl_function.h:
 
 /usr/include/c++/14/memory:
+
+/usr/include/linux/limits.h:
+
+/usr/include/c++/14/bits/atomic_lockfree_defines.h:
 
 /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp:
 
@@ -1196,6 +1195,12 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/glm/detail/type_mat4x2.inl:
 
+/usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h:
+
+/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
+
+/usr/include/c++/14/bits/vector.tcc:
+
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h:
 
 /usr/include/c++/14/cerrno:
@@ -1309,8 +1314,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/c++/14/bits/refwrap.h:
 
 /usr/include/glm/ext/matrix_double2x2_precision.hpp:
-
-/usr/include/glm/ext/matrix_double3x2_precision.hpp:
 
 /usr/include/c++/14/debug/debug.h:
 

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DENABLE_VALIDATION_LAYERS -DSPIRV_OUT=\"/home/jam/Documents/code/VulkanLearning/build/shaders\"
 
-CXX_INCLUDES = -I/home/jam/Documents/code/VulkanLearning/include
+CXX_INCLUDES = -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external
 
 CXX_FLAGS = -g -std=gnu++20
 

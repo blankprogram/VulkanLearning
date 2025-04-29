@@ -14,6 +14,13 @@ target_link_libraries(engine PUBLIC
   glm::glm
 )
 
+
+target_include_directories(engine PUBLIC
+  ${CMAKE_SOURCE_DIR}/include
+  ${GLFW_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/external         # <— so we can #include "vk_mem_alloc.h"
+)
+
 if (WIN32)
   target_compile_definitions(engine PRIVATE VK_USE_PLATFORM_WIN32_KHR)
 elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")

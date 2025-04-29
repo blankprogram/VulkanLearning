@@ -19,6 +19,7 @@ src/CMakeFiles/engine.dir/core/Application.cpp.o: /home/jam/Documents/code/Vulka
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -524,6 +525,7 @@ src/CMakeFiles/engine.dir/main.cpp.o: /home/jam/Documents/code/VulkanLearning/sr
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -1562,6 +1564,7 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/co
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Pipeline.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/utils/VulkanHelpers.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -1737,6 +1740,7 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/co
   /usr/include/glm/detail/func_vector_relational.inl \
   /usr/include/glm/detail/qualifier.hpp \
   /usr/include/glm/detail/setup.hpp \
+  /usr/include/glm/detail/type_float.hpp \
   /usr/include/glm/detail/type_half.hpp \
   /usr/include/glm/detail/type_half.inl \
   /usr/include/glm/detail/type_mat2x2.hpp \
@@ -1757,6 +1761,8 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/co
   /usr/include/glm/detail/type_mat4x3.inl \
   /usr/include/glm/detail/type_mat4x4.hpp \
   /usr/include/glm/detail/type_mat4x4.inl \
+  /usr/include/glm/detail/type_quat.hpp \
+  /usr/include/glm/detail/type_quat.inl \
   /usr/include/glm/detail/type_vec1.hpp \
   /usr/include/glm/detail/type_vec1.inl \
   /usr/include/glm/detail/type_vec2.hpp \
@@ -1808,34 +1814,60 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/co
   /usr/include/glm/ext/matrix_projection.inl \
   /usr/include/glm/ext/matrix_transform.hpp \
   /usr/include/glm/ext/matrix_transform.inl \
+  /usr/include/glm/ext/quaternion_common.hpp \
+  /usr/include/glm/ext/quaternion_common.inl \
+  /usr/include/glm/ext/quaternion_double.hpp \
+  /usr/include/glm/ext/quaternion_double_precision.hpp \
+  /usr/include/glm/ext/quaternion_float.hpp \
+  /usr/include/glm/ext/quaternion_float_precision.hpp \
+  /usr/include/glm/ext/quaternion_geometric.hpp \
+  /usr/include/glm/ext/quaternion_geometric.inl \
+  /usr/include/glm/ext/quaternion_relational.hpp \
+  /usr/include/glm/ext/quaternion_relational.inl \
+  /usr/include/glm/ext/quaternion_transform.hpp \
+  /usr/include/glm/ext/quaternion_transform.inl \
+  /usr/include/glm/ext/quaternion_trigonometric.hpp \
+  /usr/include/glm/ext/quaternion_trigonometric.inl \
   /usr/include/glm/ext/scalar_constants.hpp \
   /usr/include/glm/ext/scalar_constants.inl \
   /usr/include/glm/ext/scalar_int_sized.hpp \
   /usr/include/glm/ext/scalar_uint_sized.hpp \
+  /usr/include/glm/ext/vector_bool1.hpp \
+  /usr/include/glm/ext/vector_bool1_precision.hpp \
   /usr/include/glm/ext/vector_bool2.hpp \
   /usr/include/glm/ext/vector_bool2_precision.hpp \
   /usr/include/glm/ext/vector_bool3.hpp \
   /usr/include/glm/ext/vector_bool3_precision.hpp \
   /usr/include/glm/ext/vector_bool4.hpp \
   /usr/include/glm/ext/vector_bool4_precision.hpp \
+  /usr/include/glm/ext/vector_double1.hpp \
+  /usr/include/glm/ext/vector_double1_precision.hpp \
   /usr/include/glm/ext/vector_double2.hpp \
   /usr/include/glm/ext/vector_double2_precision.hpp \
   /usr/include/glm/ext/vector_double3.hpp \
   /usr/include/glm/ext/vector_double3_precision.hpp \
   /usr/include/glm/ext/vector_double4.hpp \
   /usr/include/glm/ext/vector_double4_precision.hpp \
+  /usr/include/glm/ext/vector_float1.hpp \
+  /usr/include/glm/ext/vector_float1_precision.hpp \
   /usr/include/glm/ext/vector_float2.hpp \
   /usr/include/glm/ext/vector_float2_precision.hpp \
   /usr/include/glm/ext/vector_float3.hpp \
   /usr/include/glm/ext/vector_float3_precision.hpp \
   /usr/include/glm/ext/vector_float4.hpp \
   /usr/include/glm/ext/vector_float4_precision.hpp \
+  /usr/include/glm/ext/vector_int1.hpp \
+  /usr/include/glm/ext/vector_int1_sized.hpp \
   /usr/include/glm/ext/vector_int2.hpp \
   /usr/include/glm/ext/vector_int2_sized.hpp \
   /usr/include/glm/ext/vector_int3.hpp \
   /usr/include/glm/ext/vector_int3_sized.hpp \
   /usr/include/glm/ext/vector_int4.hpp \
   /usr/include/glm/ext/vector_int4_sized.hpp \
+  /usr/include/glm/ext/vector_relational.hpp \
+  /usr/include/glm/ext/vector_relational.inl \
+  /usr/include/glm/ext/vector_uint1.hpp \
+  /usr/include/glm/ext/vector_uint1_sized.hpp \
   /usr/include/glm/ext/vector_uint2.hpp \
   /usr/include/glm/ext/vector_uint2_sized.hpp \
   /usr/include/glm/ext/vector_uint3.hpp \
@@ -1847,8 +1879,15 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/co
   /usr/include/glm/glm.hpp \
   /usr/include/glm/gtc/constants.hpp \
   /usr/include/glm/gtc/constants.inl \
+  /usr/include/glm/gtc/epsilon.hpp \
+  /usr/include/glm/gtc/epsilon.inl \
   /usr/include/glm/gtc/matrix_transform.hpp \
   /usr/include/glm/gtc/matrix_transform.inl \
+  /usr/include/glm/gtc/quaternion.hpp \
+  /usr/include/glm/gtc/quaternion.inl \
+  /usr/include/glm/gtc/type_ptr.hpp \
+  /usr/include/glm/gtc/type_ptr.inl \
+  /usr/include/glm/gtc/vec1.hpp \
   /usr/include/glm/integer.hpp \
   /usr/include/glm/mat2x2.hpp \
   /usr/include/glm/mat2x3.hpp \
@@ -2013,6 +2052,7 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/co
 src/CMakeFiles/engine.dir/platform/Swapchain.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/Swapchain.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -2251,6 +2291,7 @@ src/CMakeFiles/engine.dir/platform/Swapchain.cpp.o: /home/jam/Documents/code/Vul
 
 src/CMakeFiles/engine.dir/platform/VulkanDevice.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/VulkanDevice.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -2936,6 +2977,7 @@ src/CMakeFiles/engine.dir/render/Mesh.cpp.o: /home/jam/Documents/code/VulkanLear
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Mesh.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Vertex.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/utils/VulkanHelpers.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -3492,6 +3534,7 @@ src/CMakeFiles/engine.dir/utils/ThreadPool.cpp.o: /home/jam/Documents/code/Vulka
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Mesh.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Vertex.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/utils/ThreadPool.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -4012,6 +4055,7 @@ src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o: /home/jam/Documents/code/Vulk
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Vertex.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelMesher.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -4518,6 +4562,7 @@ src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o: /home/jam/Documents/code/Vul
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/TerrainGenerator.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -5001,6 +5046,7 @@ src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: /home/jam/Documents/cod
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -5795,6 +5841,44 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /home/jam/Documents/code/VulkanLearning/src/utils/VulkanHelpers.cpp:
 
+/home/jam/Documents/code/VulkanLearning/src/scene/Scene.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/scene/Entity.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/resources/Model.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/render/ShaderManager.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/render/RenderQueue.cpp:
+
+/usr/include/c++/14/fstream:
+
+/usr/include/c++/14/bits/fstream.tcc:
+
+/usr/include/c++/14/bits/codecvt.h:
+
+/home/jam/Documents/code/VulkanLearning/src/render/Pipeline.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/render/Mesh.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/render/Material.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/render/Camera.cpp:
+
+/usr/include/c++/14/set:
+
+/usr/include/c++/14/bits/stl_set.h:
+
+/usr/include/c++/14/bits/stl_multiset.h:
+
+/usr/include/c++/14/bits/stl_algo.h:
+
+/usr/include/strings.h:
+
+/usr/include/string.h:
+
+/usr/include/glm/gtc/vec1.hpp:
+
 /usr/include/glm/ext/matrix_double2x3.hpp:
 
 /usr/include/glm/detail/type_vec3.inl:
@@ -5808,8 +5892,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
 /usr/include/glm/detail/type_vec1.inl:
-
-/usr/include/glm/detail/type_vec4.inl:
 
 /usr/include/c++/14/initializer_list:
 
@@ -5841,10 +5923,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/vector_uint4_sized.hpp:
 
-/usr/include/glm/ext/matrix_double2x3_precision.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
-
 /usr/include/glm/detail/type_mat3x2.hpp:
 
 /usr/include/glm/detail/type_mat2x3.inl:
@@ -5863,19 +5941,21 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/detail/func_integer.inl:
 
-/usr/include/stdlib.h:
-
 /usr/include/wctype.h:
 
 /usr/include/glm/detail/compute_common.hpp:
-
-/usr/include/strings.h:
 
 /usr/include/glm/detail/_vectorize.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
 
 /usr/include/glm/detail/_fixes.hpp:
+
+/home/jam/Documents/code/VulkanLearning/src/resources/ResourceManager.cpp:
+
+/usr/include/c++/14/pstl/glue_memory_defs.h:
+
+/usr/include/glm/gtc/type_ptr.inl:
 
 /usr/include/glm/common.hpp:
 
@@ -5913,6 +5993,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/tr1/gamma.tcc:
 
+/usr/include/c++/14/bits/uniform_int_dist.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
+
 /usr/include/c++/14/typeinfo:
 
 /usr/include/glm/detail/type_mat3x3.inl:
@@ -5925,21 +6009,29 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/tr1/bessel_function.tcc:
 
+/usr/include/glm/gtc/type_ptr.hpp:
+
 /usr/include/vulkan/vulkan_core.h:
 
 /usr/include/c++/14/thread:
 
 /usr/include/c++/14/pstl/execution_defs.h:
 
-/usr/include/c++/14/istream:
+/home/jam/Documents/code/VulkanLearning/src/render/DebugRenderer.cpp:
 
-/usr/lib/gcc/x86_64-linux-gnu/14/include/float.h:
+/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
+
+/home/jam/Documents/code/VulkanLearning/src/render/Renderer.cpp:
+
+/usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h:
+
+/usr/include/c++/14/istream:
 
 /usr/include/glm/mat4x4.hpp:
 
-/usr/include/c++/14/ext/type_traits.h:
+/usr/include/glm/ext/quaternion_float.hpp:
 
-/home/jam/Documents/code/VulkanLearning/src/render/Material.cpp:
+/usr/include/c++/14/ext/type_traits.h:
 
 /usr/include/glm/detail/func_common.inl:
 
@@ -5963,8 +6055,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
-/home/jam/Documents/code/VulkanLearning/src/scene/Entity.cpp:
-
 /usr/include/errno.h:
 
 /usr/include/c++/14/cwctype:
@@ -5985,10 +6075,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/cerrno:
 
-/usr/include/c++/14/string:
-
-/usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h:
-
 /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp:
 
 /usr/include/glm/ext/matrix_double3x2.hpp:
@@ -6003,23 +6089,7 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/tr1/legendre_function.tcc:
 
-/usr/include/c++/14/pstl/glue_memory_defs.h:
-
-/home/jam/Documents/code/VulkanLearning/src/resources/ResourceManager.cpp:
-
-/usr/include/c++/14/bits/exception_defines.h:
-
-/usr/include/c++/14/bits/deque.tcc:
-
-/usr/include/c++/14/bits/shared_ptr_base.h:
-
-/usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
-
-/usr/include/c++/14/string_view:
-
-/usr/include/x86_64-linux-gnu/bits/syscall.h:
-
-/usr/include/c++/14/bits/cxxabi_init_exception.h:
+/usr/include/c++/14/bits/unordered_map.h:
 
 /usr/include/glm/detail/type_mat4x2.inl:
 
@@ -6027,19 +6097,17 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/detail/type_mat4x2.hpp:
 
-/usr/include/c++/14/bits/unordered_map.h:
+/usr/include/c++/14/string_view:
+
+/usr/include/x86_64-linux-gnu/bits/syscall.h:
+
+/usr/include/c++/14/bits/cxxabi_init_exception.h:
 
 /usr/include/c++/14/bits/functexcept.h:
 
-/usr/include/c++/14/set:
-
 /usr/include/c++/14/tr1/riemann_zeta.tcc:
 
-/usr/include/c++/14/bits/basic_string.h:
-
 /usr/include/c++/14/bits/locale_facets.h:
-
-/usr/include/c++/14/cwchar:
 
 /usr/include/c++/14/bits/charconv.h:
 
@@ -6075,6 +6143,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/vector_int3.hpp:
 
+/usr/lib/gcc/x86_64-linux-gnu/14/include/float.h:
+
+/usr/include/glm/ext/vector_double1_precision.hpp:
+
 /usr/include/c++/14/cstddef:
 
 /usr/include/glm/vec3.hpp:
@@ -6085,13 +6157,15 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/detail/func_matrix.inl:
 
-/usr/include/c++/14/bits/fstream.tcc:
-
 /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp:
+
+/usr/include/x86_64-linux-gnu/c++/14/bits/c++io.h:
+
+/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
 
 /usr/include/c++/14/backward/binders.h:
 
-/home/jam/Documents/code/VulkanLearning/src/core/Application.cpp:
+/usr/include/glm/ext/quaternion_geometric.inl:
 
 /usr/include/c++/14/array:
 
@@ -6104,8 +6178,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/cassert:
 
 /usr/include/X11/Xlib.h:
-
-/usr/include/assert.h:
 
 /usr/include/c++/14/bits/stl_iterator_base_funcs.h:
 
@@ -6127,6 +6199,8 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/matrix_transform.hpp:
 
+/usr/include/linux/limits.h:
+
 /usr/include/glm/detail/type_mat4x3.hpp:
 
 /usr/include/c++/14/memory:
@@ -6143,7 +6217,37 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/vk_video/vulkan_video_codec_av1std.h:
 
+/usr/include/glm/ext/vector_float1.hpp:
+
 /usr/include/c++/14/bits/erase_if.h:
+
+/usr/include/glm/ext/matrix_double4x3_precision.hpp:
+
+/usr/include/c++/14/bit:
+
+/usr/include/c++/14/bits/semaphore_base.h:
+
+/usr/include/glm/vec4.hpp:
+
+/usr/include/glm/ext/quaternion_relational.hpp:
+
+/usr/include/c++/14/bits/string_view.tcc:
+
+/usr/include/glm/ext/scalar_constants.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+/usr/include/c++/14/bits/locale_classes.tcc:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp:
+
+/usr/include/glm/mat2x3.hpp:
+
+/usr/include/c++/14/bits/stl_iterator_base_types.h:
+
+/usr/include/c++/14/bits/atomic_lockfree_defines.h:
+
+/usr/include/c++/14/backward/auto_ptr.h:
 
 /usr/include/glm/detail/type_mat2x4.inl:
 
@@ -6159,6 +6263,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/bits/stl_raw_storage_iter.h:
 
+/usr/include/c++/14/bits/ranges_algo.h:
+
+/usr/include/c++/14/bits/functional_hash.h:
+
 /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
 
 /usr/include/c++/14/limits:
@@ -6173,59 +6281,35 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/bits/exception_ptr.h:
 
+/usr/include/c++/14/bits/chrono.h:
+
+/usr/include/c++/14/bits/locale_facets.tcc:
+
 /usr/include/GL/gl.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
 /usr/include/c++/14/bits/cpp_type_traits.h:
 
-/home/jam/Documents/code/VulkanLearning/include/engine/utils/ThreadPool.hpp:
-
 /usr/include/c++/14/bits/range_access.h:
-
-/usr/include/c++/14/backward/auto_ptr.h:
-
-/usr/include/c++/14/bits/atomic_lockfree_defines.h:
-
-/usr/include/linux/limits.h:
 
 /usr/include/c++/14/bits/allocator.h:
 
-/usr/include/string.h:
-
-/home/jam/Documents/code/VulkanLearning/src/render/Pipeline.cpp:
-
-/usr/include/glm/ext/matrix_double4x3_precision.hpp:
-
-/usr/include/c++/14/bit:
-
-/usr/include/c++/14/bits/locale_facets.tcc:
-
-/usr/include/c++/14/bits/chrono.h:
-
-/usr/include/c++/14/bits/semaphore_base.h:
-
-/usr/include/glm/vec4.hpp:
-
-/usr/include/glm/ext/scalar_constants.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
-
-/usr/include/c++/14/bits/locale_classes.tcc:
-
-/home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp:
-
-/usr/include/glm/mat2x3.hpp:
-
-/usr/include/c++/14/bits/stl_iterator_base_types.h:
-
-/usr/include/c++/14/bits/string_view.tcc:
+/home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h:
 
 /usr/include/c++/14/ext/alloc_traits.h:
 
 /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp:
 
 /usr/include/c++/14/bits/stringfwd.h:
+
+/usr/include/c++/14/bits/deque.tcc:
+
+/usr/include/c++/14/bits/exception_defines.h:
+
+/usr/include/c++/14/bits/shared_ptr_base.h:
+
+/usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
 
 /usr/include/glm/ext/vector_bool4_precision.hpp:
 
@@ -6245,9 +6329,19 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/GL/glext.h:
 
+/usr/include/c++/14/cwchar:
+
+/usr/include/glm/ext/quaternion_trigonometric.hpp:
+
 /usr/include/glm/detail/func_vector_relational.inl:
 
 /usr/include/c++/14/bits/alloc_traits.h:
+
+/home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/resources/Texture.cpp:
+
+/usr/include/glm/ext/vector_int2_sized.hpp:
 
 /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h:
 
@@ -6287,6 +6381,8 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/syscall.h:
 
+/usr/include/glm/gtc/quaternion.inl:
+
 /usr/include/c++/14/bits/localefwd.h:
 
 /usr/include/c++/14/new:
@@ -6305,11 +6401,11 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/cmath:
 
-/usr/include/c++/14/bits/stl_algo.h:
-
 /usr/include/c++/14/bits/stl_uninitialized.h:
 
 /usr/include/c++/14/bits/locale_classes.h:
+
+/usr/include/glm/detail/type_quat.inl:
 
 /usr/include/glm/ext/vector_int4.hpp:
 
@@ -6366,6 +6462,8 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/bits/std_thread.h:
 
 /usr/include/c++/14/bits/shared_ptr_atomic.h:
+
+/usr/include/glm/ext/vector_int1_sized.hpp:
 
 /usr/include/c++/14/vector:
 
@@ -6427,11 +6525,15 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/vector_double3.hpp:
 
+/usr/include/glm/detail/type_vec4.inl:
+
+/usr/include/glm/ext/quaternion_float_precision.hpp:
+
+/usr/include/glm/ext/matrix_double2x3_precision.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
+
 /usr/include/glm/ext/matrix_double3x2_precision.hpp:
-
-/usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h:
-
-/home/jam/Documents/code/VulkanLearning/src/render/Renderer.cpp:
 
 /usr/include/glm/ext/matrix_double3x3.hpp:
 
@@ -6457,13 +6559,15 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/matrix_double4x4_precision.hpp:
 
+/usr/include/glm/ext/quaternion_common.inl:
+
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
 /usr/include/glm/ext/matrix_float2x2.hpp:
 
-/usr/include/glm/ext/matrix_float2x2_precision.hpp:
-
 /usr/include/stdc-predef.h:
+
+/usr/include/glm/gtc/epsilon.hpp:
 
 /usr/include/glm/ext/matrix_float2x3.hpp:
 
@@ -6477,6 +6581,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/matrix_float3x4.hpp:
 
+/usr/include/glm/ext/matrix_float2x2_precision.hpp:
+
+/usr/include/glm/ext/quaternion_geometric.hpp:
+
 /usr/include/glm/ext/matrix_float3x4_precision.hpp:
 
 /usr/include/glm/ext/matrix_float4x2.hpp:
@@ -6485,17 +6593,11 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/vector_double4.hpp:
 
-/usr/include/endian.h:
-
-/usr/include/glm/ext/matrix_float4x3_precision.hpp:
-
 /home/jam/Documents/code/VulkanLearning/src/core/Window.cpp:
 
 /usr/include/glm/ext/matrix_projection.hpp:
 
 /usr/include/glm/ext/matrix_projection.inl:
-
-/home/jam/Documents/code/VulkanLearning/src/scene/Scene.cpp:
 
 /usr/include/glm/ext/vector_bool2.hpp:
 
@@ -6523,9 +6625,19 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/vector_double3_precision.hpp:
 
+/usr/include/glm/ext/quaternion_common.hpp:
+
 /usr/include/glm/ext/vector_double4_precision.hpp:
 
+/usr/include/stdlib.h:
+
+/usr/include/glm/ext/vector_uint1_sized.hpp:
+
 /usr/include/glm/ext/vector_float2_precision.hpp:
+
+/usr/include/c++/14/pstl/glue_algorithm_defs.h:
+
+/usr/include/glm/ext/vector_relational.hpp:
 
 /usr/include/glm/ext/vector_float3.hpp:
 
@@ -6534,10 +6646,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
-
-/usr/include/c++/14/bits/uniform_int_dist.h:
 
 /usr/include/glm/ext/vector_float3_precision.hpp:
 
@@ -6550,12 +6658,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h:
-
-/home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp:
-
-/usr/include/glm/ext/vector_int2_sized.hpp:
-
-/home/jam/Documents/code/VulkanLearning/src/resources/Texture.cpp:
 
 /usr/include/glm/ext/vector_int4_sized.hpp:
 
@@ -6571,7 +6673,9 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/gtc/constants.hpp:
 
-/home/jam/Documents/code/VulkanLearning/src/render/Camera.cpp:
+/usr/include/x86_64-linux-gnu/c++/14/bits/basic_file.h:
+
+/usr/include/glm/gtc/constants.inl:
 
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
@@ -6609,9 +6713,17 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/mat4x2.hpp:
 
+/home/jam/Documents/code/VulkanLearning/src/platform/VulkanDevice.cpp:
+
+/usr/include/glm/packing.hpp:
+
 /usr/include/glm/trigonometric.hpp:
 
 /usr/include/glm/vector_relational.hpp:
+
+/home/jam/Documents/code/VulkanLearning/src/platform/WindowManager.cpp:
+
+/usr/include/glm/detail/type_float.hpp:
 
 /usr/include/limits.h:
 
@@ -6635,6 +6747,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/x86_64-linux-gnu/bits/setjmp.h:
 
+/home/jam/Documents/code/VulkanLearning/src/platform/Swapchain.cpp:
+
+/usr/include/unistd.h:
+
 /usr/include/glm/ext/vector_uint2.hpp:
 
 /usr/include/vk_video/vulkan_video_codec_h264std_decode.h:
@@ -6650,6 +6766,8 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/vulkan/vulkan.h:
 
 /usr/include/vulkan/vulkan_wayland.h:
+
+/usr/include/glm/ext/vector_bool1.hpp:
 
 /usr/include/glm/detail/qualifier.hpp:
 
@@ -6674,10 +6792,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /home/jam/Documents/code/VulkanLearning/include/engine/utils/VulkanHelpers.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
-
-/home/jam/Documents/code/VulkanLearning/src/render/DebugRenderer.cpp:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
@@ -6721,8 +6835,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/x86_64-linux-gnu/bits/timex.h:
 
-/home/jam/Documents/code/VulkanLearning/src/render/RenderQueue.cpp:
-
 /usr/include/wchar.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
@@ -6732,6 +6844,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h:
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
+
+/usr/include/c++/14/algorithm:
+
+/usr/include/x86_64-linux-gnu/bits/timesize.h:
 
 /usr/include/c++/14/ctime:
 
@@ -6745,8 +6861,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
 
-/usr/include/c++/14/pstl/glue_algorithm_defs.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
 /usr/include/glm/detail/type_mat2x2.hpp:
@@ -6758,6 +6872,8 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/compare:
 
 /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h:
+
+/usr/include/glm/ext/vector_float1_precision.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
 
@@ -6775,9 +6891,9 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /home/jam/Documents/code/VulkanLearning/src/platform/FrameSync.cpp:
 
-/usr/include/glm/gtc/constants.inl:
+/home/jam/Documents/code/VulkanLearning/include/engine/utils/ThreadPool.hpp:
 
-/usr/include/x86_64-linux-gnu/c++/14/bits/basic_file.h:
+/usr/include/glm/ext/quaternion_double_precision.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
@@ -6795,11 +6911,9 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/matrix_float3x2_precision.hpp:
 
+/usr/include/glm/ext/quaternion_transform.hpp:
+
 /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h:
-
-/usr/include/c++/14/bits/functional_hash.h:
-
-/usr/include/c++/14/bits/ranges_algo.h:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h:
 
@@ -6855,34 +6969,40 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/cstring:
 
-/usr/include/unistd.h:
+/usr/include/glm/detail/type_quat.hpp:
 
-/home/jam/Documents/code/VulkanLearning/src/platform/Swapchain.cpp:
+/usr/include/c++/14/string:
 
-/home/jam/Documents/code/VulkanLearning/src/render/ShaderManager.cpp:
+/usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h:
 
-/usr/include/x86_64-linux-gnu/bits/timesize.h:
+/usr/include/glm/ext/quaternion_double.hpp:
 
-/usr/include/c++/14/algorithm:
+/home/jam/Documents/code/VulkanLearning/src/core/Application.cpp:
 
-/usr/include/glm/packing.hpp:
+/usr/include/glm/ext/quaternion_relational.inl:
 
-/home/jam/Documents/code/VulkanLearning/src/platform/VulkanDevice.cpp:
+/usr/include/glm/ext/quaternion_transform.inl:
 
-/usr/include/c++/14/bits/stl_multiset.h:
+/usr/include/assert.h:
 
-/usr/include/c++/14/bits/stl_set.h:
+/usr/include/glm/ext/quaternion_trigonometric.inl:
 
-/home/jam/Documents/code/VulkanLearning/src/platform/WindowManager.cpp:
+/usr/include/glm/ext/vector_bool1_precision.hpp:
 
-/home/jam/Documents/code/VulkanLearning/src/render/Mesh.cpp:
+/usr/include/glm/ext/vector_double1.hpp:
 
-/usr/include/c++/14/bits/codecvt.h:
+/usr/include/glm/ext/vector_int1.hpp:
 
-/usr/include/c++/14/fstream:
+/usr/include/glm/ext/vector_relational.inl:
 
-/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
+/usr/include/c++/14/bits/basic_string.h:
 
-/usr/include/x86_64-linux-gnu/c++/14/bits/c++io.h:
+/usr/include/glm/ext/vector_uint1.hpp:
 
-/home/jam/Documents/code/VulkanLearning/src/resources/Model.cpp:
+/usr/include/glm/gtc/epsilon.inl:
+
+/usr/include/endian.h:
+
+/usr/include/glm/ext/matrix_float4x3_precision.hpp:
+
+/usr/include/glm/gtc/quaternion.hpp:

@@ -1,6 +1,8 @@
 
 #include "engine/platform/VulkanDevice.hpp"
 #include <cstring>
+#define VMA_IMPLEMENTATION
+#include "externals/vk_mem_alloc.h"
 #include <set>
 static VKAPI_ATTR VkBool32 VKAPI_CALL
 debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
