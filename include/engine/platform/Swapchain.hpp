@@ -8,7 +8,7 @@
 
 class Swapchain {
 public:
-  Swapchain(VulkanDevice *device, VkSurfaceKHR surface);
+  Swapchain(VulkanDevice *device, VkSurfaceKHR surface, GLFWwindow *window);
   ~Swapchain();
 
   void recreate();
@@ -26,6 +26,7 @@ private:
   std::vector<VkImage> images_;
   std::vector<VkImageView> imageViews_;
   VkFormat imageFormat_{};
+  GLFWwindow *window_;
 
   void create();
   void createImageViews();

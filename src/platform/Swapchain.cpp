@@ -5,8 +5,9 @@
 #include <iostream>
 #include <stdexcept>
 
-Swapchain::Swapchain(VulkanDevice *device, VkSurfaceKHR surface)
-    : device_(device), surface_(surface) {
+Swapchain::Swapchain(VulkanDevice *device, VkSurfaceKHR surface,
+                     GLFWwindow *window)
+    : device_(device), surface_(surface), window_(window) {
   create();
   createImageViews();
 }
@@ -70,7 +71,7 @@ void Swapchain::create() {
   }
 
   int width, height;
-  glfwGetFramebufferSize(glfwGetCurrentContext(), &width, &height);
+  glfwGetFramebufferSize(window_, &width, &height);
   VkExtent2D extent = {std::clamp(static_cast<uint32_t>(width),
                                   capabilities.minImageExtent.width,
                                   capabilities.maxImageExtent.width),

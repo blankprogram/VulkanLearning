@@ -22,7 +22,8 @@ RendererContext::~RendererContext() { cleanup(); }
 void RendererContext::init(GLFWwindow *window) {
   // 1) device, swapchain, sync objects
   device_ = std::make_unique<VulkanDevice>(window);
-  swapchain_ = std::make_unique<Swapchain>(device_.get(), device_->surface);
+  swapchain_ =
+      std::make_unique<Swapchain>(device_.get(), device_->surface, window);
   frameSync_.init(device_->device, MAX_FRAMES_IN_FLIGHT);
 
   extent_ = swapchain_->getExtent(); // store for viewport/scissor
