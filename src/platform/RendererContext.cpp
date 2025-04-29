@@ -51,22 +51,19 @@ void RendererContext::init(GLFWwindow *window) {
 
 void RendererContext::createUniforms() {
   VkDevice device = device_->device;
+  auto phys = device_->physicalDevice;
   uint32_t n = MAX_FRAMES_IN_FLIGHT;
 
-  // 1) create one UBO per frame
   uniformBuffers_.resize(n);
   uniformMemories_.resize(n);
+
   for (uint32_t i = 0; i < n; ++i) {
-    // allocate a host‐visible buffer of sizeof(mat4)
-    engine::utils::CreateBuffer(device, device_->physicalDevice,
-                                device_->commandPool, device_->graphicsQueue,
-                                nullptr, // no initial data
-                                sizeof(glm::mat4),
-                                VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                uniformBuffers_[i], uniformMemories_[i]);
+    // UBO is always mapped, so make it HOST_VISIBLE
+    engine::utils::CreateHostVisibleBuffer(
+        device, phys, sizeof(glm::mat4), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+        uniformBuffers_[i], uniformMemories_[i]);
   }
 
-  // 2) descriptor layout / pool / sets
   descriptorMgr_.init(device, n);
 
   // 3) write each descriptor to point at its UBO

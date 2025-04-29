@@ -15,4 +15,8 @@ void CreateBuffer(VkDevice device, VkPhysicalDevice physDevice,
                   VkDeviceSize size, VkBufferUsageFlags usage,
                   VkBuffer &outBuffer, VkDeviceMemory &outMemory);
 
+void CreateHostVisibleBuffer(VkDevice device, VkPhysicalDevice physDevice,
+                             VkDeviceSize size, VkBufferUsageFlags usage,
+                             VkBuffer &outBuffer, VkDeviceMemory &outMemory);
+
 } // namespace engine::utils

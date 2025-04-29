@@ -91,4 +91,32 @@ void CreateBuffer(VkDevice device, VkPhysicalDevice physDevice,
   vkFreeMemory(device, stagingMem, nullptr);
 }
 
+void CreateHostVisibleBuffer(VkDevice device, VkPhysicalDevice physDevice,
+                             VkDeviceSize size, VkBufferUsageFlags usage,
+                             VkBuffer &outBuffer, VkDeviceMemory &outMemory) {
+  // 1) create the buffer
+  VkBufferCreateInfo bufInfo{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
+  bufInfo.size = size;
+  bufInfo.usage = usage;
+  bufInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+  if (vkCreateBuffer(device, &bufInfo, nullptr, &outBuffer) != VK_SUCCESS)
+    throw std::runtime_error("Failed to create host-visible buffer");
+
+  // 2) allocate HOST_VISIBLE | HOST_COHERENT memory
+  VkMemoryRequirements memReq;
+  vkGetBufferMemoryRequirements(device, outBuffer, &memReq);
+
+  VkMemoryAllocateInfo allocInfo{VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO};
+  allocInfo.allocationSize = memReq.size;
+  allocInfo.memoryTypeIndex =
+      FindMemoryType(physDevice, memReq.memoryTypeBits,
+                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                         VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+  if (vkAllocateMemory(device, &allocInfo, nullptr, &outMemory) != VK_SUCCESS)
+    throw std::runtime_error("Failed to allocate buffer memory");
+
+  // 3) bind them
+  vkBindBufferMemory(device, outBuffer, outMemory, 0);
+}
+
 } // namespace engine::utils
