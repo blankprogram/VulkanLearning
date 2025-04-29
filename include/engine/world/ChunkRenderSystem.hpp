@@ -7,7 +7,7 @@ namespace engine::world {
 
 class ChunkRenderSystem {
 public:
-  void drawAll(RendererContext &ctx, ChunkManager &chunks);
+  void drawAll(RendererContext &ctx, const ChunkManager &chunks);
 };
 
 } // namespace engine::world
