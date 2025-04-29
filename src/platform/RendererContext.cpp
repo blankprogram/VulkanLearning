@@ -15,7 +15,6 @@ static constexpr uint32_t HEIGHT = 720;
 RendererContext::RendererContext(GLFWwindow *window)
     : cam_(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.1f, 100.0f) {
   init(window);
-  createUniforms();
 }
 
 RendererContext::~RendererContext() { cleanup(); }

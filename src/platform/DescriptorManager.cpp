@@ -6,7 +6,7 @@ void DescriptorManager::init(VkDevice device, uint32_t maxFrames) {
   // 1) create layout
   VkDescriptorSetLayoutBinding b{};
   b.binding = 0;
-  b.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  b.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
   b.descriptorCount = 1;
   b.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
   VkDescriptorSetLayoutCreateInfo li{
@@ -18,7 +18,7 @@ void DescriptorManager::init(VkDevice device, uint32_t maxFrames) {
 
   // 2) pool
   VkDescriptorPoolSize ps{};
-  ps.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  ps.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
   ps.descriptorCount = maxFrames;
   VkDescriptorPoolCreateInfo pi{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
   pi.poolSizeCount = 1;
