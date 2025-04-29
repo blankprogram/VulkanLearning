@@ -9,9 +9,6 @@
 
 namespace engine::world {
 
-// definition of constructor
-ChunkManager::ChunkManager() = default;
-
 void ChunkManager::initChunks() { updateChunks(glm::vec3{0.0f, 0.0f, 0.0f}); }
 
 void ChunkManager::updateChunks(const glm::vec3 &playerPos) {
