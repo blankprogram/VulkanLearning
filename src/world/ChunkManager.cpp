@@ -8,11 +8,10 @@
 using namespace engine::world;
 using engine::voxel::VoxelMesher;
 
-void ChunkManager::initChunks(engine::utils::ThreadPool &tp) {
-  // generate around origin
-  updateChunks(glm::vec3{0, 0, 0}, tp);
+void ChunkManager::initChunks(engine::utils::ThreadPool &threadPool) {
+  // generate initial chunks around origin
+  updateChunks(glm::vec3{0, 0, 0}, threadPool);
 }
-
 void ChunkManager::updateChunks(const glm::vec3 &playerPos,
                                 engine::utils::ThreadPool &threadPool) {
   // compute player chunk

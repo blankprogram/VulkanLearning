@@ -2,22 +2,21 @@
 // include/engine/world/ChunkManager.hpp
 #pragma once
 
+#include "engine/utils/ThreadPool.hpp"
 #include "engine/world/Chunk.hpp"
 #include <glm/glm.hpp>
 #include <unordered_map>
-
 namespace engine::world {
 
 class ChunkManager {
 public:
   ChunkManager();
-
-  void initChunks();
+  // now takes your ThreadPool
+  void initChunks(engine::utils::ThreadPool &threadPool);
   void updateChunks(const glm::vec3 &playerPos,
                     engine::utils::ThreadPool &threadPool);
-
-  // ← Add this:
-  const auto &getChunks() const { return chunks_; }
+  // for inserting finished meshes
+  Chunk &getChunk(const glm::ivec3 &coord) { return chunks_[coord]; }
 
 private:
   static constexpr glm::ivec3 CHUNK_DIM{16, 16, 16};
