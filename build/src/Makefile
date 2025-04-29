@@ -851,6 +851,30 @@ voxel/Octree.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/voxel/Octree.cpp.s
 .PHONY : voxel/Octree.cpp.s
 
+voxel/VoxelMesher.o: voxel/VoxelMesher.cpp.o
+.PHONY : voxel/VoxelMesher.o
+
+# target to build an object file
+voxel/VoxelMesher.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o
+.PHONY : voxel/VoxelMesher.cpp.o
+
+voxel/VoxelMesher.i: voxel/VoxelMesher.cpp.i
+.PHONY : voxel/VoxelMesher.i
+
+# target to preprocess a source file
+voxel/VoxelMesher.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.i
+.PHONY : voxel/VoxelMesher.cpp.i
+
+voxel/VoxelMesher.s: voxel/VoxelMesher.cpp.s
+.PHONY : voxel/VoxelMesher.s
+
+# target to generate assembly for a file
+voxel/VoxelMesher.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.s
+.PHONY : voxel/VoxelMesher.cpp.s
+
 voxel/VoxelVolume.o: voxel/VoxelVolume.cpp.o
 .PHONY : voxel/VoxelVolume.o
 
@@ -922,6 +946,30 @@ world/ChunkManager.s: world/ChunkManager.cpp.s
 world/ChunkManager.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/world/ChunkManager.cpp.s
 .PHONY : world/ChunkManager.cpp.s
+
+world/ChunkRenderSystem.o: world/ChunkRenderSystem.cpp.o
+.PHONY : world/ChunkRenderSystem.o
+
+# target to build an object file
+world/ChunkRenderSystem.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o
+.PHONY : world/ChunkRenderSystem.cpp.o
+
+world/ChunkRenderSystem.i: world/ChunkRenderSystem.cpp.i
+.PHONY : world/ChunkRenderSystem.i
+
+# target to preprocess a source file
+world/ChunkRenderSystem.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.i
+.PHONY : world/ChunkRenderSystem.cpp.i
+
+world/ChunkRenderSystem.s: world/ChunkRenderSystem.cpp.s
+.PHONY : world/ChunkRenderSystem.s
+
+# target to generate assembly for a file
+world/ChunkRenderSystem.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.s
+.PHONY : world/ChunkRenderSystem.cpp.s
 
 world/TerrainGenerator.o: world/TerrainGenerator.cpp.o
 .PHONY : world/TerrainGenerator.o
@@ -1046,6 +1094,9 @@ help:
 	@echo "... voxel/Octree.o"
 	@echo "... voxel/Octree.i"
 	@echo "... voxel/Octree.s"
+	@echo "... voxel/VoxelMesher.o"
+	@echo "... voxel/VoxelMesher.i"
+	@echo "... voxel/VoxelMesher.s"
 	@echo "... voxel/VoxelVolume.o"
 	@echo "... voxel/VoxelVolume.i"
 	@echo "... voxel/VoxelVolume.s"
@@ -1055,6 +1106,9 @@ help:
 	@echo "... world/ChunkManager.o"
 	@echo "... world/ChunkManager.i"
 	@echo "... world/ChunkManager.s"
+	@echo "... world/ChunkRenderSystem.o"
+	@echo "... world/ChunkRenderSystem.i"
+	@echo "... world/ChunkRenderSystem.s"
 	@echo "... world/TerrainGenerator.o"
 	@echo "... world/TerrainGenerator.i"
 	@echo "... world/TerrainGenerator.s"

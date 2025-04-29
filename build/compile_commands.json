@@ -187,6 +187,12 @@
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -std=gnu++20 -o CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp",
+  "output": "src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
   "command": "/usr/bin/c++ -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -std=gnu++20 -o CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp",
   "output": "src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o"
@@ -202,6 +208,12 @@
   "command": "/usr/bin/c++ -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -std=gnu++20 -o CMakeFiles/engine.dir/world/ChunkManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/ChunkManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/world/ChunkManager.cpp",
   "output": "src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -std=gnu++20 -o CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp",
+  "output": "src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",

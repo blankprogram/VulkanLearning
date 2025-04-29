@@ -1,49 +1,47 @@
+
 #include "engine/platform/DescriptorManager.hpp"
 #include <stdexcept>
 
-void DescriptorManager::init(VkDevice device) {
-  // Example: basic UBO layout
-  VkDescriptorSetLayoutBinding uboLayoutBinding{};
-  uboLayoutBinding.binding = 0;
-  uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  uboLayoutBinding.descriptorCount = 1;
-  uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-  uboLayoutBinding.pImmutableSamplers = nullptr;
+void DescriptorManager::init(VkDevice device, uint32_t maxFrames) {
+  // 1) create layout
+  VkDescriptorSetLayoutBinding b{};
+  b.binding = 0;
+  b.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  b.descriptorCount = 1;
+  b.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+  VkDescriptorSetLayoutCreateInfo li{
+      VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO};
+  li.bindingCount = 1;
+  li.pBindings = &b;
+  if (vkCreateDescriptorSetLayout(device, &li, nullptr, &layout_) != VK_SUCCESS)
+    throw std::runtime_error("Failed to create descriptor set layout");
 
-  VkDescriptorSetLayoutCreateInfo layoutInfo{};
-  layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-  layoutInfo.bindingCount = 1;
-  layoutInfo.pBindings = &uboLayoutBinding;
+  // 2) pool
+  VkDescriptorPoolSize ps{};
+  ps.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  ps.descriptorCount = maxFrames;
+  VkDescriptorPoolCreateInfo pi{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
+  pi.poolSizeCount = 1;
+  pi.pPoolSizes = &ps;
+  pi.maxSets = maxFrames;
+  if (vkCreateDescriptorPool(device, &pi, nullptr, &pool_) != VK_SUCCESS)
+    throw std::runtime_error("Failed to create descriptor pool");
 
-  if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr,
-                                  &descriptorSetLayout_) != VK_SUCCESS) {
-    throw std::runtime_error("Failed to create descriptor set layout!");
-  }
-
-  // Create a simple pool (adjust sizes as needed)
-  VkDescriptorPoolSize poolSize{};
-  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  poolSize.descriptorCount = 100;
-
-  VkDescriptorPoolCreateInfo poolInfo{};
-  poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  poolInfo.poolSizeCount = 1;
-  poolInfo.pPoolSizes = &poolSize;
-  poolInfo.maxSets = 100;
-
-  if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool_) !=
-      VK_SUCCESS) {
-    throw std::runtime_error("Failed to create descriptor pool!");
-  }
+  // 3) allocate sets
+  sets_.resize(maxFrames);
+  std::vector<VkDescriptorSetLayout> layouts(maxFrames, layout_);
+  VkDescriptorSetAllocateInfo ai{
+      VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
+  ai.descriptorPool = pool_;
+  ai.descriptorSetCount = maxFrames;
+  ai.pSetLayouts = layouts.data();
+  if (vkAllocateDescriptorSets(device, &ai, sets_.data()) != VK_SUCCESS)
+    throw std::runtime_error("Failed to allocate descriptor sets");
 }
 
 void DescriptorManager::cleanup(VkDevice device) {
-  if (descriptorPool_ != VK_NULL_HANDLE) {
-    vkDestroyDescriptorPool(device, descriptorPool_, nullptr);
-    descriptorPool_ = VK_NULL_HANDLE;
-  }
-  if (descriptorSetLayout_ != VK_NULL_HANDLE) {
-    vkDestroyDescriptorSetLayout(device, descriptorSetLayout_, nullptr);
-    descriptorSetLayout_ = VK_NULL_HANDLE;
-  }
+  if (pool_)
+    vkDestroyDescriptorPool(device, pool_, nullptr);
+  if (layout_)
+    vkDestroyDescriptorSetLayout(device, layout_, nullptr);
 }

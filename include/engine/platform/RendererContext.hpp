@@ -1,11 +1,13 @@
 
 #pragma once
 
+#include "engine/platform/DescriptorManager.hpp"
 #include "engine/platform/FrameSync.hpp"
 #include "engine/platform/Swapchain.hpp"
 #include "engine/platform/VulkanDevice.hpp"
 
 #include "engine/platform/CommandBufferRecorder.hpp"
+#include "engine/render/Camera.hpp"
 #include <GLFW/glfw3.h>
 #include <memory>
 
@@ -17,7 +19,7 @@ public:
   void beginFrame();
   void endFrame();
   void recreateSwapchain();
-
+  engine::render::Camera &camera() { return cam_; }
   VkCommandBuffer getCurrentCommandBuffer() const {
     return currentCommandBuffer_;
   }
@@ -30,7 +32,7 @@ private:
   static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
   void init(GLFWwindow *window);
   void createSyncObjects();
-
+  void createUniforms();
   std::unique_ptr<VulkanDevice> device_;
   std::unique_ptr<Swapchain> swapchain_;
   FrameSync frameSync_;
@@ -41,4 +43,9 @@ private:
       VK_NULL_HANDLE; // TODO: Hook up proper command buffer
 
   VkCommandBuffer commandBuffers_[MAX_FRAMES_IN_FLIGHT]{};
+
+  DescriptorManager descriptorMgr_;
+  std::vector<VkBuffer> uniformBuffers_;
+  std::vector<VkDeviceMemory> uniformMemories_;
+  engine::render::Camera cam_;
 };

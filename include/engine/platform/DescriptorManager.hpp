@@ -1,16 +1,21 @@
 
+
 #pragma once
+#include <vector>
 #include <vulkan/vulkan.h>
 
 class DescriptorManager {
 public:
-  void init(VkDevice device);
+  void init(VkDevice device, uint32_t maxFrames);
   void cleanup(VkDevice device);
 
-  VkDescriptorSetLayout getLayout() const { return descriptorSetLayout_; }
-  VkDescriptorPool getPool() const { return descriptorPool_; }
+  VkDescriptorSetLayout getLayout() const { return layout_; }
+  const std::vector<VkDescriptorSet> &getDescriptorSets() const {
+    return sets_;
+  }
 
 private:
-  VkDescriptorSetLayout descriptorSetLayout_ = VK_NULL_HANDLE;
-  VkDescriptorPool descriptorPool_ = VK_NULL_HANDLE;
+  VkDescriptorSetLayout layout_{VK_NULL_HANDLE};
+  VkDescriptorPool pool_{VK_NULL_HANDLE};
+  std::vector<VkDescriptorSet> sets_;
 };

@@ -11,6 +11,21 @@ find_package(glm REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
 
+
+set(SPIRV_OUT ${CMAKE_BINARY_DIR}/shaders)
+file(MAKE_DIRECTORY ${SPIRV_OUT})
+
+add_custom_command(
+  OUTPUT ${SPIRV_OUT}/vert.spv ${SPIRV_OUT}/frag.spv
+  COMMAND ${GLSLANG_VALIDATOR_EXECUTABLE}
+          -V ${CMAKE_SOURCE_DIR}/shaders/vert.glsl -o ${SPIRV_OUT}/vert.spv
+  COMMAND ${GLSLANG_VALIDATOR_EXECUTABLE}
+          -V ${CMAKE_SOURCE_DIR}/shaders/frag.glsl -o ${SPIRV_OUT}/frag.spv
+  DEPENDS ${CMAKE_SOURCE_DIR}/shaders/vert.glsl ${CMAKE_SOURCE_DIR}/shaders/frag.glsl
+)
+add_custom_target(Shaders DEPENDS ${SPIRV_OUT}/vert.spv ${SPIRV_OUT}/frag.spv)
+add_dependencies(engine Shaders)
+
 # 1. Add engine library from src/
 add_subdirectory(src)
 

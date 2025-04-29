@@ -35,9 +35,11 @@ set(OLD_GLOB
   "/home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/utils/VulkanHelpers.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp"
+  "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/world/ChunkManager.cpp"
+  "/home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/world/TerrainGenerator.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
