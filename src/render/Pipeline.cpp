@@ -6,6 +6,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <vector>
+#include <vulkan/vulkan_core.h>
 
 namespace engine::render {
 

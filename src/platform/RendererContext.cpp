@@ -113,11 +113,10 @@ void RendererContext::beginFrame() {
   // 2) Update our per-frame UBO via VMA
   glm::mat4 viewProj = cam_.viewProjection();
   void *mapped;
-  // Map once per frame
   vmaMapMemory(allocator_, uniformAllocation_, &mapped);
-  // Copy into the slice for this frame
-  std::memcpy((char *)mapped + sizeof(glm::mat4) * currentFrame_, &viewProj,
-              sizeof(viewProj));
+  std::memcpy(reinterpret_cast<char *>(mapped) +
+                  sizeof(glm::mat4) * currentFrame_,
+              &viewProj, sizeof(viewProj));
   vmaUnmapMemory(allocator_, uniformAllocation_);
 
   // 3) Begin recording commands into today's command buffer
@@ -126,29 +125,30 @@ void RendererContext::beginFrame() {
   bi.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
   vkBeginCommandBuffer(currentCommandBuffer_, &bi);
 
-  // 4) Begin render pass
-  VkClearValue clear{.color = {{0.1f, 0.1f, 0.1f, 1.0f}}};
+  // 4) Begin render pass with both color and depth clears
+  VkClearValue clearValues[2];
+  // clear color attachment (attachment 0)
+  clearValues[0].color = {{0.1f, 0.1f, 0.1f, 1.0f}};
+  // clear depth attachment (attachment 1) to far plane = 1.0
+  clearValues[1].depthStencil = {1.0f, 0};
+
   VkRenderPassBeginInfo rpbi{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
   rpbi.renderPass = renderPass_;
   rpbi.framebuffer = framebuffers_[currentImageIndex_];
   rpbi.renderArea = {{0, 0}, extent_};
-  rpbi.clearValueCount = 1;
-  rpbi.pClearValues = &clear;
+  rpbi.clearValueCount = 2;
+  rpbi.pClearValues = clearValues;
   vkCmdBeginRenderPass(currentCommandBuffer_, &rpbi,
                        VK_SUBPASS_CONTENTS_INLINE);
 
   // 5) Bind pipeline and descriptor set with dynamic offset
   vkCmdBindPipeline(currentCommandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
                     pipeline_.pipeline);
-
-  uint32_t dynamicOffset = uint32_t(sizeof(glm::mat4) * currentFrame_);
-  vkCmdBindDescriptorSets(currentCommandBuffer_,
-                          VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_.layout,
-                          0, // firstSet
-                          1, // descriptorCount
-                          &descriptorMgr_.getDescriptorSets()[0],
-                          1, // dynamicOffsetCount
-                          &dynamicOffset);
+  uint32_t dynamicOffset =
+      static_cast<uint32_t>(sizeof(glm::mat4) * currentFrame_);
+  vkCmdBindDescriptorSets(
+      currentCommandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_.layout,
+      0, 1, &descriptorMgr_.getDescriptorSets()[0], 1, &dynamicOffset);
 
   // 6) Set viewport & scissor
   VkViewport vp{0.f, 0.f, float(extent_.width), float(extent_.height),
