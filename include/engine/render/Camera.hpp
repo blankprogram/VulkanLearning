@@ -35,6 +35,16 @@ public:
     return projectionMatrix() * viewMatrix();
   }
 
+  float getYaw() const { return yaw; }
+  float getPitch() const { return pitch; }
+  glm::vec3 front() const {
+    return glm::normalize(
+        glm::vec3{cos(pitch) * cos(yaw), sin(pitch), cos(pitch) * sin(yaw)});
+  }
+  glm::vec3 right() const {
+    return glm::normalize(glm::cross(front(), glm::vec3{0, 1, 0}));
+  }
+
 private:
   glm::vec3 position{0.0f, 0.0f, 0.0f};
   float yaw = glm::radians(-90.0f);

@@ -8,8 +8,9 @@ using namespace engine::world;
 Application::Application()
     : windowManager_(1280, 720, "Vulkan Voxel World"),
       threadPool_(std::thread::hardware_concurrency()),
-      rendererContext_(windowManager_.getWindow()), chunkManager_(),
-      chunkRenderer_() {
+      rendererContext_(windowManager_.getWindow()),
+      inputManager_(windowManager_.getWindow(), rendererContext_.camera()),
+      chunkManager_(), chunkRenderer_() {
   // initial chunk load
   chunkManager_.initChunks(threadPool_);
 }
@@ -21,6 +22,13 @@ void Application::Run() {
 
 void Application::mainLoop() {
   windowManager_.pollEvents();
+
+  static double last = glfwGetTime();
+  double now = glfwGetTime();
+  float dt = float(now - last);
+  last = now;
+
+  inputManager_.processInput(dt);
   rendererContext_.beginFrame();
 
   // get camera position (stubbed)

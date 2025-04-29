@@ -1,5 +1,6 @@
 #pragma once
 
+#include "engine/platform/InputManager.hpp"
 #include "engine/platform/RendererContext.hpp"
 #include "engine/platform/WindowManager.hpp"
 #include "engine/utils/ThreadPool.hpp"
@@ -19,4 +20,5 @@ private:
   RendererContext rendererContext_;                // global-scope class
   engine::world::ChunkManager chunkManager_;       // fully qualified
   engine::world::ChunkRenderSystem chunkRenderer_; // fully qualified
+  InputManager inputManager_;
 };
