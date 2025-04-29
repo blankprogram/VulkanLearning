@@ -25,6 +25,12 @@ void RendererContext::init(GLFWwindow *window) {
   swapchain_ = std::make_unique<Swapchain>(device_.get(), device_->surface);
   frameSync_.init(device_->device, MAX_FRAMES_IN_FLIGHT);
 
+  extent_ = swapchain_->getExtent(); // store for viewport/scissor
+  createRenderPass();
+  createFramebuffers();
+  pipeline_.init(device_->device, renderPass_, descriptorMgr_.getLayout(),
+                 SPIRV_OUT "/vert.spv", SPIRV_OUT "/frag.spv");
+
   // 2) allocate command buffers
   VkCommandBufferAllocateInfo allocInfo{
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
@@ -104,6 +110,32 @@ void RendererContext::beginFrame() {
   std::memcpy(ptr, &vp, sizeof(vp));
   vkUnmapMemory(device_->device, uniformMemories_[currentFrame_]);
 
+  // start the render‐pass
+  VkClearValue clear{.color = {{0.1f, 0.1f, 0.1f, 1.0f}}};
+  VkRenderPassBeginInfo rpbi{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+  rpbi.renderPass = renderPass_;
+  rpbi.framebuffer = framebuffers_[currentImageIndex_];
+  rpbi.renderArea = {{0, 0}, extent_};
+  rpbi.clearValueCount = 1;
+  rpbi.pClearValues = &clear;
+  vkCmdBeginRenderPass(currentCommandBuffer_, &rpbi,
+                       VK_SUBPASS_CONTENTS_INLINE);
+
+  // bind your pipeline + descriptor set
+  vkCmdBindPipeline(currentCommandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    pipeline_.pipeline);
+  vkCmdBindDescriptorSets(
+      currentCommandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_.layout,
+      0, 1, &descriptorMgr_.getDescriptorSets()[currentImageIndex_], 0,
+      nullptr);
+
+  // dynamic viewport + scissor
+  VkViewport vp{0, 0, float(extent_.width), float(extent_.height), 0.0f, 1.0f};
+  vkCmdSetViewport(currentCommandBuffer_, 0, 1, &vp);
+  VkRect2D sc{{0, 0}, extent_};
+  vkCmdSetScissor(currentCommandBuffer_, 0, 1, &sc);
+
+  // now your ChunkRenderSystem::drawAll() will emit vkCmdDrawIndexed()...
   // begin recording
   currentCommandBuffer_ = commandBuffers_[currentFrame_];
   CommandBufferRecorder recorder(currentCommandBuffer_);
@@ -151,6 +183,20 @@ void RendererContext::endFrame() {
 void RendererContext::recreateSwapchain() {
   vkDeviceWaitIdle(device_->device);
   swapchain_->cleanup();
+
+  // destroy old
+  for (auto fb : framebuffers_)
+    vkDestroyFramebuffer(device_->device, fb, nullptr);
+  vkDestroyRenderPass(device_->device, renderPass_, nullptr);
+  pipeline_.cleanup(device_->device);
+
+  // now recreate:
+  swapchain_->cleanup();
+  swapchain_->recreate();
+  extent_ = swapchain_->getExtent();
+  createRenderPass();
+  createFramebuffers();
+  pipeline_.init(/* same args as above */);
   swapchain_->recreate();
 }
 
@@ -165,4 +211,33 @@ void RendererContext::cleanup() {
   swapchain_->cleanup();
   swapchain_.reset();
   device_.reset();
+}
+
+void RendererContext::createRenderPass() {
+  auto device = device_->device;
+  VkAttachmentDescription colorAtt{};
+  colorAtt.format = swapchain_->getImageFormat();
+  colorAtt.samples = VK_SAMPLE_COUNT_1_BIT;
+  colorAtt.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  colorAtt.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  colorAtt.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  colorAtt.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+  VkAttachmentReference colorRef{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+
+  // (you'll want a depthAttachment here too)
+
+  VkSubpassDescription subpass{};
+  subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+  subpass.colorAttachmentCount = 1;
+  subpass.pColorAttachments = &colorRef;
+
+  VkRenderPassCreateInfo rpci{VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO};
+  rpci.attachmentCount = 1;
+  rpci.pAttachments = &colorAtt;
+  rpci.subpassCount = 1;
+  rpci.pSubpasses = &subpass;
+
+  if (vkCreateRenderPass(device, &rpci, nullptr, &renderPass_) != VK_SUCCESS)
+    throw std::runtime_error("Failed to create render pass");
 }

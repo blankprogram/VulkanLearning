@@ -1,13 +1,13 @@
 
 #pragma once
 
+#include "engine/platform/CommandBufferRecorder.hpp"
 #include "engine/platform/DescriptorManager.hpp"
 #include "engine/platform/FrameSync.hpp"
 #include "engine/platform/Swapchain.hpp"
 #include "engine/platform/VulkanDevice.hpp"
-
-#include "engine/platform/CommandBufferRecorder.hpp"
 #include "engine/render/Camera.hpp"
+#include "engine/render/Pipeline.hpp"
 #include <GLFW/glfw3.h>
 #include <memory>
 
@@ -33,6 +33,7 @@ private:
   void init(GLFWwindow *window);
   void createSyncObjects();
   void createUniforms();
+  void createFramebuffers();
   std::unique_ptr<VulkanDevice> device_;
   std::unique_ptr<Swapchain> swapchain_;
   FrameSync frameSync_;
@@ -48,4 +49,9 @@ private:
   std::vector<VkBuffer> uniformBuffers_;
   std::vector<VkDeviceMemory> uniformMemories_;
   engine::render::Camera cam_;
+
+  VkRenderPass renderPass_{VK_NULL_HANDLE};
+  std::vector<VkFramebuffer> framebuffers_;
+  engine::render::Pipeline pipeline_; // your Pipeline struct
+  VkExtent2D extent_;                 // current swapchain size
 };
