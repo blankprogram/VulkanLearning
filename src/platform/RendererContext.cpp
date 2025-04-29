@@ -10,6 +10,16 @@ void RendererContext::init(GLFWwindow *window) {
   device_ = std::make_unique<VulkanDevice>(window);
   swapchain_ = std::make_unique<Swapchain>(device_.get(), device_->surface);
   frameSync_.init(device_->device, MAX_FRAMES_IN_FLIGHT);
+  VkCommandBufferAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.commandPool = device_->commandPool; // <- Add accessor if needed
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandBufferCount = MAX_FRAMES_IN_FLIGHT;
+
+  if (vkAllocateCommandBuffers(device_->device, &allocInfo, commandBuffers_) !=
+      VK_SUCCESS) {
+    throw std::runtime_error("Failed to allocate command buffers!");
+  }
 }
 
 void RendererContext::beginFrame() {

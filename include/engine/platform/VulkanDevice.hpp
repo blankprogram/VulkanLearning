@@ -1,4 +1,5 @@
 #pragma once
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <stdexcept>
@@ -14,9 +15,12 @@ public:
   VkPhysicalDevice physicalDevice;
   VkSurfaceKHR surface;
   VkQueue graphicsQueue;
+  VkCommandPool commandPool;
 
 private:
   void createInstance();
   void pickPhysicalDevice();
   void createLogicalDevice();
+
+  uint32_t graphicsQueueFamilyIndex; // Needed to make command pool
 };

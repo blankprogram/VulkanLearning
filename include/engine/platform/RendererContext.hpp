@@ -4,6 +4,8 @@
 #include "engine/platform/FrameSync.hpp"
 #include "engine/platform/Swapchain.hpp"
 #include "engine/platform/VulkanDevice.hpp"
+
+#include "engine/platform/CommandBufferRecorder.hpp"
 #include <GLFW/glfw3.h>
 #include <memory>
 
@@ -25,6 +27,7 @@ public:
   Swapchain *getSwapchain() const { return swapchain_.get(); }
 
 private:
+  static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
   void init(GLFWwindow *window);
   void createSyncObjects();
 
@@ -37,5 +40,5 @@ private:
   VkCommandBuffer currentCommandBuffer_ =
       VK_NULL_HANDLE; // TODO: Hook up proper command buffer
 
-  static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
+  VkCommandBuffer commandBuffers_[MAX_FRAMES_IN_FLIGHT]{};
 };
