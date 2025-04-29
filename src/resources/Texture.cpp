@@ -2,6 +2,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "thirdparty/stb_image.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "thirdparty/stb_image_write.h"
+
 #include "engine/resources/Texture.hpp"
 #include "engine/utils/VulkanHelpers.hpp" // include helpers!
 

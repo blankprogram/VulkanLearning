@@ -8,6 +8,15 @@ Mesh::Mesh(VkDevice device, VkPhysicalDevice physicalDevice,
            const std::vector<Vertex> &vertices,
            const std::vector<uint32_t> &indices)
     : device_(device), indexCount_(static_cast<uint32_t>(indices.size())) {
+
+  if (vertices.empty() || indices.empty()) {
+    vbo_ = VK_NULL_HANDLE;
+    vboMem_ = VK_NULL_HANDLE;
+    ibo_ = VK_NULL_HANDLE;
+    iboMem_ = VK_NULL_HANDLE;
+    return;
+  }
+
   VkDeviceSize vboSize = sizeof(vertices[0]) * vertices.size();
   VkDeviceSize iboSize = sizeof(indices[0]) * indices.size();
 

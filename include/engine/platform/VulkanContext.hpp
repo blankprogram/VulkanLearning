@@ -21,6 +21,8 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
+#include "engine/resources/Model.hpp"
+
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
@@ -59,7 +61,7 @@ private:
   void createGlobalDescriptorSets();
   void updateDescriptorSet(uint32_t frameIndex);
   void updateUniformBuffer(uint32_t frameIndex);
-
+  void updateTextureDescriptor();
   void createDepthResources();
   void recordCommandBuffer(VkCommandBuffer cmd, uint32_t imageIndex,
                            uint32_t frameIndex);
@@ -141,6 +143,8 @@ private:
   int currentFrame_;
   std::vector<std::unique_ptr<Mesh>> meshes_;
   std::vector<std::unique_ptr<Material>> materials_;
+
+  std::vector<std::unique_ptr<Model>> models_;
 };
 
 #endif // VULKAN_CONTEXT_H

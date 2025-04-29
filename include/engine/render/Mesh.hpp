@@ -16,6 +16,8 @@ public:
 
   void Bind(VkCommandBuffer cmd) const;
   void Draw(VkCommandBuffer cmd) const;
+  VkBuffer GetVertexBuffer() const { return vbo_; }
+  VkBuffer GetIndexBuffer() const { return ibo_; }
 
 private:
   VkDevice device_;

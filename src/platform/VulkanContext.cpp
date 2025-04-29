@@ -11,67 +11,40 @@
 
 VulkanContext::VulkanContext(uint32_t w, uint32_t h, const std::string &t)
     : width_(w), height_(h), title_(t), cameraAspect_(float(w) / float(h)) {
+
   initWindow();
   initVulkan();
 
-  // now that device_, renderPass_, dsLayout_, pipelines exist:
-  renderer_ = std::make_unique<Renderer>(
-      device_, renderPass_, globalDescriptorSetLayout_, filledPipeline_,
-      wireframePipeline_); // spawn one camera in our ECS:
+  renderer_ = std::make_unique<Renderer>(device_, renderPass_,
+                                         globalDescriptorSetLayout_,
+                                         filledPipeline_, wireframePipeline_);
+
   auto camE = registry_.create();
   registry_.emplace<CameraComponent>(camE, cameraAspect_);
-  // registry_.get<CameraComponent>(camE).cam.LookAt({3, 3, 3}, {0, 0, 0},
-  //                                                 {0, 1, 0});
 
-  std::vector<Vertex> cubeVerts = {
-      // front
-      {{-0.5f, -0.5f, 0.5f}, {0, 0}},
-      {{0.5f, -0.5f, 0.5f}, {1, 0}},
-      {{0.5f, 0.5f, 0.5f}, {1, 1}},
-      {{-0.5f, 0.5f, 0.5f}, {0, 1}},
-      // back
-      {{-0.5f, -0.5f, -0.5f}, {1, 0}},
-      {{0.5f, -0.5f, -0.5f}, {0, 0}},
-      {{0.5f, 0.5f, -0.5f}, {0, 1}},
-      {{-0.5f, 0.5f, -0.5f}, {1, 1}},
-      // left
-      {{-0.5f, -0.5f, -0.5f}, {0, 0}},
-      {{-0.5f, -0.5f, 0.5f}, {1, 0}},
-      {{-0.5f, 0.5f, 0.5f}, {1, 1}},
-      {{-0.5f, 0.5f, -0.5f}, {0, 1}},
-      // right
-      {{0.5f, -0.5f, -0.5f}, {1, 0}},
-      {{0.5f, -0.5f, 0.5f}, {0, 0}},
-      {{0.5f, 0.5f, 0.5f}, {0, 1}},
-      {{0.5f, 0.5f, -0.5f}, {1, 1}},
-      // top
-      {{-0.5f, 0.5f, -0.5f}, {0, 1}},
-      {{0.5f, 0.5f, -0.5f}, {1, 1}},
-      {{0.5f, 0.5f, 0.5f}, {1, 0}},
-      {{-0.5f, 0.5f, 0.5f}, {0, 0}},
-      // bottom
-      {{-0.5f, -0.5f, -0.5f}, {1, 1}},
-      {{0.5f, -0.5f, -0.5f}, {0, 1}},
-      {{0.5f, -0.5f, 0.5f}, {0, 0}},
-      {{-0.5f, -0.5f, 0.5f}, {1, 0}},
-  };
-  std::vector<uint32_t> cubeIdx = {
-      0,  1,  2,  2,  3,  0,  4,  6,  5,  6,  4,  7,  8,  9,  10, 10, 11, 8,
-      12, 14, 13, 14, 12, 15, 16, 18, 17, 18, 16, 19, 20, 21, 22, 22, 23, 20};
+  // --- NEW LOADING ---
 
-  // 2) create Mesh + Material and keep them alive
-  meshes_.emplace_back(std::make_unique<Mesh>(device_, physicalDevice_,
-                                              commandPool_, graphicsQueue_,
-                                              cubeVerts, cubeIdx));
+  auto model =
+      std::make_unique<Model>(device_, physicalDevice_, commandPool_,
+                              graphicsQueue_, "assets/models/Plant/Plant.obj",
+                              &texture_); // <-- pass the texture pointer
+
+  updateTextureDescriptor();
+  meshes_.emplace_back(model->TakeMesh());
+  // Now we can safely discard 'model' afterwards
+
   materials_.emplace_back(std::make_unique<Material>(
       device_, descriptorPool_, materialDescriptorSetLayout_, &texture_));
 
-  // 3) spawn an entity and attach components
-  auto cube = registry_.create();
-  registry_.emplace<Transform>(cube, Transform{glm::mat4(1.0f)});
-  registry_.emplace<MeshRef>(cube, meshes_.back().get());
-  registry_.emplace<MaterialRef>(cube, materials_.back().get());
+  auto modelEntity = registry_.create();
+
+  registry_.emplace<Transform>(
+      modelEntity, Transform{glm::scale(glm::mat4(1.0f), glm::vec3(0.01f))});
+
+  registry_.emplace<MeshRef>(modelEntity, meshes_.back().get());
+  registry_.emplace<MaterialRef>(modelEntity, materials_.back().get());
 }
+
 VulkanContext::~VulkanContext() { cleanup(); }
 
 void VulkanContext::Run() { mainLoop(); }
@@ -170,8 +143,6 @@ void VulkanContext::initVulkan() {
   createDescriptorPool();
   createCommandPool(gf);
 
-  texture_.Load(device_, physicalDevice_, commandPool_, graphicsQueue_,
-                "assets/textures/cobble.png");
   createGlobalDescriptorSets();
 
   createMaterialDescriptorSetLayout();
@@ -773,13 +744,7 @@ void VulkanContext::updateDescriptorSet(uint32_t idx) {
   bufferInfo.offset = 0;
   bufferInfo.range = sizeof(UBO);
 
-  VkDescriptorImageInfo imageInfo{};
-  imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-  imageInfo.imageView = texture_.GetImageView();
-  imageInfo.sampler = texture_.GetSampler();
-
-  std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+  std::array<VkWriteDescriptorSet, 1> descriptorWrites{};
 
   descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
   descriptorWrites[0].dstSet = descriptorSets_[idx];
@@ -789,18 +754,29 @@ void VulkanContext::updateDescriptorSet(uint32_t idx) {
   descriptorWrites[0].descriptorCount = 1;
   descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-  descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-  descriptorWrites[1].dstSet = descriptorSets_[idx];
-  descriptorWrites[1].dstBinding = 1;
-  descriptorWrites[1].dstArrayElement = 0;
-  descriptorWrites[1].descriptorType =
-      VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-  descriptorWrites[1].descriptorCount = 1;
-  descriptorWrites[1].pImageInfo = &imageInfo;
-
   vkUpdateDescriptorSets(device_,
                          static_cast<uint32_t>(descriptorWrites.size()),
                          descriptorWrites.data(), 0, nullptr);
+}
+
+void VulkanContext::updateTextureDescriptor() {
+  for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
+    VkDescriptorImageInfo imageInfo{};
+    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    imageInfo.imageView = texture_.GetImageView();
+    imageInfo.sampler = texture_.GetSampler();
+
+    VkWriteDescriptorSet descriptorWrite{};
+    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrite.dstSet = descriptorSets_[i];
+    descriptorWrite.dstBinding = 1; // binding 1 = texture
+    descriptorWrite.dstArrayElement = 0;
+    descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descriptorWrite.descriptorCount = 1;
+    descriptorWrite.pImageInfo = &imageInfo;
+
+    vkUpdateDescriptorSets(device_, 1, &descriptorWrite, 0, nullptr);
+  }
 }
 
 void VulkanContext::recreateSwapchain(uint32_t width, uint32_t height) {

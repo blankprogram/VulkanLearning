@@ -11,6 +11,9 @@ add_library(engine STATIC
   scene/Camera.cpp
   utils/VulkanHelpers.cpp
   render/Material.cpp
+  resources/Model.cpp
+  ../include/thirdparty/tiny_obj_loader.cc  # <--- add this
+  ../include/thirdparty/tiny_gltf.cc        # <--- add this
 )
 
 target_include_directories(engine PUBLIC

@@ -13,6 +13,7 @@ void Renderer::Render(
     entt::registry &registry, VkCommandBuffer cmd, VkExtent2D extent,
     const std::array<VkDescriptorSet, MAX_FRAMES_IN_FLIGHT> &globalDescSets,
     uint32_t frameIndex, bool wireframe) {
+
   // Choose which pipeline to bind
   auto &pipeline = wireframe ? wireframe_ : opaque_;
 
@@ -40,6 +41,17 @@ void Renderer::Render(
     auto &tf = view.get<Transform>(e);
     auto &mesh = view.get<MeshRef>(e).mesh;
     auto &mat = view.get<MaterialRef>(e).mat;
+
+    // 🛡️ New: Validate that mesh and material are valid
+    if (!mesh || !mat) {
+      continue; // skip invalid entries
+    }
+
+    // 🛡️ New: Validate that mesh buffers are valid
+    if (mesh->GetVertexBuffer() == VK_NULL_HANDLE ||
+        mesh->GetIndexBuffer() == VK_NULL_HANDLE) {
+      continue; // skip meshes that failed to load
+    }
 
     // 3a) Push-constants (model matrix)
     vkCmdPushConstants(cmd, pipeline.GetLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0,
