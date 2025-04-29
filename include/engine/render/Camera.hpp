@@ -27,7 +27,9 @@ public:
   }
 
   glm::mat4 projectionMatrix() const {
-    return glm::perspective(fovY, aspect, nearPlane, farPlane);
+    glm::mat4 proj = glm::perspective(fovY, aspect, nearPlane, farPlane);
+    proj[1][1] *= -1.0f; // <— invert Y for Vulkan
+    return proj;
   }
 
   glm::mat4 viewProjection() const {

@@ -29,7 +29,7 @@ void ChunkManager::updateChunks(const glm::vec3 &playerPos,
         if (!chunk.volume) {
           chunk.volume =
               std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
-          TerrainGenerator::Generate(*chunk.volume);
+          TerrainGenerator::Generate(*chunk.volume, coord);
           chunk.dirty = true;
           chunk.meshJobQueued = false;
         }
