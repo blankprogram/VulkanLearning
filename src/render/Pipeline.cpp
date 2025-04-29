@@ -89,7 +89,7 @@ void Pipeline::init(VkDevice dev, VkRenderPass rp, VkDescriptorSetLayout dsl,
   ras.rasterizerDiscardEnable = VK_FALSE;
   ras.polygonMode = VK_POLYGON_MODE_FILL;
   ras.lineWidth = 1.0f;
-  ras.cullMode = VK_CULL_MODE_BACK_BIT;
+  ras.cullMode = VK_CULL_MODE_NONE;
   ras.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
   ras.depthBiasEnable = VK_FALSE;
 
