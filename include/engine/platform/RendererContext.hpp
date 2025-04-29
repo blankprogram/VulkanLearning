@@ -56,4 +56,13 @@ private:
   std::vector<VkFramebuffer> framebuffers_;
   engine::render::Pipeline pipeline_; // your Pipeline struct
   VkExtent2D extent_;                 // current swapchain size
+                                      //
+                                      //
+  VkFormat depthFormat_{};
+  VkImage depthImage_{VK_NULL_HANDLE};
+  VmaAllocation depthImageAllocation_{VK_NULL_HANDLE};
+  VkImageView depthImageView_{VK_NULL_HANDLE};
+  // helpers
+  void createDepthResources();
+  VkFormat findDepthFormat() const;
 };

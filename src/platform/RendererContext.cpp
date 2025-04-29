@@ -8,7 +8,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 
-// Make sure these match your window size constants, or query at runtime:
 static constexpr uint32_t WIDTH = 1280;
 static constexpr uint32_t HEIGHT = 720;
 
@@ -31,6 +30,8 @@ void RendererContext::init(GLFWwindow *window) {
   ai.instance = device_->instance;
   vmaCreateAllocator(&ai, &allocator_);
   extent_ = swapchain_->getExtent();
+
+  createDepthResources();
   createRenderPass();
   createFramebuffers();
 
@@ -196,27 +197,30 @@ void RendererContext::endFrame() {
 }
 
 void RendererContext::createFramebuffers() {
+  // destroy old ones if any
   for (auto fb : framebuffers_)
     vkDestroyFramebuffer(device_->device, fb, nullptr);
   framebuffers_.clear();
 
-  auto &views = swapchain_->getImageViews();
-  framebuffers_.resize(views.size());
-  for (size_t i = 0; i < views.size(); ++i) {
-    VkImageView attachments[] = {views[i]};
+  auto &colorViews = swapchain_->getImageViews();
+  framebuffers_.resize(colorViews.size());
+
+  for (size_t i = 0; i < colorViews.size(); ++i) {
+    VkImageView attachments[] = {colorViews[i], depthImageView_};
+
     VkFramebufferCreateInfo fci{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
     fci.renderPass = renderPass_;
-    fci.attachmentCount = 1;
+    fci.attachmentCount = 2;
     fci.pAttachments = attachments;
     fci.width = extent_.width;
     fci.height = extent_.height;
     fci.layers = 1;
+
     if (vkCreateFramebuffer(device_->device, &fci, nullptr,
                             &framebuffers_[i]) != VK_SUCCESS)
       throw std::runtime_error("Failed to create framebuffer");
   }
 }
-
 void RendererContext::recreateSwapchain() {
   vkDeviceWaitIdle(device_->device);
   swapchain_->cleanup();
@@ -227,6 +231,7 @@ void RendererContext::recreateSwapchain() {
 
   swapchain_->recreate();
   extent_ = swapchain_->getExtent();
+  createDepthResources();
   createRenderPass();
   createFramebuffers();
   pipeline_.init(device_->device, renderPass_, descriptorMgr_.getLayout(),
@@ -235,55 +240,133 @@ void RendererContext::recreateSwapchain() {
 }
 
 void RendererContext::cleanup() {
-  // 1) Destroy the VMA‐allocated UBO
-  vmaDestroyBuffer(allocator_, uniformBuffer_, uniformAllocation_);
-  // 2) Destroy the allocator itself
-  vmaDestroyAllocator(allocator_);
-
-  // 3) Cleanup descriptor‐set layout & pool
-  descriptorMgr_.cleanup(device_->device);
-  // 4) Cleanup semaphores & fences
-  frameSync_.cleanup(device_->device);
-
-  // 5) Destroy all framebuffers
-  for (auto fb : framebuffers_) {
+  // 1) Destroy framebuffers
+  for (auto fb : framebuffers_)
     vkDestroyFramebuffer(device_->device, fb, nullptr);
-  }
   framebuffers_.clear();
 
-  // 6) Destroy the render pass
-  vkDestroyRenderPass(device_->device, renderPass_, nullptr);
+  // 2) Destroy render pass
+  if (renderPass_ != VK_NULL_HANDLE)
+    vkDestroyRenderPass(device_->device, renderPass_, nullptr);
 
-  // 7) Cleanup swapchain (image‐views + swapchain handle) and free it
+  // 3) Destroy depth view & image
+  if (depthImageView_ != VK_NULL_HANDLE)
+    vkDestroyImageView(device_->device, depthImageView_, nullptr);
+  if (depthImage_ != VK_NULL_HANDLE)
+    vmaDestroyImage(allocator_, depthImage_, depthImageAllocation_);
+
+  // 4) Cleanup swapchain
   swapchain_->cleanup();
-  swapchain_.reset();
 
-  // 8) Finally destroy the Vulkan device & instance
+  // 5) Destroy allocator’s UBO & allocator itself, then device
+  vmaDestroyBuffer(allocator_, uniformBuffer_, uniformAllocation_);
+  vmaDestroyAllocator(allocator_);
+
+  descriptorMgr_.cleanup(device_->device);
+  frameSync_.cleanup(device_->device);
   device_.reset();
 }
 
 void RendererContext::createRenderPass() {
-  auto dev = device_->device;
+  // — 1) Color attachment —
   VkAttachmentDescription colorAtt{};
   colorAtt.format = swapchain_->getImageFormat();
   colorAtt.samples = VK_SAMPLE_COUNT_1_BIT;
   colorAtt.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
   colorAtt.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+  colorAtt.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  colorAtt.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
   colorAtt.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
   colorAtt.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+  // — 2) Depth attachment —
+  VkAttachmentDescription depthAtt{};
+  depthAtt.format = depthFormat_;
+  depthAtt.samples = VK_SAMPLE_COUNT_1_BIT;
+  depthAtt.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+  depthAtt.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  depthAtt.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+  depthAtt.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+  depthAtt.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  depthAtt.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+  std::array<VkAttachmentDescription, 2> atts = {colorAtt, depthAtt};
+
+  // references for subpass
   VkAttachmentReference colorRef{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+  VkAttachmentReference depthRef{
+      1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
+
   VkSubpassDescription subpass{};
   subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
   subpass.colorAttachmentCount = 1;
   subpass.pColorAttachments = &colorRef;
+  subpass.pDepthStencilAttachment = &depthRef;
 
   VkRenderPassCreateInfo rpci{VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO};
-  rpci.attachmentCount = 1;
-  rpci.pAttachments = &colorAtt;
+  rpci.attachmentCount = static_cast<uint32_t>(atts.size());
+  rpci.pAttachments = atts.data();
   rpci.subpassCount = 1;
   rpci.pSubpasses = &subpass;
 
-  if (vkCreateRenderPass(dev, &rpci, nullptr, &renderPass_) != VK_SUCCESS)
+  if (vkCreateRenderPass(device_->device, &rpci, nullptr, &renderPass_) !=
+      VK_SUCCESS)
     throw std::runtime_error("Failed to create render pass");
+}
+VkFormat RendererContext::findDepthFormat() const {
+  // candidates in order of preference:
+  std::vector<VkFormat> candidates = {VK_FORMAT_D32_SFLOAT,
+                                      VK_FORMAT_D32_SFLOAT_S8_UINT,
+                                      VK_FORMAT_D24_UNORM_S8_UINT};
+
+  for (auto fmt : candidates) {
+    VkFormatProperties props;
+    vkGetPhysicalDeviceFormatProperties(device_->physicalDevice, fmt, &props);
+    if (props.optimalTilingFeatures &
+        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+      return fmt;
+  }
+
+  throw std::runtime_error("Failed to find supported depth format");
+}
+
+void RendererContext::createDepthResources() {
+  depthFormat_ = findDepthFormat();
+
+  // 1) Create the VkImage
+  VkImageCreateInfo imgInfo{VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO};
+  imgInfo.imageType = VK_IMAGE_TYPE_2D;
+  imgInfo.extent.width = extent_.width;
+  imgInfo.extent.height = extent_.height;
+  imgInfo.extent.depth = 1;
+  imgInfo.mipLevels = 1;
+  imgInfo.arrayLayers = 1;
+  imgInfo.format = depthFormat_;
+  imgInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+  imgInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  imgInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+  imgInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+  imgInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+  VmaAllocationCreateInfo allocInfo{};
+  allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+  if (vmaCreateImage(allocator_, &imgInfo, &allocInfo, &depthImage_,
+                     &depthImageAllocation_, nullptr) != VK_SUCCESS)
+    throw std::runtime_error("Failed to allocate depth image");
+
+  // 2) Create the VkImageView
+  VkImageViewCreateInfo viewInfo{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
+  viewInfo.image = depthImage_;
+  viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+  viewInfo.format = depthFormat_;
+  viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+  viewInfo.subresourceRange.baseMipLevel = 0;
+  viewInfo.subresourceRange.levelCount = 1;
+  viewInfo.subresourceRange.baseArrayLayer = 0;
+  viewInfo.subresourceRange.layerCount = 1;
+
+  if (vkCreateImageView(device_->device, &viewInfo, nullptr,
+                        &depthImageView_) != VK_SUCCESS)
+    throw std::runtime_error("Failed to create depth image view");
 }
