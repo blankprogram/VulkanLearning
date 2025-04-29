@@ -2,7 +2,78 @@
 #include "engine/platform/VulkanDevice.hpp"
 #include <cstring>
 #include <set>
+static VKAPI_ATTR VkBool32 VKAPI_CALL
+debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+              VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+              const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+              void * /*pUserData*/) {
+  // You can filter on severity / type here if you like:
+  std::cerr << "Validation layer: " << pCallbackData->pMessage << "\n";
+  // Return VK_FALSE to indicate that the call should not be aborted
+  return VK_FALSE;
+}
 
+static void populateDebugMessengerCreateInfo(
+    VkDebugUtilsMessengerCreateInfoEXT &createInfo) {
+  createInfo = {VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT};
+  createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+                               VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+                               VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+  createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+                           VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                           VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+  createInfo.pfnUserCallback = debugCallback;
+  createInfo.pUserData = nullptr; // optional
+}
+
+// ————————————————————————————————————————————————————————————————
+//  3) Load & wrap vkCreateDebugUtilsMessengerEXT
+// ————————————————————————————————————————————————————————————————
+static VkResult CreateDebugUtilsMessengerEXT(
+    VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+    const VkAllocationCallbacks *pAllocator,
+    VkDebugUtilsMessengerEXT *pMessenger) {
+  auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+      instance, "vkCreateDebugUtilsMessengerEXT");
+  if (func) {
+    return func(instance, pCreateInfo, pAllocator, pMessenger);
+  }
+  return VK_ERROR_EXTENSION_NOT_PRESENT;
+}
+
+// ————————————————————————————————————————————————————————————————
+//  4) Load & wrap vkDestroyDebugUtilsMessengerEXT
+// ————————————————————————————————————————————————————————————————
+static void
+DestroyDebugUtilsMessengerEXT(VkInstance instance,
+                              VkDebugUtilsMessengerEXT messenger,
+                              const VkAllocationCallbacks *pAllocator) {
+  auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+      instance, "vkDestroyDebugUtilsMessengerEXT");
+  if (func) {
+    func(instance, messenger, pAllocator);
+  }
+}
+
+// ————————————————————————————————————————————————————————————————
+//  5) User‐facing setup/teardown
+// ————————————————————————————————————————————————————————————————
+VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
+
+void setupDebugMessenger(VkInstance instance) {
+  VkDebugUtilsMessengerCreateInfoEXT createInfo;
+  populateDebugMessengerCreateInfo(createInfo);
+  if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr,
+                                   &debugMessenger) != VK_SUCCESS) {
+    std::cerr << "ERROR: failed to set up debug messenger!\n";
+  }
+}
+
+void teardownDebugMessenger(VkInstance instance) {
+  if (debugMessenger != VK_NULL_HANDLE) {
+    DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+  }
+}
 VulkanDevice::VulkanDevice(GLFWwindow *window) {
   createInstance();
 
@@ -16,45 +87,68 @@ VulkanDevice::VulkanDevice(GLFWwindow *window) {
   createLogicalDevice();
 }
 
-VulkanDevice::~VulkanDevice() {
-  if (commandPool != VK_NULL_HANDLE) {
-    vkDestroyCommandPool(device, commandPool, nullptr);
-  }
-  if (device != VK_NULL_HANDLE) {
-    vkDestroyDevice(device, nullptr);
-  }
-  if (surface != VK_NULL_HANDLE) {
-    vkDestroySurfaceKHR(instance, surface, nullptr);
-  }
-  if (instance != VK_NULL_HANDLE) {
-    vkDestroyInstance(instance, nullptr);
-  }
-}
-
 void VulkanDevice::createInstance() {
-  VkApplicationInfo appInfo{};
-  appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+  VkApplicationInfo appInfo{VK_STRUCTURE_TYPE_APPLICATION_INFO};
   appInfo.pApplicationName = "Vulkan Engine";
   appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
   appInfo.pEngineName = "No Engine";
   appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
   appInfo.apiVersion = VK_API_VERSION_1_3;
 
-  uint32_t glfwExtensionCount = 0;
-  const char **glfwExtensions =
-      glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+  // 1) figure out layers + extensions
+  std::vector<const char *> layers;
+  std::vector<const char *> exts;
 
-  VkInstanceCreateInfo createInfo{};
-  createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-  createInfo.pApplicationInfo = &appInfo;
-  createInfo.enabledExtensionCount = glfwExtensionCount;
-  createInfo.ppEnabledExtensionNames = glfwExtensions;
+#ifdef ENABLE_VALIDATION_LAYERS
+  layers.push_back("VK_LAYER_KHRONOS_validation");
+  exts.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
+  // GLFW wants its own surface extensions, too…
+  uint32_t gefCount = 0;
+  auto glfwExts = glfwGetRequiredInstanceExtensions(&gefCount);
+  exts.insert(exts.end(), glfwExts, glfwExts + gefCount);
 
-  if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
+  // 2) build the InstanceCreateInfo
+  VkInstanceCreateInfo ci{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO};
+  ci.pApplicationInfo = &appInfo;
+  ci.enabledLayerCount = (uint32_t)layers.size();
+  ci.ppEnabledLayerNames = layers.data();
+  ci.enabledExtensionCount = (uint32_t)exts.size();
+  ci.ppEnabledExtensionNames = exts.data();
+
+#ifdef ENABLE_VALIDATION_LAYERS
+  // chain in our debug‐utils create info so messenger is alive immediately
+  VkDebugUtilsMessengerCreateInfoEXT debugCI;
+  populateDebugMessengerCreateInfo(debugCI);
+  ci.pNext = &debugCI;
+#else
+  ci.pNext = nullptr;
+#endif
+
+  if (vkCreateInstance(&ci, nullptr, &instance) != VK_SUCCESS)
     throw std::runtime_error("Failed to create Vulkan instance!");
-  }
+
+#ifdef ENABLE_VALIDATION_LAYERS
+  // if you didn’t pNext it in above, you can do it now:
+  if (CreateDebugUtilsMessengerEXT(instance, &debugCI, nullptr,
+                                   &debugMessenger) != VK_SUCCESS)
+    std::cerr << "Warning: failed to install debug messenger\n";
+#endif
 }
 
+VulkanDevice::~VulkanDevice() {
+#ifdef ENABLE_VALIDATION_LAYERS
+  teardownDebugMessenger(instance);
+#endif
+  if (commandPool != VK_NULL_HANDLE)
+    vkDestroyCommandPool(device, commandPool, nullptr);
+  if (device != VK_NULL_HANDLE)
+    vkDestroyDevice(device, nullptr);
+  if (surface != VK_NULL_HANDLE)
+    vkDestroySurfaceKHR(instance, surface, nullptr);
+  if (instance != VK_NULL_HANDLE)
+    vkDestroyInstance(instance, nullptr);
+}
 void VulkanDevice::pickPhysicalDevice() {
   uint32_t deviceCount = 0;
   vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);

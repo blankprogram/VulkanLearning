@@ -17,6 +17,10 @@ public:
   VkQueue graphicsQueue;
   VkCommandPool commandPool;
 
+#ifdef ENABLE_VALIDATION_LAYERS
+  VkDebugUtilsMessengerEXT debugMessenger;
+#endif
+
 private:
   void createInstance();
   void pickPhysicalDevice();

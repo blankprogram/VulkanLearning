@@ -3,6 +3,12 @@
 cmake_minimum_required(VERSION 3.10)
 project(VulkanEngine LANGUAGES CXX)
 
+
+
+# only enable in Debug
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_compile_definitions(ENABLE_VALIDATION_LAYERS)
+endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -11,7 +17,7 @@ find_package(Vulkan REQUIRED)
 find_package(glm REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
-
+list(APPEND REQUIRED_INSTANCE_EXTENSIONS VK_EXT_debug_utils)
 # locate either glslangValidator or glslang
 find_program(GLSLANG_EXECUTABLE
   NAMES glslangValidator glslang

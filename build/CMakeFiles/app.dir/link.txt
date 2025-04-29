@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/app.dir/src/main.cpp.o -o app  src/libengine.a /usr/lib/x86_64-linux-gnu/libvulkan.so -lglfw
+/usr/bin/c++ -g CMakeFiles/app.dir/src/main.cpp.o -o app  src/libengine.a /usr/lib/x86_64-linux-gnu/libvulkan.so -lglfw
