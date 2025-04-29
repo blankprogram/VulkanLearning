@@ -44,7 +44,9 @@ void CreateBuffer(VkDevice device, VkPhysicalDevice physDevice,
   // Copy data into staging
   void *mapped;
   vkMapMemory(device, stagingMem, 0, size, 0, &mapped);
-  std::memcpy(mapped, data, (size_t)size);
+  if (data) {
+    std::memcpy(mapped, data, static_cast<size_t>(size));
+  }
   vkUnmapMemory(device, stagingMem);
 
   // 2) Create device-local buffer

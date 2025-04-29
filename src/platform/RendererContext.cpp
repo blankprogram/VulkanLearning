@@ -89,12 +89,11 @@ void RendererContext::createUniforms() {
 }
 
 void RendererContext::beginFrame() {
-  // wait on fence for this frame
+  // wait / acquire
   VkFence fence = frameSync_.getInFlightFence(currentFrame_);
   vkWaitForFences(device_->device, 1, &fence, VK_TRUE, UINT64_MAX);
   vkResetFences(device_->device, 1, &fence);
 
-  // acquire next image
   VkResult res = vkAcquireNextImageKHR(
       device_->device, swapchain_->getSwapchain(), UINT64_MAX,
       frameSync_.getImageAvailable(currentFrame_), VK_NULL_HANDLE,
@@ -106,7 +105,7 @@ void RendererContext::beginFrame() {
     throw std::runtime_error("Failed to acquire swapchain image!");
   }
 
-  // update UBO for this frame
+  // UPDATE UBO (same as before)…
   glm::mat4 viewProj = cam_.viewProjection();
   void *ptr = nullptr;
   vkMapMemory(device_->device, uniformMemories_[currentFrame_], 0,
@@ -114,7 +113,14 @@ void RendererContext::beginFrame() {
   std::memcpy(ptr, &viewProj, sizeof(viewProj));
   vkUnmapMemory(device_->device, uniformMemories_[currentFrame_]);
 
-  // start the render‐pass
+  // ——— NOW start recording into the _correct_ buffer ———
+  currentCommandBuffer_ = commandBuffers_[currentFrame_];
+
+  VkCommandBufferBeginInfo bi{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+  bi.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  vkBeginCommandBuffer(currentCommandBuffer_, &bi);
+
+  // begin render-pass
   VkClearValue clear{.color = {{0.1f, 0.1f, 0.1f, 1.0f}}};
   VkRenderPassBeginInfo rpbi{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
   rpbi.renderPass = renderPass_;
@@ -125,30 +131,27 @@ void RendererContext::beginFrame() {
   vkCmdBeginRenderPass(currentCommandBuffer_, &rpbi,
                        VK_SUBPASS_CONTENTS_INLINE);
 
-  // bind your pipeline + descriptor set
+  // bind pipeline / descriptor / viewport / scissor as you were…
   vkCmdBindPipeline(currentCommandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
                     pipeline_.pipeline);
   vkCmdBindDescriptorSets(
       currentCommandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_.layout,
       0, 1, &descriptorMgr_.getDescriptorSets()[currentImageIndex_], 0,
       nullptr);
-
-  // dynamic viewport + scissor
-  VkViewport vp{0, 0, float(extent_.width), float(extent_.height), 0.0f, 1.0f};
+  VkViewport vp{0, 0, float(extent_.width), float(extent_.height), 0.f, 1.f};
   vkCmdSetViewport(currentCommandBuffer_, 0, 1, &vp);
   VkRect2D sc{{0, 0}, extent_};
   vkCmdSetScissor(currentCommandBuffer_, 0, 1, &sc);
-
-  // now your ChunkRenderSystem::drawAll() will emit vkCmdDrawIndexed()...
-  // begin recording
-  currentCommandBuffer_ = commandBuffers_[currentFrame_];
-  CommandBufferRecorder recorder(currentCommandBuffer_);
 }
 
 void RendererContext::endFrame() {
-  VkCommandBuffer cmd = currentCommandBuffer_;
+  // finish the render pass
+  vkCmdEndRenderPass(currentCommandBuffer_);
 
-  // submit
+  // finish recording
+  vkEndCommandBuffer(currentCommandBuffer_);
+
+  // submit & present (exactly as you had it)…
   VkSemaphore waitSems[] = {frameSync_.getImageAvailable(currentFrame_)};
   VkPipelineStageFlags ps[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   VkSemaphore sigSems[] = {frameSync_.getRenderFinished(currentFrame_)};
@@ -157,14 +160,13 @@ void RendererContext::endFrame() {
   si.pWaitSemaphores = waitSems;
   si.pWaitDstStageMask = ps;
   si.commandBufferCount = 1;
-  si.pCommandBuffers = &cmd;
+  si.pCommandBuffers = &currentCommandBuffer_;
   si.signalSemaphoreCount = 1;
   si.pSignalSemaphores = sigSems;
 
   vkQueueSubmit(device_->graphicsQueue, 1, &si,
                 frameSync_.getInFlightFence(currentFrame_));
 
-  // present
   VkPresentInfoKHR pi{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
   pi.waitSemaphoreCount = 1;
   pi.pWaitSemaphores = sigSems;
@@ -180,7 +182,6 @@ void RendererContext::endFrame() {
     throw std::runtime_error("Failed to present swapchain image!");
   }
 
-  // advance frame index
   currentFrame_ = (currentFrame_ + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
