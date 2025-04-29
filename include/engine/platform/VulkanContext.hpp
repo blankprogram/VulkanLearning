@@ -14,15 +14,21 @@
 #include "thirdparty/FastNoiseLite.h"
 #include "thirdparty/entt.hpp"
 #include <GLFW/glfw3.h>
+#include <algorithm> // for std::max
 #include <chrono>
 #include <cmath>
+#include <condition_variable> // for std::condition_variable
 #include <cstdlib>
 #include <cstring>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <mutex> // for std::mutex
+#include <queue> // for std::queue
 #include <stdexcept>
 #include <string>
+#include <thread> // for std::thread
+#include <thread>
 #include <vector>
 #include <vulkan/vulkan.h>
 #ifdef NDEBUG
@@ -121,6 +127,8 @@ private:
   void onMouseMoved(float xpos, float ypos);
   void processInput(float dt);
 
+  void startWorkerThreads();
+  void stopWorkerThreads();
   struct UBO {
     glm::mat4 view;
     glm::mat4 proj;
@@ -156,6 +164,20 @@ private:
   std::unordered_map<glm::ivec3, Chunk> chunks_;
 
   glm::ivec3 lastPlayerChunk_{9999, 9999, 9999}; // new: player chunk last frame
+                                                 //
+  std::vector<std::thread> workers_;
+  std::queue<glm::ivec3> taskQueue_; // chunk coords to generate
+  std::mutex taskMux_;
+  std::condition_variable taskCV_;
+  bool stopWorkers_ = false;
+
+  // results come back as fully built Chunks (with VoxelVolume, mesh VB/IB)
+  std::queue<Chunk> doneQueue_;
+  std::mutex doneMux_;
+  std::mutex queueMux_;
+  std::vector<Chunk> pendingDestroy_;
 };
+
+;
 
 #endif // VULKAN_CONTEXT_H

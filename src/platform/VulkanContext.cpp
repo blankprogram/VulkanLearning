@@ -14,6 +14,8 @@ VulkanContext::VulkanContext(uint32_t w, uint32_t h, const std::string &t)
   initWindow();
   initVulkan();
 
+  startWorkerThreads();
+
   // --- create Renderer (needs Vulkan stuff ready first) ---
   renderer_ = std::make_unique<Renderer>(device_, renderPass_,
                                          globalDescriptorSetLayout_,
@@ -33,7 +35,10 @@ VulkanContext::VulkanContext(uint32_t w, uint32_t h, const std::string &t)
   initChunks(); // ✅ ✅ ✅ ADD THIS LINE
 }
 
-VulkanContext::~VulkanContext() { cleanup(); }
+VulkanContext::~VulkanContext() {
+  stopWorkerThreads();
+  cleanup();
+}
 
 void VulkanContext::Run() { mainLoop(); }
 
@@ -87,20 +92,27 @@ void VulkanContext::onMouseMoved(float xpos, float ypos) {
     view.get<CameraComponent>(e).cam.ProcessMouseMovement(xoffset, yoffset);
   }
 }
+
 void VulkanContext::processInput(float dt) {
+  // if either shift is held, double the effective delta-time
+  bool fast = glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+              glfwGetKey(window_, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
+  float speedDt = dt * (fast ? 2.0f : 1.0f);
+
   auto view = registry_.view<CameraComponent>();
   for (auto e : view) {
     auto &cam = view.get<CameraComponent>(e).cam;
     if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS)
-      cam.ProcessKeyboard(FORWARD, dt);
+      cam.ProcessKeyboard(FORWARD, speedDt);
     if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS)
-      cam.ProcessKeyboard(BACKWARD, dt);
+      cam.ProcessKeyboard(BACKWARD, speedDt);
     if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS)
-      cam.ProcessKeyboard(LEFT, dt);
+      cam.ProcessKeyboard(LEFT, speedDt);
     if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS)
-      cam.ProcessKeyboard(RIGHT, dt);
+      cam.ProcessKeyboard(RIGHT, speedDt);
   }
 }
+
 void VulkanContext::onResize(int newW, int newH) {
   framebufferResized_ = true;
   newWidth_ = newW;
@@ -164,46 +176,69 @@ void VulkanContext::mainLoop() {
     processInput(dt);
 
     updateChunksAroundPlayer();
+
+    {
+      std::lock_guard<std::mutex> lk(doneMux_);
+      while (!doneQueue_.empty()) {
+        Chunk chunk = std::move(doneQueue_.front());
+        doneQueue_.pop();
+        // store into map, replacing placeholder
+        chunks_[chunk.chunkPos] = std::move(chunk);
+
+        // spawn ECS entity & attach Transform/MeshRef/MaterialRef
+        auto e = registry_.create();
+        const float voxelScale = 0.25f;
+        const int chunkSize = 128;
+        glm::vec3 worldPos = {chunk.chunkPos.x * chunkSize * voxelScale,
+                              chunk.chunkPos.y * chunkSize * voxelScale,
+                              chunk.chunkPos.z * chunkSize * voxelScale};
+        registry_.emplace<Transform>(
+            e, Transform{glm::translate(glm::mat4(1.0f), worldPos)});
+        registry_.emplace<MeshRef>(e, chunks_[chunk.chunkPos].mesh.get());
+        registry_.emplace<MaterialRef>(e, materials_.back().get());
+      }
+    }
     drawFrame();
   }
   vkDeviceWaitIdle(device_);
 }
 
 void VulkanContext::cleanup() {
-  // wait for everything on the GPU to finish
+  // make sure absolutely nothing is in flight
+  vkDeviceWaitIdle(device_);
 
-  // destroy per-frame sync & uniform resources
-  for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
+  // per-frame sync & UBOs
+  for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
     vkDestroySemaphore(device_, renderFinishedSemaphores_[i], nullptr);
     vkDestroySemaphore(device_, imageAvailableSemaphores_[i], nullptr);
     vkDestroyFence(device_, inFlightFences_[i], nullptr);
 
     vkDestroyBuffer(device_, uniformBuffers_[i], nullptr);
-
-    vkDestroyImageView(device_, depthImageView_, nullptr);
-    vkDestroyImage(device_, depthImage_, nullptr);
-    vkFreeMemory(device_, depthImageMemory_, nullptr);
     vkFreeMemory(device_, uniformBuffersMemory_[i], nullptr);
-
-    texture_.Cleanup(device_);
   }
 
-  // destroy descriptor‐set machinery
+  texture_.Cleanup(device_);
+
+  // descriptor sets/layouts
   vkDestroyDescriptorPool(device_, descriptorPool_, nullptr);
   vkDestroyDescriptorSetLayout(device_, globalDescriptorSetLayout_, nullptr);
+  vkDestroyDescriptorSetLayout(device_, materialDescriptorSetLayout_, nullptr);
 
-  // framebuffers & image views
+  // framebuffers & image-views
   for (auto fb : swapchainFramebuffers_)
     vkDestroyFramebuffer(device_, fb, nullptr);
   for (auto iv : swapchainImageViews_)
     vkDestroyImageView(device_, iv, nullptr);
+  vkDestroyImageView(device_, depthImageView_, nullptr);
+  vkDestroyImage(device_, depthImage_, nullptr);
+  vkFreeMemory(device_, depthImageMemory_, nullptr);
 
-  // pipeline & renderpass
+  // pipelines & render pass
   filledPipeline_.Cleanup(device_);
   wireframePipeline_.Cleanup(device_);
   vkDestroyRenderPass(device_, renderPass_, nullptr);
 
-  // swapchain, command pool, device, surface, instance
+  // swapchain, pools, device, surface, instance
   vkDestroySwapchainKHR(device_, swapchain_, nullptr);
   vkDestroyCommandPool(device_, commandPool_, nullptr);
   vkDestroyDevice(device_, nullptr);
@@ -513,7 +548,7 @@ void VulkanContext::drawFrame() {
   vkWaitForFences(device_, 1, &inFlightFences_[currentFrame_], VK_TRUE,
                   UINT64_MAX);
 
-  // 1a) handle any queued resize
+  // 1a) handle resize
   if (framebufferResized_) {
     vkDeviceWaitIdle(device_);
     recreateSwapchain(uint32_t(newWidth_), uint32_t(newHeight_));
@@ -529,14 +564,14 @@ void VulkanContext::drawFrame() {
                         imageAvailableSemaphores_[currentFrame_],
                         VK_NULL_HANDLE, &imageIndex);
 
-  // 3) update UBO for this frame
+  // 3) update UBO
   updateUniformBuffer(currentFrame_);
 
   // 4) record commands
-  auto cmd = commandBuffers_[currentFrame_];
+  VkCommandBuffer cmd = commandBuffers_[currentFrame_];
   recordCommandBuffer(cmd, imageIndex, currentFrame_);
 
-  // 5) submit
+  // 5) submit under lock
   VkSemaphore waitSems[] = {imageAvailableSemaphores_[currentFrame_]};
   VkPipelineStageFlags ws[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
   VkSemaphore signalSems[] = {renderFinishedSemaphores_[currentFrame_]};
@@ -550,10 +585,13 @@ void VulkanContext::drawFrame() {
   si.signalSemaphoreCount = 1;
   si.pSignalSemaphores = signalSems;
 
-  CHECK_VK_RESULT(
-      vkQueueSubmit(graphicsQueue_, 1, &si, inFlightFences_[currentFrame_]));
+  {
+    std::lock_guard<std::mutex> ql(queueMux_);
+    CHECK_VK_RESULT(
+        vkQueueSubmit(graphicsQueue_, 1, &si, inFlightFences_[currentFrame_]));
+  }
 
-  // 6) present
+  // 6) present under same lock
   VkPresentInfoKHR pi{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
   pi.waitSemaphoreCount = 1;
   pi.pWaitSemaphores = signalSems;
@@ -561,15 +599,25 @@ void VulkanContext::drawFrame() {
   pi.pSwapchains = &swapchain_;
   pi.pImageIndices = &imageIndex;
 
-  auto res = vkQueuePresentKHR(graphicsQueue_, &pi);
+  VkResult res;
+  {
+    std::lock_guard<std::mutex> ql(queueMux_);
+    res = vkQueuePresentKHR(graphicsQueue_, &pi);
+  }
   if (res == VK_ERROR_OUT_OF_DATE_KHR || res == VK_SUBOPTIMAL_KHR) {
-    // defer to next frame’s resize logic
     framebufferResized_ = true;
   } else if (res != VK_SUCCESS) {
     throw std::runtime_error("Failed to present swapchain image!");
   }
 
-  // 7) next frame
+  // 7) now that GPU is idle, destroy any deferred chunks
+  {
+    std::lock_guard<std::mutex> ql(queueMux_);
+    vkQueueWaitIdle(graphicsQueue_);
+  }
+  pendingDestroy_.clear();
+
+  // 8) next frame
   currentFrame_ = (currentFrame_ + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
@@ -885,43 +933,15 @@ void VulkanContext::updateChunksAroundPlayer() {
       desiredChunks.insert(coord);
 
       if (chunks_.count(coord) == 0) {
-        // New chunk needed: generate it
-        Chunk chunk;
-        chunk.chunkPos = coord;
-        chunk.volume = std::make_unique<VoxelVolume>();
-
-        for (int x = 0; x < chunkSize; ++x)
-          for (int y = 0; y < chunkSize; ++y)
-            for (int z = 0; z < chunkSize; ++z) {
-              int wx = coord.x * chunkSize + x;
-              int wy = y;
-              int wz = coord.z * chunkSize + z;
-              Voxel voxel = generateTerrainVoxel(wx, wy, wz);
-              if (voxel.solid)
-                chunk.volume->insert({x, y, z}, voxel);
-            }
-
-        std::vector<Vertex> verts;
-        std::vector<uint32_t> inds;
-        chunk.volume->generateMesh(verts, inds);
-        chunk.mesh =
-            std::make_unique<Mesh>(device_, physicalDevice_, commandPool_,
-                                   graphicsQueue_, verts, inds);
-        chunk.dirty = false;
-
-        chunks_[coord] = std::move(chunk);
-
-        // Create ECS entity for this chunk
-        auto voxelEntity = registry_.create();
-
-        glm::vec3 worldPos = glm::vec3(coord.x * chunkSize * voxelScale,
-                                       coord.y * chunkSize * voxelScale,
-                                       coord.z * chunkSize * voxelScale);
-
-        registry_.emplace<Transform>(
-            voxelEntity, Transform{glm::translate(glm::mat4(1.0f), worldPos)});
-        registry_.emplace<MeshRef>(voxelEntity, chunks_[coord].mesh.get());
-        registry_.emplace<MaterialRef>(voxelEntity, materials_.back().get());
+        // placeholder
+        chunks_[coord] = Chunk{};
+        chunks_[coord].chunkPos = coord;
+        // schedule a worker
+        {
+          std::lock_guard<std::mutex> lk(taskMux_);
+          taskQueue_.push(coord);
+        }
+        taskCV_.notify_one();
       }
     }
   }
@@ -949,64 +969,123 @@ void VulkanContext::updateChunksAroundPlayer() {
         break;
       }
     }
-    // Remove from map
+    pendingDestroy_.push_back(std::move(chunks_[coord]));
     chunks_.erase(coord);
   }
 }
 
-void VulkanContext::initChunks() {
-  const int range = 1; // how many chunks around (0,0,0)
+// Spawn N threads, each with its own VkCommandPool, to pull coords from
+// taskQueue_
 
-  for (int cx = -range; cx <= range; ++cx) {
-    for (int cz = -range; cz <= range; ++cz) {
-      glm::ivec3 chunkCoord = {cx, 0, cz};
-      Chunk chunk;
-      chunk.chunkPos = chunkCoord;
-      chunk.volume = std::make_unique<VoxelVolume>();
+void VulkanContext::startWorkerThreads() {
+  const unsigned int N = std::max(1u, std::thread::hardware_concurrency());
+  for (unsigned int i = 0; i < N; ++i) {
+    workers_.emplace_back([this]() {
+      // create a thread-local command pool
+      VkCommandPoolCreateInfo cpci{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
+      cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+      cpci.queueFamilyIndex = findGraphicsQueueFamily();
+      VkCommandPool threadPool;
+      vkCreateCommandPool(device_, &cpci, nullptr, &threadPool);
 
-      for (int x = 0; x < 128; ++x) {
-        for (int y = 0; y < 128; ++y) {
-          for (int z = 0; z < 128; ++z) {
-            int wx = cx * 128 + x;
-            int wy = y;
-            int wz = cz * 128 + z;
+      while (true) {
+        glm::ivec3 coord;
+        { // wait for work or shutdown
+          std::unique_lock<std::mutex> lk(taskMux_);
+          taskCV_.wait(lk,
+                       [this] { return stopWorkers_ || !taskQueue_.empty(); });
+          if (stopWorkers_ && taskQueue_.empty())
+            break;
+          coord = taskQueue_.front();
+          taskQueue_.pop();
+        }
 
-            Voxel voxel = generateTerrainVoxel(wx, wy, wz);
-            if (voxel.solid)
-              chunk.volume->insert({x, y, z}, voxel);
-          }
+        // --- CPU: generate & mesh on the CPU side ---
+        std::vector<Vertex> verts;
+        std::vector<uint32_t> inds;
+        {
+          Chunk chunk;
+          chunk.chunkPos = coord;
+          chunk.volume = std::make_unique<VoxelVolume>();
+          const int chunkSize = 128;
+          for (int x = 0; x < chunkSize; ++x)
+            for (int y = 0; y < chunkSize; ++y)
+              for (int z = 0; z < chunkSize; ++z) {
+                int wx = coord.x * chunkSize + x;
+                int wy = y;
+                int wz = coord.z * chunkSize + z;
+                Voxel v = generateTerrainVoxel(wx, wy, wz);
+                if (v.solid)
+                  chunk.volume->insert({x, y, z}, v);
+              }
+          chunk.volume->generateMesh(verts, inds);
+        }
+
+        // --- GPU upload on this thread, but serialize access to the single
+        // queue: ---
+        std::unique_ptr<Mesh> mesh;
+        {
+          std::lock_guard<std::mutex> ql(queueMux_);
+          mesh = std::make_unique<Mesh>(device_, physicalDevice_, threadPool,
+                                        graphicsQueue_, verts, inds);
+        }
+
+        // push into doneQueue_
+        {
+          std::lock_guard<std::mutex> lk(doneMux_);
+          Chunk out;
+          out.chunkPos = coord;
+          out.volume = nullptr; // you already filled volume above
+          out.mesh = std::move(mesh);
+          out.dirty = false;
+          doneQueue_.push(std::move(out));
         }
       }
 
-      std::vector<Vertex> verts;
-      std::vector<uint32_t> inds;
-      chunk.volume->generateMesh(verts, inds);
-      chunk.mesh = std::make_unique<Mesh>(
-          device_, physicalDevice_, commandPool_, graphicsQueue_, verts, inds);
-      chunk.dirty = false;
+      // before we destroy our threadPool, make sure all its submissions are
+      // done:
+      {
+        std::lock_guard<std::mutex> ql(queueMux_);
+        vkQueueWaitIdle(graphicsQueue_);
+      }
+      vkDestroyCommandPool(device_, threadPool, nullptr);
+    });
+  }
+}
 
-      // Store the chunk
-      chunks_[chunkCoord] = std::move(chunk);
+// Signal shutdown, wake all threads, join them
 
-      // ➡️ Now create an ECS entity for this chunk
-      auto voxelEntity = registry_.create();
+void VulkanContext::stopWorkerThreads() {
+  // tell them to exit
+  {
+    std::lock_guard<std::mutex> lk(taskMux_);
+    stopWorkers_ = true;
+  }
+  taskCV_.notify_all();
 
-      // Set the world transform (position based on chunk coordinate)
+  // wait for any in-flight GPU work to finish—
+  // don't destroy pools until that’s done
+  vkDeviceWaitIdle(device_);
 
-      const float voxelScale = 0.25f;
-      glm::vec3 worldPos =
-          glm::vec3(chunkCoord.x * 128 * voxelScale,
-                    chunkCoord.y * 128 * voxelScale * voxelScale,
-                    chunkCoord.z * 128 * voxelScale);
+  // now join
+  for (auto &t : workers_)
+    t.join();
+  workers_.clear();
+}
 
-      registry_.emplace<Transform>(
-          voxelEntity, Transform{glm::translate(glm::mat4(1.0f), worldPos)});
-
-      // Attach the mesh pointer
-      registry_.emplace<MeshRef>(voxelEntity, chunks_[chunkCoord].mesh.get());
-
-      // Attach the material (just reuse the first material you made)
-      registry_.emplace<MaterialRef>(voxelEntity, materials_.back().get());
+void VulkanContext::initChunks() {
+  const int range = 1; // how many around (0,0)
+  for (int cx = -range; cx <= range; ++cx) {
+    for (int cz = -range; cz <= range; ++cz) {
+      glm::ivec3 coord{cx, 0, cz};
+      // placeholder so updateChunks won’t re‐enqueue
+      chunks_[coord] = Chunk{};
+      chunks_[coord].chunkPos = coord;
+      {
+        std::lock_guard<std::mutex> lk(taskMux_);
+        taskQueue_.push(coord);
+      }
     }
   }
+  taskCV_.notify_all();
 }
