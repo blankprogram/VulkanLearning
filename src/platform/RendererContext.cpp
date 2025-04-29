@@ -28,8 +28,10 @@ void RendererContext::init(GLFWwindow *window) {
   extent_ = swapchain_->getExtent(); // store for viewport/scissor
   createRenderPass();
   createFramebuffers();
+
+  std::string shaderDir = "/assets/shaders"; // or wherever CMake writes them
   pipeline_.init(device_->device, renderPass_, descriptorMgr_.getLayout(),
-                 SPIRV_OUT "/vert.spv", SPIRV_OUT "/frag.spv");
+                 shaderDir + "/vert.spv", shaderDir + "/frag.spv");
 
   // 2) allocate command buffers
   VkCommandBufferAllocateInfo allocInfo{
@@ -103,11 +105,11 @@ void RendererContext::beginFrame() {
   }
 
   // update UBO for this frame
-  glm::mat4 vp = cam_.viewProjection();
+  glm::mat4 viewProj = cam_.viewProjection();
   void *ptr = nullptr;
-  vkMapMemory(device_->device, uniformMemories_[currentFrame_], 0, sizeof(vp),
-              0, &ptr);
-  std::memcpy(ptr, &vp, sizeof(vp));
+  vkMapMemory(device_->device, uniformMemories_[currentFrame_], 0,
+              sizeof(viewProj), 0, &ptr);
+  std::memcpy(ptr, &viewProj, sizeof(viewProj));
   vkUnmapMemory(device_->device, uniformMemories_[currentFrame_]);
 
   // start the render‐pass
@@ -196,7 +198,9 @@ void RendererContext::recreateSwapchain() {
   extent_ = swapchain_->getExtent();
   createRenderPass();
   createFramebuffers();
-  pipeline_.init(/* same args as above */);
+  std::string shaderDir = "/assets/shaders"; // or wherever CMake writes them
+  pipeline_.init(device_->device, renderPass_, descriptorMgr_.getLayout(),
+                 shaderDir + "/vert.spv", shaderDir + "/frag.spv");
   swapchain_->recreate();
 }
 

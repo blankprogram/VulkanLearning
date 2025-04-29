@@ -100,6 +100,8 @@ void Swapchain::create() {
   createInfo.clipped = VK_TRUE;
   createInfo.oldSwapchain = VK_NULL_HANDLE;
 
+  extent_ = createInfo.imageExtent;
+
   if (vkCreateSwapchainKHR(device_->device, &createInfo, nullptr,
                            &swapchain_) != VK_SUCCESS) {
     throw std::runtime_error("Failed to create swapchain");

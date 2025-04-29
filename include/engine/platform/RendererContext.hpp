@@ -31,6 +31,7 @@ public:
 private:
   static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
   void init(GLFWwindow *window);
+  void createRenderPass();
   void createSyncObjects();
   void createUniforms();
   void createFramebuffers();
