@@ -15,6 +15,7 @@
 #include "thirdparty/entt.hpp"
 #include <GLFW/glfw3.h>
 #include <chrono>
+#include <cmath>
 #include <cstdlib>
 #include <cstring>
 #include <glm/glm.hpp>
@@ -78,6 +79,8 @@ private:
 
   Voxel generateTerrainVoxel(int wx, int wy, int wz);
   void initChunks();
+
+  void updateChunksAroundPlayer();
   bool framebufferResized_ = false;
   GLFWwindow *window_;
   uint32_t width_, height_;
@@ -151,6 +154,8 @@ private:
   std::unique_ptr<VoxelVolume> volume_;
 
   std::unordered_map<glm::ivec3, Chunk> chunks_;
+
+  glm::ivec3 lastPlayerChunk_{9999, 9999, 9999}; // new: player chunk last frame
 };
 
 #endif // VULKAN_CONTEXT_H

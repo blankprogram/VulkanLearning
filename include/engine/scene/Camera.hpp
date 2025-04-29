@@ -11,7 +11,7 @@ enum CameraMovement { FORWARD, BACKWARD, LEFT, RIGHT };
 class Camera {
 public:
   /// ctor: supply your aspect or use defaults
-  Camera(float aspect, glm::vec3 position = {2.0f, 2.0f, 2.0f},
+  Camera(float aspect, glm::vec3 position = {5.0f, 5.0f, 2.0f},
          glm::vec3 up = {0.0f, 1.0f, 0.0f}, float yaw = -90.0f,
          float pitch = 0.0f);
 
@@ -28,6 +28,7 @@ public:
   /// scroll-wheel zoom
   void ProcessMouseScroll(float yoffset);
 
+  const glm::vec3 &GetPosition() const { return Position; }
   /// what you bind into your UBO
   const glm::mat4 &GetView() const { return view_; }
   const glm::mat4 &GetProj() const { return proj_; }
@@ -42,7 +43,7 @@ private:
   float Yaw, Pitch;
 
   // options
-  float MovementSpeed = 2.5f;
+  float MovementSpeed = 10.0f;
   float MouseSensitivity = 0.1f;
   float Zoom = 45.0f; // fovY in degrees
 

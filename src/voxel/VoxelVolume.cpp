@@ -2,7 +2,7 @@
 #include "engine/voxel/VoxelVolume.hpp"
 
 void VoxelVolume::insert(const glm::ivec3 &pos, const Voxel &voxel) {
-  insertRecursive(root_.get(), pos, 5, voxel); // depth 5 = 32³ volume
+  insertRecursive(root_.get(), pos, 7, voxel); // depth 5 = 32³ volume
 }
 
 void VoxelVolume::insertRecursive(OctreeNode *node, glm::ivec3 pos, int depth,
@@ -35,7 +35,7 @@ void VoxelVolume::insertRecursive(OctreeNode *node, glm::ivec3 pos, int depth,
 }
 
 const Voxel *VoxelVolume::get(const glm::ivec3 &pos) const {
-  return getRecursive(root_.get(), pos, 5);
+  return getRecursive(root_.get(), pos, 7);
 }
 
 const Voxel *VoxelVolume::getRecursive(const OctreeNode *node, glm::ivec3 pos,
@@ -69,10 +69,10 @@ void VoxelVolume::generateMesh(std::vector<Vertex> &outVertices,
                                std::vector<uint32_t> &outIndices) {
   outVertices.clear();
   outIndices.clear();
-
-  for (int x = 0; x < 32; ++x)
-    for (int y = 0; y < 32; ++y)
-      for (int z = 0; z < 32; ++z) {
+  int ChunkSize = 128;
+  for (int x = 0; x < ChunkSize; ++x)
+    for (int y = 0; y < ChunkSize; ++y)
+      for (int z = 0; z < ChunkSize; ++z) {
         glm::ivec3 pos(x, y, z);
         const Voxel *v = get(pos);
         if (v && v->solid) {

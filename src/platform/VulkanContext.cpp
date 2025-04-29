@@ -162,6 +162,8 @@ void VulkanContext::mainLoop() {
 
     glfwPollEvents();
     processInput(dt);
+
+    updateChunksAroundPlayer();
     drawFrame();
   }
   vkDeviceWaitIdle(device_);
@@ -829,22 +831,126 @@ VKAPI_ATTR VkBool32 VKAPI_CALL VulkanContext::debugCallback(
 
 Voxel VulkanContext::generateTerrainVoxel(int wx, int wy, int wz) {
   noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+  float frequency = 0.02f;
+  float amplitude = 20.0f;
 
-  float n = noise.GetNoise((float)wx * 0.05f, (float)wz * 0.05f);
-  int groundHeight = 8 + (int)(5.0f * n);
+  float n =
+      std::fabs(noise.GetNoise((float)wx * frequency, (float)wz * frequency));
+  n = glm::clamp(n, 0.0f, 1.0f);
+
+  // make mountains sharper (optional tweak)
+  n = std::pow(n, 1.5f);
+
+  int groundHeight = 16 + int(amplitude * n);
 
   if (wy <= groundHeight) {
-    // Random brown color
     static std::mt19937 rng(wx * 73856093 ^ wy * 19349663 ^ wz * 83492791);
     static std::uniform_real_distribution<float> dist(0.0f, 1.0f);
 
-    float r = 0.4f + 0.2f * dist(rng); // 0.4 - 0.6
-    float g = 0.2f + 0.2f * dist(rng); // 0.2 - 0.4
-    float b = 0.1f + 0.1f * dist(rng); // 0.1 - 0.2
+    float r = 0.4f + 0.2f * dist(rng);
+    float g = 0.2f + 0.2f * dist(rng);
+    float b = 0.1f + 0.1f * dist(rng);
 
     return Voxel{{r, g, b}, 1.0f, true};
   } else {
     return Voxel{{0.0f, 0.0f, 0.0f}, 1.0f, false};
+  }
+}
+
+void VulkanContext::updateChunksAroundPlayer() {
+  auto view = registry_.view<CameraComponent>();
+  if (view.empty())
+    return;
+
+  auto &camera = view.get<CameraComponent>(*view.begin()).cam;
+
+  glm::vec3 playerPos = camera.GetPosition();
+
+  float voxelScale = 0.25f;
+  int chunkSize = 128; // 32 voxels per chunk
+
+  glm::ivec3 currentChunk = glm::floor(playerPos / (chunkSize * voxelScale));
+
+  if (currentChunk == lastPlayerChunk_)
+    return; // player still in same chunk, no need to update
+
+  lastPlayerChunk_ = currentChunk;
+
+  const int loadDistance = 2; // how many chunks to load around player
+
+  std::unordered_set<glm::ivec3> desiredChunks;
+  for (int dx = -loadDistance; dx <= loadDistance; ++dx) {
+    for (int dz = -loadDistance; dz <= loadDistance; ++dz) {
+      glm::ivec3 coord = currentChunk + glm::ivec3(dx, 0, dz);
+      desiredChunks.insert(coord);
+
+      if (chunks_.count(coord) == 0) {
+        // New chunk needed: generate it
+        Chunk chunk;
+        chunk.chunkPos = coord;
+        chunk.volume = std::make_unique<VoxelVolume>();
+
+        for (int x = 0; x < chunkSize; ++x)
+          for (int y = 0; y < chunkSize; ++y)
+            for (int z = 0; z < chunkSize; ++z) {
+              int wx = coord.x * chunkSize + x;
+              int wy = y;
+              int wz = coord.z * chunkSize + z;
+              Voxel voxel = generateTerrainVoxel(wx, wy, wz);
+              if (voxel.solid)
+                chunk.volume->insert({x, y, z}, voxel);
+            }
+
+        std::vector<Vertex> verts;
+        std::vector<uint32_t> inds;
+        chunk.volume->generateMesh(verts, inds);
+        chunk.mesh =
+            std::make_unique<Mesh>(device_, physicalDevice_, commandPool_,
+                                   graphicsQueue_, verts, inds);
+        chunk.dirty = false;
+
+        chunks_[coord] = std::move(chunk);
+
+        // Create ECS entity for this chunk
+        auto voxelEntity = registry_.create();
+
+        glm::vec3 worldPos = glm::vec3(coord.x * chunkSize * voxelScale,
+                                       coord.y * chunkSize * voxelScale,
+                                       coord.z * chunkSize * voxelScale);
+
+        registry_.emplace<Transform>(
+            voxelEntity, Transform{glm::translate(glm::mat4(1.0f), worldPos)});
+        registry_.emplace<MeshRef>(voxelEntity, chunks_[coord].mesh.get());
+        registry_.emplace<MaterialRef>(voxelEntity, materials_.back().get());
+      }
+    }
+  }
+
+  // Now unload distant chunks
+  std::vector<glm::ivec3> toDelete;
+  for (const auto &[coord, chunk] : chunks_) {
+    if (desiredChunks.find(coord) == desiredChunks.end()) {
+      toDelete.push_back(coord);
+    }
+  }
+
+  for (auto coord : toDelete) {
+    // Find and destroy corresponding ECS entity
+    auto view = registry_.view<Transform, MeshRef>();
+    for (auto e : view) {
+      auto &tf = view.get<Transform>(e);
+      glm::vec3 entityPos = glm::vec3(tf.model[3]);
+      glm::vec3 chunkWorldPos = glm::vec3(coord.x * chunkSize * voxelScale,
+                                          coord.y * chunkSize * voxelScale,
+                                          coord.z * chunkSize * voxelScale);
+
+      if (glm::distance(entityPos, chunkWorldPos) < 1e-3f) {
+        registry_.destroy(e);
+        break;
+      }
+    }
+    // Remove from map
+    chunks_.erase(coord);
   }
 }
 
@@ -858,12 +964,12 @@ void VulkanContext::initChunks() {
       chunk.chunkPos = chunkCoord;
       chunk.volume = std::make_unique<VoxelVolume>();
 
-      for (int x = 0; x < 32; ++x) {
-        for (int y = 0; y < 32; ++y) {
-          for (int z = 0; z < 32; ++z) {
-            int wx = cx * 32 + x;
+      for (int x = 0; x < 128; ++x) {
+        for (int y = 0; y < 128; ++y) {
+          for (int z = 0; z < 128; ++z) {
+            int wx = cx * 128 + x;
             int wy = y;
-            int wz = cz * 32 + z;
+            int wz = cz * 128 + z;
 
             Voxel voxel = generateTerrainVoxel(wx, wy, wz);
             if (voxel.solid)
@@ -889,9 +995,9 @@ void VulkanContext::initChunks() {
 
       const float voxelScale = 0.25f;
       glm::vec3 worldPos =
-          glm::vec3(chunkCoord.x * 32 * voxelScale,
-                    chunkCoord.y * 32 * voxelScale * voxelScale,
-                    chunkCoord.z * 32 * voxelScale);
+          glm::vec3(chunkCoord.x * 128 * voxelScale,
+                    chunkCoord.y * 128 * voxelScale * voxelScale,
+                    chunkCoord.z * 128 * voxelScale);
 
       registry_.emplace<Transform>(
           voxelEntity, Transform{glm::translate(glm::mat4(1.0f), worldPos)});
