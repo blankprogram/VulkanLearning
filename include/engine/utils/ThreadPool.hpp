@@ -1,22 +1,45 @@
-#include "engine/platform/VulkanDevice.hpp"
-#include "engine/utils/VulkanHelpers.hpp"
-#include "engine/voxel/VoxelVolume.hpp"
-#include "engine/world/Chunk.hpp"
+#pragma once
+
+#include "engine/render/Mesh.hpp"
 #include <condition_variable>
-#include <glm/glm.hpp>
+#include <functional>
+#include <glm/vec3.hpp>
 #include <mutex>
 #include <queue>
 #include <thread>
 #include <vector>
-#include <vulkan/vulkan.h>
+
+namespace engine::utils {
+
+struct MeshResult {
+  glm::ivec3 coord;
+  std::unique_ptr<Mesh> mesh;
+};
+
 class ThreadPool {
 public:
-  ThreadPool(VulkanDevice &device, VkQueue queue);
+  ThreadPool(size_t workerCount = std::thread::hardware_concurrency());
   ~ThreadPool();
-  void enqueue(const glm::ivec3 &coord);
+
+  // enqueue any job
+  void enqueueJob(std::function<void()> job);
+
+  // enqueue a meshing job: generate mesh & push result
+  void enqueueMesh(const glm::ivec3 &coord,
+                   std::function<std::unique_ptr<Mesh>()> func);
+
+  // call on main thread to collect completed MeshResults
+  std::vector<MeshResult> collectResults();
 
 private:
   std::vector<std::thread> workers_;
-  std::queue<glm::ivec3> taskQueue_;
-  // mutex, condition variable...
+  std::queue<std::function<void()>> jobs_;
+  std::mutex jobsMtx_;
+  std::condition_variable jobsCv_;
+  bool stop_ = false;
+
+  std::queue<MeshResult> results_;
+  std::mutex resultsMtx_;
 };
+
+} // namespace engine::utils

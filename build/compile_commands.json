@@ -43,6 +43,24 @@
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -std=gnu++20 -o CMakeFiles/engine.dir/platform/CommandManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp",
+  "output": "src/CMakeFiles/engine.dir/platform/CommandManager.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -std=gnu++20 -o CMakeFiles/engine.dir/platform/DescriptorManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/DescriptorManager.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/platform/DescriptorManager.cpp",
+  "output": "src/CMakeFiles/engine.dir/platform/DescriptorManager.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -std=gnu++20 -o CMakeFiles/engine.dir/platform/FrameSync.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/FrameSync.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/platform/FrameSync.cpp",
+  "output": "src/CMakeFiles/engine.dir/platform/FrameSync.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
   "command": "/usr/bin/c++ -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -std=gnu++20 -o CMakeFiles/engine.dir/platform/InputManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/InputManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/InputManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/InputManager.cpp.o"

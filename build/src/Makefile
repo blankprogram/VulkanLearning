@@ -275,6 +275,78 @@ math/Math.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/math/Math.cpp.s
 .PHONY : math/Math.cpp.s
 
+platform/CommandManager.o: platform/CommandManager.cpp.o
+.PHONY : platform/CommandManager.o
+
+# target to build an object file
+platform/CommandManager.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/CommandManager.cpp.o
+.PHONY : platform/CommandManager.cpp.o
+
+platform/CommandManager.i: platform/CommandManager.cpp.i
+.PHONY : platform/CommandManager.i
+
+# target to preprocess a source file
+platform/CommandManager.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/CommandManager.cpp.i
+.PHONY : platform/CommandManager.cpp.i
+
+platform/CommandManager.s: platform/CommandManager.cpp.s
+.PHONY : platform/CommandManager.s
+
+# target to generate assembly for a file
+platform/CommandManager.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/CommandManager.cpp.s
+.PHONY : platform/CommandManager.cpp.s
+
+platform/DescriptorManager.o: platform/DescriptorManager.cpp.o
+.PHONY : platform/DescriptorManager.o
+
+# target to build an object file
+platform/DescriptorManager.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/DescriptorManager.cpp.o
+.PHONY : platform/DescriptorManager.cpp.o
+
+platform/DescriptorManager.i: platform/DescriptorManager.cpp.i
+.PHONY : platform/DescriptorManager.i
+
+# target to preprocess a source file
+platform/DescriptorManager.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/DescriptorManager.cpp.i
+.PHONY : platform/DescriptorManager.cpp.i
+
+platform/DescriptorManager.s: platform/DescriptorManager.cpp.s
+.PHONY : platform/DescriptorManager.s
+
+# target to generate assembly for a file
+platform/DescriptorManager.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/DescriptorManager.cpp.s
+.PHONY : platform/DescriptorManager.cpp.s
+
+platform/FrameSync.o: platform/FrameSync.cpp.o
+.PHONY : platform/FrameSync.o
+
+# target to build an object file
+platform/FrameSync.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/FrameSync.cpp.o
+.PHONY : platform/FrameSync.cpp.o
+
+platform/FrameSync.i: platform/FrameSync.cpp.i
+.PHONY : platform/FrameSync.i
+
+# target to preprocess a source file
+platform/FrameSync.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/FrameSync.cpp.i
+.PHONY : platform/FrameSync.cpp.i
+
+platform/FrameSync.s: platform/FrameSync.cpp.s
+.PHONY : platform/FrameSync.s
+
+# target to generate assembly for a file
+platform/FrameSync.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/FrameSync.cpp.s
+.PHONY : platform/FrameSync.cpp.s
+
 platform/InputManager.o: platform/InputManager.cpp.o
 .PHONY : platform/InputManager.o
 
@@ -902,6 +974,15 @@ help:
 	@echo "... math/Math.o"
 	@echo "... math/Math.i"
 	@echo "... math/Math.s"
+	@echo "... platform/CommandManager.o"
+	@echo "... platform/CommandManager.i"
+	@echo "... platform/CommandManager.s"
+	@echo "... platform/DescriptorManager.o"
+	@echo "... platform/DescriptorManager.i"
+	@echo "... platform/DescriptorManager.s"
+	@echo "... platform/FrameSync.o"
+	@echo "... platform/FrameSync.i"
+	@echo "... platform/FrameSync.s"
 	@echo "... platform/InputManager.o"
 	@echo "... platform/InputManager.i"
 	@echo "... platform/InputManager.s"
