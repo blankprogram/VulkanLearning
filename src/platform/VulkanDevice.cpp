@@ -85,6 +85,13 @@ VulkanDevice::VulkanDevice(GLFWwindow *window) {
 
   pickPhysicalDevice();
   createLogicalDevice();
+
+  VmaAllocatorCreateInfo allocInfo{};
+  allocInfo.physicalDevice = physicalDevice;
+  allocInfo.device = device;
+  allocInfo.instance = instance;
+  // If you’re on multiple queues / transfer queues, set those here:
+  vmaCreateAllocator(&allocInfo, &allocator);
 }
 
 void VulkanDevice::createInstance() {

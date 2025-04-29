@@ -47,8 +47,9 @@ private:
   VkCommandBuffer commandBuffers_[MAX_FRAMES_IN_FLIGHT]{};
 
   DescriptorManager descriptorMgr_;
-  VkBuffer uniformBuffer_;
-  VkDeviceMemory uniformMemory_;
+  VkBuffer uniformBuffer_{VK_NULL_HANDLE};
+  VmaAllocation uniformAllocation_{VK_NULL_HANDLE};
+  VmaAllocator allocator_{VK_NULL_HANDLE};
   engine::render::Camera cam_;
 
   VkRenderPass renderPass_{VK_NULL_HANDLE};

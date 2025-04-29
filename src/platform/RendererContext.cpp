@@ -26,7 +26,11 @@ void RendererContext::init(GLFWwindow *window) {
   swapchain_ =
       std::make_unique<Swapchain>(device_.get(), device_->surface, window);
   frameSync_.init(device_->device, MAX_FRAMES_IN_FLIGHT);
-
+  VmaAllocatorCreateInfo ai{};
+  ai.physicalDevice = device_->physicalDevice;
+  ai.device = device_->device;
+  ai.instance = device_->instance;
+  vmaCreateAllocator(&ai, &allocator_);
   extent_ = swapchain_->getExtent();
   createRenderPass();
   createFramebuffers();
@@ -55,32 +59,42 @@ void RendererContext::createUniforms() {
   VkDevice dev = device_->device;
   VkPhysicalDevice phys = device_->physicalDevice;
 
-  // allocate one big HOST_VISIBLE UBO for all frames
+  // — Allocate one big HOST_VISIBLE, coherent UBO for all frames via VMA —
   VkDeviceSize totalSize = sizeof(glm::mat4) * MAX_FRAMES_IN_FLIGHT;
-  engine::utils::CreateHostVisibleBuffer(dev, phys, totalSize,
-                                         VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                                         uniformBuffer_, uniformMemory_);
+  VkBufferCreateInfo bufferInfo{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
+  bufferInfo.size = totalSize;
+  bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
 
-  // descriptor: only one set, dynamic
+  VmaAllocationCreateInfo allocInfo{};
+  allocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+  allocInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                            VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+
+  // allocator_ must have been created in init()
+  vmaCreateBuffer(allocator_, &bufferInfo, &allocInfo, &uniformBuffer_,
+                  &uniformAllocation_, nullptr);
+
+  // — Descriptor: one set, dynamic UBO —
   descriptorMgr_.init(dev, 1);
 
-  VkDescriptorBufferInfo bi{};
-  bi.buffer = uniformBuffer_;
-  bi.offset = 0;
-  bi.range = sizeof(glm::mat4);
+  VkDescriptorBufferInfo dbi{};
+  dbi.buffer = uniformBuffer_;
+  dbi.offset = 0;
+  dbi.range = sizeof(glm::mat4);
 
-  VkWriteDescriptorSet w{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
-  w.dstSet = descriptorMgr_.getDescriptorSets()[0];
-  w.dstBinding = 0;
-  w.dstArrayElement = 0;
-  w.descriptorCount = 1;
-  w.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-  w.pBufferInfo = &bi;
-  vkUpdateDescriptorSets(dev, 1, &w, 0, nullptr);
+  VkWriteDescriptorSet write{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
+  write.dstSet = descriptorMgr_.getDescriptorSets()[0];
+  write.dstBinding = 0;
+  write.dstArrayElement = 0;
+  write.descriptorCount = 1;
+  write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+  write.pBufferInfo = &dbi;
+
+  vkUpdateDescriptorSets(dev, 1, &write, 0, nullptr);
 }
 
 void RendererContext::beginFrame() {
-  // wait / acquire
+  // 1) Wait for last frame’s fence and acquire the next swapchain image
   VkFence fence = frameSync_.getInFlightFence(currentFrame_);
   vkWaitForFences(device_->device, 1, &fence, VK_TRUE, UINT64_MAX);
   vkResetFences(device_->device, 1, &fence);
@@ -89,7 +103,6 @@ void RendererContext::beginFrame() {
       device_->device, swapchain_->getSwapchain(), UINT64_MAX,
       frameSync_.getImageAvailable(currentFrame_), VK_NULL_HANDLE,
       &currentImageIndex_);
-
   if (res == VK_ERROR_OUT_OF_DATE_KHR) {
     recreateSwapchain();
     return;
@@ -97,21 +110,23 @@ void RendererContext::beginFrame() {
     throw std::runtime_error("Failed to acquire swapchain image!");
   }
 
-  // update UBO for this frame
+  // 2) Update our per-frame UBO via VMA
   glm::mat4 viewProj = cam_.viewProjection();
-  void *ptr = nullptr;
-  VkDeviceSize offset = sizeof(glm::mat4) * currentFrame_;
-  vkMapMemory(device_->device, uniformMemory_, offset, sizeof(viewProj), 0,
-              &ptr);
-  std::memcpy(ptr, glm::value_ptr(viewProj), sizeof(viewProj));
-  vkUnmapMemory(device_->device, uniformMemory_);
+  void *mapped;
+  // Map once per frame
+  vmaMapMemory(allocator_, uniformAllocation_, &mapped);
+  // Copy into the slice for this frame
+  std::memcpy((char *)mapped + sizeof(glm::mat4) * currentFrame_, &viewProj,
+              sizeof(viewProj));
+  vmaUnmapMemory(allocator_, uniformAllocation_);
 
-  // record commands
+  // 3) Begin recording commands into today's command buffer
   currentCommandBuffer_ = commandBuffers_[currentFrame_];
   VkCommandBufferBeginInfo bi{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
   bi.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
   vkBeginCommandBuffer(currentCommandBuffer_, &bi);
 
+  // 4) Begin render pass
   VkClearValue clear{.color = {{0.1f, 0.1f, 0.1f, 1.0f}}};
   VkRenderPassBeginInfo rpbi{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
   rpbi.renderPass = renderPass_;
@@ -122,19 +137,20 @@ void RendererContext::beginFrame() {
   vkCmdBeginRenderPass(currentCommandBuffer_, &rpbi,
                        VK_SUBPASS_CONTENTS_INLINE);
 
+  // 5) Bind pipeline and descriptor set with dynamic offset
   vkCmdBindPipeline(currentCommandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
                     pipeline_.pipeline);
 
-  // bind the single dynamic UBO with frame-specific offset
-  uint32_t dynOffset = uint32_t(offset);
+  uint32_t dynamicOffset = uint32_t(sizeof(glm::mat4) * currentFrame_);
   vkCmdBindDescriptorSets(currentCommandBuffer_,
                           VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_.layout,
                           0, // firstSet
                           1, // descriptorCount
                           &descriptorMgr_.getDescriptorSets()[0],
                           1, // dynamicOffsetCount
-                          &dynOffset);
+                          &dynamicOffset);
 
+  // 6) Set viewport & scissor
   VkViewport vp{0.f, 0.f, float(extent_.width), float(extent_.height),
                 0.f, 1.f};
   vkCmdSetViewport(currentCommandBuffer_, 0, 1, &vp);
@@ -220,16 +236,30 @@ void RendererContext::recreateSwapchain() {
 }
 
 void RendererContext::cleanup() {
-  vkDestroyBuffer(device_->device, uniformBuffer_, nullptr);
-  vkFreeMemory(device_->device, uniformMemory_, nullptr);
+  // 1) Destroy the VMA‐allocated UBO
+  vmaDestroyBuffer(allocator_, uniformBuffer_, uniformAllocation_);
+  // 2) Destroy the allocator itself
+  vmaDestroyAllocator(allocator_);
 
+  // 3) Cleanup descriptor‐set layout & pool
   descriptorMgr_.cleanup(device_->device);
+  // 4) Cleanup semaphores & fences
   frameSync_.cleanup(device_->device);
 
-  for (auto fb : framebuffers_)
+  // 5) Destroy all framebuffers
+  for (auto fb : framebuffers_) {
     vkDestroyFramebuffer(device_->device, fb, nullptr);
+  }
+  framebuffers_.clear();
+
+  // 6) Destroy the render pass
   vkDestroyRenderPass(device_->device, renderPass_, nullptr);
+
+  // 7) Cleanup swapchain (image‐views + swapchain handle) and free it
+  swapchain_->cleanup();
   swapchain_.reset();
+
+  // 8) Finally destroy the Vulkan device & instance
   device_.reset();
 }
 

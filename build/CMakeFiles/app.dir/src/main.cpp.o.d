@@ -154,6 +154,7 @@ CMakeFiles/app.dir/src/main.cpp.o: \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
  /usr/include/GLFW/glfw3.h /usr/include/GL/gl.h /usr/include/GL/glext.h \
  /usr/include/KHR/khrplatform.h /usr/include/c++/14/iostream \
  /usr/include/c++/14/ostream /usr/include/c++/14/ios \

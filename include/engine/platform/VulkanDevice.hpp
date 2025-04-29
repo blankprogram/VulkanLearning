@@ -1,5 +1,6 @@
 #pragma once
 #define GLFW_INCLUDE_VULKAN
+#include "externals/vk_mem_alloc.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <stdexcept>
@@ -25,6 +26,7 @@ private:
   void createInstance();
   void pickPhysicalDevice();
   void createLogicalDevice();
+  VmaAllocator allocator;
 
   uint32_t graphicsQueueFamilyIndex; // Needed to make command pool
 };

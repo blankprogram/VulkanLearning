@@ -4,7 +4,8 @@ src/CMakeFiles/engine.dir/utils/ThreadPool.cpp.o: \
  /home/jam/Documents/code/VulkanLearning/include/engine/utils/ThreadPool.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/render/Mesh.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
- /usr/include/GLFW/glfw3.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
+ /usr/include/vulkan/vulkan.h /usr/include/vulkan/vk_platform.h \
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -22,7 +23,6 @@ src/CMakeFiles/engine.dir/utils/ThreadPool.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /usr/include/vulkan/vulkan.h /usr/include/vulkan/vk_platform.h \
  /usr/include/vulkan/vulkan_core.h \
  /usr/include/vk_video/vulkan_video_codec_h264std.h \
  /usr/include/vk_video/vulkan_video_codecs_common.h \
@@ -59,9 +59,10 @@ src/CMakeFiles/engine.dir/utils/ThreadPool.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h /usr/include/X11/X.h \
  /usr/include/X11/Xfuncproto.h /usr/include/X11/Xosdefs.h \
- /usr/include/vulkan/vulkan_xlib.h /usr/include/GL/gl.h \
- /usr/include/GL/glext.h /usr/include/KHR/khrplatform.h \
- /usr/include/c++/14/iostream /usr/include/c++/14/bits/requires_hosted.h \
+ /usr/include/vulkan/vulkan_xlib.h /usr/include/GLFW/glfw3.h \
+ /usr/include/GL/gl.h /usr/include/GL/glext.h \
+ /usr/include/KHR/khrplatform.h /usr/include/c++/14/iostream \
+ /usr/include/c++/14/bits/requires_hosted.h \
  /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/14/bits/os_defines.h \
  /usr/include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h \
