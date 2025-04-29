@@ -39,12 +39,14 @@ void RendererContext::beginFrame() {
     throw std::runtime_error("failed to acquire swap chain image!");
   }
 
-  // Command buffer recording should happen here
+  currentCommandBuffer_ = commandBuffers_[currentFrame_];
+  CommandBufferRecorder recorder(currentCommandBuffer_);
 }
 
 void RendererContext::endFrame() {
   // Replace with actual command buffer from your command pool system
-  VkCommandBuffer commandBuffer = VK_NULL_HANDLE; // <- Replace with actual one
+
+  VkCommandBuffer commandBuffer = currentCommandBuffer_;
 
   VkSemaphore waitSemaphores[] = {frameSync_.getImageAvailable(currentFrame_)};
   VkPipelineStageFlags waitStages[] = {
