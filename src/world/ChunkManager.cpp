@@ -1,44 +1,46 @@
-// src/world/ChunkManager.cpp
 #include "engine/world/ChunkManager.hpp"
 #include "engine/voxel/VoxelMesher.hpp"
-#include "engine/voxel/VoxelVolume.hpp"
 #include "engine/world/TerrainGenerator.hpp"
 
 #include <cmath> // std::floor
 #include <glm/glm.hpp>
 
-namespace engine::world {
+using namespace engine::world;
+using engine::voxel::VoxelMesher;
 
-void ChunkManager::initChunks() { updateChunks(glm::vec3{0.0f, 0.0f, 0.0f}); }
+void ChunkManager::initChunks(engine::utils::ThreadPool &tp) {
+  // generate around origin
+  updateChunks(glm::vec3{0, 0, 0}, tp);
+}
 
-void ChunkManager::updateChunks(const glm::vec3 &playerPos) {
-  // convert to integral chunk coords
-  glm::ivec3 pChunk{static_cast<int>(std::floor(playerPos.x)),
-                    static_cast<int>(std::floor(playerPos.y)),
-                    static_cast<int>(std::floor(playerPos.z))};
+void ChunkManager::updateChunks(const glm::vec3 &playerPos,
+                                engine::utils::ThreadPool &threadPool) {
+  // compute player chunk
+  glm::ivec3 pChunk{int(std::floor(playerPos.x)), int(std::floor(playerPos.y)),
+                    int(std::floor(playerPos.z))};
 
-  for (int dz = -viewRadius_; dz <= viewRadius_; ++dz) {
-    for (int dy = -viewRadius_; dy <= viewRadius_; ++dy) {
+  for (int dz = -viewRadius_; dz <= viewRadius_; ++dz)
+    for (int dy = -viewRadius_; dy <= viewRadius_; ++dy)
       for (int dx = -viewRadius_; dx <= viewRadius_; ++dx) {
         glm::ivec3 coord = pChunk + glm::ivec3{dx, dy, dz};
         auto &chunk = chunks_[coord];
 
-        // allocate and generate voxel data if missing
+        // allocate & generate volume
         if (!chunk.volume) {
           chunk.volume =
               std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
           TerrainGenerator::Generate(*chunk.volume);
           chunk.dirty = true;
+          chunk.meshJobQueued = false;
         }
 
-        // mesh if needed
-        if (chunk.dirty) {
-          chunk.mesh = engine::voxel::VoxelMesher::GenerateMesh(*chunk.volume);
-          chunk.dirty = false;
+        // enqueue mesh job if needed
+        if (chunk.dirty && !chunk.meshJobQueued) {
+          // capture raw pointer to volume
+          auto *volPtr = chunk.volume.get();
+          threadPool.enqueueMesh(
+              coord, [volPtr]() { return VoxelMesher::GenerateMesh(*volPtr); });
+          chunk.meshJobQueued = true;
         }
       }
-    }
-  }
 }
-
-} // namespace engine::world

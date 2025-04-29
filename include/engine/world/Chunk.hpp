@@ -1,5 +1,4 @@
 
-// include/engine/world/Chunk.hpp
 #pragma once
 
 #include "engine/render/Mesh.hpp"       // bring in Mesh
@@ -11,9 +10,10 @@ namespace engine::world {
 
 struct Chunk {
   glm::ivec3 chunkPos;
-  std::unique_ptr<engine::voxel::VoxelVolume> volume; // now known
-  std::unique_ptr<Mesh> mesh; // Mesh is in global namespace
-  bool dirty = true;
+  std::unique_ptr<engine::voxel::VoxelVolume> volume; // voxel data
+  std::unique_ptr<Mesh> mesh;                         // CPU mesh
+  bool dirty = true;                                  // needs meshing
+  bool meshJobQueued = false;                         // async flag
 };
 
 } // namespace engine::world
