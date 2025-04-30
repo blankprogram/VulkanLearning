@@ -7048,7 +7048,6 @@ src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o: /home/jam/Documents/code/Vul
   /usr/lib/gcc/x86_64-linux-gnu/14/include/syslimits.h
 
 src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: /home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp \
-  /home/jam/Documents/code/VulkanLearning/include/engine/math/FrustumCulling.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
@@ -8875,8 +8874,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/stdexcept:
 
 /usr/include/x86_64-linux-gnu/bits/select.h:
-
-/home/jam/Documents/code/VulkanLearning/include/engine/math/FrustumCulling.hpp:
 
 /usr/include/glm/mat4x3.hpp:
 

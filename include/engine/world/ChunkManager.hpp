@@ -9,13 +9,11 @@
 
 namespace engine::world {
 
-// A trivial but OK 3D-int vector hash:
-struct ivec3_hash {
-  std::size_t operator()(glm::ivec3 const &v) const noexcept {
-    // pick some large primes
+// A 2D integer vector hash for glm::ivec2
+struct ivec2_hash {
+  std::size_t operator()(const glm::ivec2 &v) const noexcept {
     return (std::hash<int>()(v.x) * 73856093u) ^
-           (std::hash<int>()(v.y) * 19349663u) ^
-           (std::hash<int>()(v.z) * 83492791u);
+           (std::hash<int>()(v.y) * 19349663u);
   }
 };
 
@@ -25,9 +23,10 @@ public:
   void initChunks(engine::utils::ThreadPool &threadPool);
   void updateChunks(const glm::vec3 &playerPos,
                     engine::utils::ThreadPool &threadPool);
-  Chunk &getChunk(const glm::ivec3 &coord) { return chunks_[coord]; }
 
-  const std::unordered_map<glm::ivec3, Chunk, ivec3_hash> &getChunks() const {
+  Chunk &getChunk(const glm::ivec2 &coord) { return chunks_[coord]; }
+
+  const std::unordered_map<glm::ivec2, Chunk, ivec2_hash> &getChunks() const {
     return chunks_;
   }
 
@@ -35,8 +34,7 @@ private:
   static constexpr glm::ivec3 CHUNK_DIM{16, 16, 16};
   int viewRadius_ = 1;
 
-  // <-- note the third template parameter
-  std::unordered_map<glm::ivec3, Chunk, ivec3_hash> chunks_;
+  std::unordered_map<glm::ivec2, Chunk, ivec2_hash> chunks_;
 };
 
 } // namespace engine::world
