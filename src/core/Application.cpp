@@ -52,7 +52,8 @@ void Application::mainLoop() {
 
   for (auto &r : results) {
     try {
-      Chunk &chunk = chunkManager_.getChunk(r.coord);
+
+      Chunk &chunk = chunkManager_.getChunk(glm::ivec2(r.coord.x, r.coord.z));
 
       if (!chunk.mesh) {
         chunk.mesh = std::move(r.mesh);
