@@ -16,8 +16,10 @@ public:
 private:
   void mainLoop();
 
-  WindowManager windowManager_;                    // global-scope class
-  engine::utils::ThreadPool threadPool_;           // fully qualified
+  WindowManager windowManager_; // global-scope class
+  engine::utils::ThreadPool
+      threadPool_; // dedicated to volume‐generation & meshing
+  engine::utils::ThreadPool uploadPool_;           // fully qualified
   RendererContext rendererContext_;                // global-scope class
   engine::world::ChunkManager chunkManager_;       // fully qualified
   engine::world::ChunkRenderSystem chunkRenderer_; // fully qualified
