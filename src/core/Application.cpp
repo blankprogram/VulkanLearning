@@ -54,6 +54,13 @@ void Application::mainLoop() {
   chunkManager_.updateChunks(camPos, threadPool_);
 
   auto results = threadPool_.collectResults();
+
+  std::lock_guard<std::mutex> lock(chunkManager_.assignMtx_);
+  for (auto &[coord, volume] : chunkManager_.chunkVolumesPending_) {
+    Chunk &chunk = chunkManager_.getChunk(coord);
+    chunk.volume = std::move(volume);
+  }
+  chunkManager_.chunkVolumesPending_.clear();
   for (auto &r : results) {
     try {
       Chunk &chunk = chunkManager_.getChunk(glm::ivec2(r.coord.x, r.coord.z));

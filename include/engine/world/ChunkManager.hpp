@@ -5,8 +5,9 @@
 #include "engine/utils/ThreadPool.hpp"
 #include "engine/world/Chunk.hpp"
 #include <glm/glm.hpp>
+#include <map>
+#include <mutex>
 #include <unordered_map>
-
 namespace engine::world {
 
 // A 2D integer vector hash for glm::ivec2
@@ -29,11 +30,14 @@ public:
   const std::unordered_map<glm::ivec2, Chunk, ivec2_hash> &getChunks() const {
     return chunks_;
   }
+  std::map<glm::ivec2, std::unique_ptr<engine::voxel::VoxelVolume>, ivec2_hash>
+      chunkVolumesPending_;
+
+  mutable std::mutex assignMtx_;
 
 private:
   static constexpr glm::ivec3 CHUNK_DIM{16, 256, 16};
   int viewRadius_ = 3;
-
   std::unordered_map<glm::ivec2, Chunk, ivec2_hash> chunks_;
 };
 

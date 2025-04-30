@@ -18,7 +18,6 @@ void ChunkManager::initChunks(engine::utils::ThreadPool &threadPool) {
 
 void ChunkManager::updateChunks(const glm::vec3 &playerPos,
                                 engine::utils::ThreadPool &threadPool) {
-  // Fix: Use correct axes (XZ) from player world position
   glm::ivec2 playerChunk =
       glm::ivec2(glm::floor(playerPos.x / float(CHUNK_DIM.x)),
                  glm::floor(playerPos.z / float(CHUNK_DIM.z)));
@@ -26,22 +25,31 @@ void ChunkManager::updateChunks(const glm::vec3 &playerPos,
   for (int dz = -viewRadius_; dz <= viewRadius_; ++dz) {
     for (int dx = -viewRadius_; dx <= viewRadius_; ++dx) {
       glm::ivec2 coord = playerChunk + glm::ivec2(dx, dz);
-      auto &chunk = chunks_[coord];
+      Chunk &chunk = chunks_[coord];
 
-      if (!chunk.volume) {
-        chunk.volume = std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
-        glm::ivec3 chunkOrigin =
-            glm::ivec3(coord.x * CHUNK_DIM.x, 0, coord.y * CHUNK_DIM.z);
-        TerrainGenerator::Generate(*chunk.volume, chunkOrigin);
-        chunk.dirty = true;
-      }
+      if (!chunk.volume && !chunk.meshJobQueued) {
+        chunk.meshJobQueued = true; // mark early to prevent duplicate jobs
 
-      if (chunk.dirty && !chunk.meshJobQueued && !chunk.mesh) {
-        auto copy = std::make_shared<engine::voxel::VoxelVolume>(*chunk.volume);
-        threadPool.enqueueMesh(glm::ivec3(coord.x, 0, coord.y), [copy]() {
-          return VoxelMesher::GenerateMesh(*copy);
+        glm::ivec3 chunkOrigin(coord.x * CHUNK_DIM.x, 0, coord.y * CHUNK_DIM.z);
+        auto coordCopy = coord;
+
+        threadPool.enqueueJob([this, coordCopy, chunkOrigin, &threadPool]() {
+          auto volume = std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
+          engine::world::TerrainGenerator::Generate(*volume, chunkOrigin);
+
+          auto meshJob =
+              [volumeCopy =
+                   std::make_shared<engine::voxel::VoxelVolume>(*volume)]() {
+                return engine::voxel::VoxelMesher::GenerateMesh(*volumeCopy);
+              };
+
+          threadPool.enqueueMesh(glm::ivec3(coordCopy.x, 0, coordCopy.y),
+                                 meshJob);
+
+          // Defer chunk.volume assignment to main thread
+          std::lock_guard<std::mutex> lock(assignMtx_);
+          chunkVolumesPending_.emplace(coordCopy, std::move(volume));
         });
-        chunk.meshJobQueued = true;
       }
     }
   }
