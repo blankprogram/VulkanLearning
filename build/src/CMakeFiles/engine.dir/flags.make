@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DSPIRV_OUT=\"/home/jam/Documents/code/VulkanLearning/build/shaders\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR
 
-CXX_INCLUDES = -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external
+CXX_INCLUDES = -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends
 
 CXX_FLAGS = -std=gnu++20
 

@@ -671,6 +671,90 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/world/TerrainGenerator.cpp.s"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/src/world/TerrainGenerator.cpp -o CMakeFiles/engine.dir/world/TerrainGenerator.cpp.s
 
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o: src/CMakeFiles/engine.dir/flags.make
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.i"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp > CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.i
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.s"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.s
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o: src/CMakeFiles/engine.dir/flags.make
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.i"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp > CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.i
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.s"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.s
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o: src/CMakeFiles/engine.dir/flags.make
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.i"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp > CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.i
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.s"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.s
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o: src/CMakeFiles/engine.dir/flags.make
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.i"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp > CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.i
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.s"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.s
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o: src/CMakeFiles/engine.dir/flags.make
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.i"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp > CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.i
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.s"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp -o CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.s
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o: src/CMakeFiles/engine.dir/flags.make
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.i"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp > CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.i
+
+src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.s"
+	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp -o CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.s
+
 # Object files for target engine
 engine_OBJECTS = \
 "CMakeFiles/engine.dir/core/Application.cpp.o" \
@@ -715,7 +799,13 @@ engine_OBJECTS = \
 "CMakeFiles/engine.dir/world/Chunk.cpp.o" \
 "CMakeFiles/engine.dir/world/ChunkManager.cpp.o" \
 "CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o" \
-"CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o"
+"CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o" \
+"CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o" \
+"CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o" \
+"CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o" \
+"CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o" \
+"CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o" \
+"CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o"
 
 # External object files for target engine
 engine_EXTERNAL_OBJECTS =
@@ -763,9 +853,15 @@ src/libengine.a: src/CMakeFiles/engine.dir/world/Chunk.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o
+src/libengine.a: src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o
+src/libengine.a: src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o
+src/libengine.a: src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o
+src/libengine.a: src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o
+src/libengine.a: src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o
+src/libengine.a: src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/build.make
 src/libengine.a: src/CMakeFiles/engine.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Linking CXX static library libengine.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_50) "Linking CXX static library libengine.a"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && $(CMAKE_COMMAND) -P CMakeFiles/engine.dir/cmake_clean_target.cmake
 	cd /home/jam/Documents/code/VulkanLearning/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/engine.dir/link.txt --verbose=$(VERBOSE)
 

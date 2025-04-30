@@ -431,4 +431,8 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: \
  /usr/include/c++/14/bits/chrono.h /usr/include/c++/14/ratio \
  /usr/include/c++/14/ctime /usr/include/c++/14/bits/parse_numbers.h \
  /usr/include/c++/14/bits/unique_lock.h /usr/include/c++/14/shared_mutex \
- /usr/include/c++/14/atomic
+ /usr/include/c++/14/atomic \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imconfig.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.h

@@ -8,6 +8,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp" "src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o" "gcc" "src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o.d"
+  "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp" "src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o" "gcc" "src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o.d"
+  "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp" "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o" "gcc" "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o.d"
+  "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp" "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o" "gcc" "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o.d"
+  "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp" "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o" "gcc" "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o.d"
+  "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp" "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o" "gcc" "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/core/Application.cpp" "src/CMakeFiles/engine.dir/core/Application.cpp.o" "gcc" "src/CMakeFiles/engine.dir/core/Application.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/core/Timer.cpp" "src/CMakeFiles/engine.dir/core/Timer.cpp.o" "gcc" "src/CMakeFiles/engine.dir/core/Timer.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/core/Window.cpp" "src/CMakeFiles/engine.dir/core/Window.cpp.o" "gcc" "src/CMakeFiles/engine.dir/core/Window.cpp.o.d"

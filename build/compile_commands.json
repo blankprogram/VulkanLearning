@@ -1,266 +1,302 @@
 [
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/app.dir/src/main.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/main.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/app.dir/src/main.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/main.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/main.cpp",
   "output": "CMakeFiles/app.dir/src/main.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/core/Application.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/core/Application.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/core/Application.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/core/Application.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/core/Application.cpp",
   "output": "src/CMakeFiles/engine.dir/core/Application.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/core/Timer.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/core/Timer.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/core/Timer.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/core/Timer.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/core/Timer.cpp",
   "output": "src/CMakeFiles/engine.dir/core/Timer.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/core/Window.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/core/Window.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/core/Window.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/core/Window.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/core/Window.cpp",
   "output": "src/CMakeFiles/engine.dir/core/Window.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/ecs/ECSManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/ecs/ECSManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/ecs/ECSManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/ecs/ECSManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/ecs/ECSManager.cpp",
   "output": "src/CMakeFiles/engine.dir/ecs/ECSManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/main.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/main.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/main.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/main.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/main.cpp",
   "output": "src/CMakeFiles/engine.dir/main.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/math/Math.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/math/Math.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/math/Math.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/math/Math.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/math/Math.cpp",
   "output": "src/CMakeFiles/engine.dir/math/Math.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/CommandManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/CommandManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/CommandManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/DepthResources.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/DepthResources.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/DepthResources.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/DepthResources.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/DepthResources.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/DepthResources.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/DescriptorManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/DescriptorManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/DescriptorManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/DescriptorManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/DescriptorManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/DescriptorManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/FrameSync.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/FrameSync.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/FrameSync.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/FrameSync.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/FrameSync.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/FrameSync.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/FramebufferManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/FramebufferManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/FramebufferManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/FramebufferManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/FramebufferManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/FramebufferManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/InputManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/InputManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/InputManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/InputManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/InputManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/InputManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderCommandManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderCommandManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderCommandManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderCommandManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RenderCommandManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/RenderCommandManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderGraph.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderGraph.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderGraph.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderGraph.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RenderGraph.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/RenderGraph.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderPassManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderPassManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderPassManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderPassManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RenderPassManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/RenderPassManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderResources.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderResources.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderResources.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderResources.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RenderResources.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/RenderResources.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/RendererContext.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RendererContext.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/RendererContext.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RendererContext.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RendererContext.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/Swapchain.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/Swapchain.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/Swapchain.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/Swapchain.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/Swapchain.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/Swapchain.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/UniformManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/UniformManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/UniformManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/UniformManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/UniformManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/UniformManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/VulkanDevice.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/VulkanDevice.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/VulkanDevice.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/VulkanDevice.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/VulkanDevice.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/VulkanDevice.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/platform/WindowManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/WindowManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/platform/WindowManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/WindowManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/WindowManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/WindowManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/render/Camera.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Camera.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/render/Camera.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Camera.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/render/Camera.cpp",
   "output": "src/CMakeFiles/engine.dir/render/Camera.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/render/DebugRenderer.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/DebugRenderer.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/render/DebugRenderer.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/DebugRenderer.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/render/DebugRenderer.cpp",
   "output": "src/CMakeFiles/engine.dir/render/DebugRenderer.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/render/Material.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Material.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/render/Material.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Material.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/render/Material.cpp",
   "output": "src/CMakeFiles/engine.dir/render/Material.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/render/Mesh.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Mesh.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/render/Mesh.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Mesh.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/render/Mesh.cpp",
   "output": "src/CMakeFiles/engine.dir/render/Mesh.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/render/Pipeline.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Pipeline.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/render/Pipeline.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Pipeline.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/render/Pipeline.cpp",
   "output": "src/CMakeFiles/engine.dir/render/Pipeline.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/render/RenderQueue.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/RenderQueue.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/render/RenderQueue.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/RenderQueue.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/render/RenderQueue.cpp",
   "output": "src/CMakeFiles/engine.dir/render/RenderQueue.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/render/Renderer.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Renderer.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/render/Renderer.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/Renderer.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/render/Renderer.cpp",
   "output": "src/CMakeFiles/engine.dir/render/Renderer.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/render/ShaderManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/ShaderManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/render/ShaderManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/render/ShaderManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/render/ShaderManager.cpp",
   "output": "src/CMakeFiles/engine.dir/render/ShaderManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/resources/Model.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/resources/Model.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/resources/Model.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/resources/Model.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/resources/Model.cpp",
   "output": "src/CMakeFiles/engine.dir/resources/Model.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/resources/ResourceManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/resources/ResourceManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/resources/ResourceManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/resources/ResourceManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/resources/ResourceManager.cpp",
   "output": "src/CMakeFiles/engine.dir/resources/ResourceManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/resources/Texture.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/resources/Texture.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/resources/Texture.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/resources/Texture.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/resources/Texture.cpp",
   "output": "src/CMakeFiles/engine.dir/resources/Texture.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/scene/Entity.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/scene/Entity.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/scene/Entity.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/scene/Entity.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/scene/Entity.cpp",
   "output": "src/CMakeFiles/engine.dir/scene/Entity.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/scene/Scene.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/scene/Scene.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/scene/Scene.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/scene/Scene.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/scene/Scene.cpp",
   "output": "src/CMakeFiles/engine.dir/scene/Scene.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/utils/ThreadPool.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/utils/ThreadPool.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp",
   "output": "src/CMakeFiles/engine.dir/utils/ThreadPool.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/utils/VulkanHelpers.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/utils/VulkanHelpers.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/utils/VulkanHelpers.cpp",
   "output": "src/CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/voxel/Octree.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/voxel/Octree.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp",
   "output": "src/CMakeFiles/engine.dir/voxel/Octree.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp",
   "output": "src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp",
   "output": "src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/world/Chunk.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/world/Chunk.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp",
   "output": "src/CMakeFiles/engine.dir/world/Chunk.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/world/ChunkManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/ChunkManager.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/world/ChunkManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/ChunkManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/world/ChunkManager.cpp",
   "output": "src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp",
   "output": "src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -std=gnu++20 -o CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/TerrainGenerator.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/TerrainGenerator.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/world/TerrainGenerator.cpp",
   "output": "src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp",
+  "output": "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp",
+  "output": "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp",
+  "output": "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp",
+  "output": "src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp",
+  "output": "src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp",
+  "output": "src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o"
 }
 ]

@@ -9,7 +9,9 @@
 #include "engine/platform/Swapchain.hpp"
 #include "engine/platform/VulkanDevice.hpp"
 #include "engine/render/Camera.hpp"
+
 #include <GLFW/glfw3.h>
+
 #include <memory>
 
 class RendererContext {
@@ -33,6 +35,9 @@ public:
   VulkanDevice *getDevice() const { return device_.get(); }
   Swapchain *getSwapchain() const { return swapchain_.get(); }
 
+  void initImGui(GLFWwindow *window);
+  void cleanupImGui();
+
 private:
   static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -51,4 +56,6 @@ private:
   RenderCommandManager commandManager_;
   RenderGraph renderGraph_;
   RenderResources renderResources_;
+
+  VkDescriptorPool imguiDescriptorPool_{VK_NULL_HANDLE}; // ✅ Added
 };

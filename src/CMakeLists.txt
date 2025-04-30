@@ -1,7 +1,26 @@
 
 
 file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS "*.cpp")
-add_library(engine STATIC ${ENGINE_SOURCES})
+
+
+
+set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/include/externals/imgui)
+
+file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
+  ${CMAKE_SOURCE_DIR}/src/*.cpp
+)
+
+set(IMGUI_SOURCES
+  ${IMGUI_DIR}/imgui.cpp
+  ${IMGUI_DIR}/imgui_draw.cpp
+  ${IMGUI_DIR}/imgui_tables.cpp
+  ${IMGUI_DIR}/imgui_widgets.cpp
+  ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+  ${IMGUI_DIR}/backends/imgui_impl_vulkan.cpp
+)
+
+add_library(engine STATIC ${ENGINE_SOURCES} ${IMGUI_SOURCES})
+
 
 
 target_include_directories(engine PUBLIC
@@ -16,10 +35,12 @@ target_link_libraries(engine PUBLIC
 )
 
 
+
 target_include_directories(engine PUBLIC
   ${CMAKE_SOURCE_DIR}/include
+  ${IMGUI_DIR}
+  ${IMGUI_DIR}/backends
   ${GLFW_INCLUDE_DIRS}
-  ${CMAKE_SOURCE_DIR}/external         # <— so we can #include "vk_mem_alloc.h"
 )
 
 if (WIN32)
