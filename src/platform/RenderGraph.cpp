@@ -72,14 +72,16 @@ void RenderGraph::beginFrame(RenderResources &resources,
 }
 
 void RenderGraph::endFrame() {
-  // Transition image to PRESENT_SRC_KHR before ending the render pass
+  vkCmdEndRenderPass(commandBuffer_);
+
+  // now safe to transition layout to PRESENT
   VkImageMemoryBarrier presentBarrier{};
   presentBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
   presentBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
   presentBarrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
   presentBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
   presentBarrier.dstAccessMask = 0;
-  presentBarrier.image = swapchainImage_; // ← stored in beginFrame
+  presentBarrier.image = swapchainImage_;
   presentBarrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
   presentBarrier.subresourceRange.baseMipLevel = 0;
   presentBarrier.subresourceRange.levelCount = 1;
@@ -90,8 +92,6 @@ void RenderGraph::endFrame() {
                        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
                        VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0,
                        nullptr, 1, &presentBarrier);
-
-  vkCmdEndRenderPass(commandBuffer_);
 
   if (vkEndCommandBuffer(commandBuffer_) != VK_SUCCESS) {
     throw std::runtime_error("Failed to end command buffer");
