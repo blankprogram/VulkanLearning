@@ -27,7 +27,7 @@ void RenderGraph::beginFrame(RenderResources &resources,
   // TRANSITION IMAGE: undefined → color_attachment (BEFORE render pass)
   VkImageMemoryBarrier barrier{};
   barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-  barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  barrier.oldLayout = currentLayout;
   barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
   barrier.srcAccessMask = 0;
   barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
@@ -76,6 +76,8 @@ void RenderGraph::beginFrame(RenderResources &resources,
 
   vkCmdSetViewport(commandBuffer_, 0, 1, &viewport);
   vkCmdSetScissor(commandBuffer_, 0, 1, &scissor);
+
+  finalLayout_ = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 }
 
 void RenderGraph::endFrame() {
@@ -103,4 +105,6 @@ void RenderGraph::endFrame() {
   if (vkEndCommandBuffer(commandBuffer_) != VK_SUCCESS) {
     throw std::runtime_error("Failed to end command buffer");
   }
+
+  finalLayout_ = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 }

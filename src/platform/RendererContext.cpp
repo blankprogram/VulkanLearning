@@ -45,10 +45,13 @@ void RendererContext::beginFrame() {
 
   glm::mat4 viewProj = cam_.viewProjection();
 
+  VkImageLayout layout = renderGraph_.getFinalLayout(); // from previous frame
+  if (layout == VK_IMAGE_LAYOUT_UNDEFINED)
+    layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
   renderGraph_.beginFrame(
       renderResources_, commandManager_, currentFrame_, viewProj,
-      renderResources_.getSwapchain()->getImages()[currentImageIndex_],
-      VK_IMAGE_LAYOUT_UNDEFINED); // <-- add this
+      renderResources_.getSwapchain()->getImages()[currentImageIndex_], layout);
 }
 
 void RendererContext::endFrame() {
