@@ -63,12 +63,6 @@ void Swapchain::create() {
                                             presentModes.data());
 
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
-  for (const auto &mode : presentModes) {
-    if (mode == VK_PRESENT_MODE_MAILBOX_KHR) {
-      presentMode = mode;
-      break;
-    }
-  }
 
   int width, height;
   glfwGetFramebufferSize(window_, &width, &height);
