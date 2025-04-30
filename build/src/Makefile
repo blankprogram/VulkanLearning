@@ -299,6 +299,30 @@ platform/CommandManager.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/CommandManager.cpp.s
 .PHONY : platform/CommandManager.cpp.s
 
+platform/DepthResources.o: platform/DepthResources.cpp.o
+.PHONY : platform/DepthResources.o
+
+# target to build an object file
+platform/DepthResources.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/DepthResources.cpp.o
+.PHONY : platform/DepthResources.cpp.o
+
+platform/DepthResources.i: platform/DepthResources.cpp.i
+.PHONY : platform/DepthResources.i
+
+# target to preprocess a source file
+platform/DepthResources.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/DepthResources.cpp.i
+.PHONY : platform/DepthResources.cpp.i
+
+platform/DepthResources.s: platform/DepthResources.cpp.s
+.PHONY : platform/DepthResources.s
+
+# target to generate assembly for a file
+platform/DepthResources.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/DepthResources.cpp.s
+.PHONY : platform/DepthResources.cpp.s
+
 platform/DescriptorManager.o: platform/DescriptorManager.cpp.o
 .PHONY : platform/DescriptorManager.o
 
@@ -347,6 +371,30 @@ platform/FrameSync.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/FrameSync.cpp.s
 .PHONY : platform/FrameSync.cpp.s
 
+platform/FramebufferManager.o: platform/FramebufferManager.cpp.o
+.PHONY : platform/FramebufferManager.o
+
+# target to build an object file
+platform/FramebufferManager.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/FramebufferManager.cpp.o
+.PHONY : platform/FramebufferManager.cpp.o
+
+platform/FramebufferManager.i: platform/FramebufferManager.cpp.i
+.PHONY : platform/FramebufferManager.i
+
+# target to preprocess a source file
+platform/FramebufferManager.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/FramebufferManager.cpp.i
+.PHONY : platform/FramebufferManager.cpp.i
+
+platform/FramebufferManager.s: platform/FramebufferManager.cpp.s
+.PHONY : platform/FramebufferManager.s
+
+# target to generate assembly for a file
+platform/FramebufferManager.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/FramebufferManager.cpp.s
+.PHONY : platform/FramebufferManager.cpp.s
+
 platform/InputManager.o: platform/InputManager.cpp.o
 .PHONY : platform/InputManager.o
 
@@ -370,6 +418,30 @@ platform/InputManager.s: platform/InputManager.cpp.s
 platform/InputManager.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/InputManager.cpp.s
 .PHONY : platform/InputManager.cpp.s
+
+platform/RenderPassManager.o: platform/RenderPassManager.cpp.o
+.PHONY : platform/RenderPassManager.o
+
+# target to build an object file
+platform/RenderPassManager.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderPassManager.cpp.o
+.PHONY : platform/RenderPassManager.cpp.o
+
+platform/RenderPassManager.i: platform/RenderPassManager.cpp.i
+.PHONY : platform/RenderPassManager.i
+
+# target to preprocess a source file
+platform/RenderPassManager.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderPassManager.cpp.i
+.PHONY : platform/RenderPassManager.cpp.i
+
+platform/RenderPassManager.s: platform/RenderPassManager.cpp.s
+.PHONY : platform/RenderPassManager.s
+
+# target to generate assembly for a file
+platform/RenderPassManager.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderPassManager.cpp.s
+.PHONY : platform/RenderPassManager.cpp.s
 
 platform/RendererContext.o: platform/RendererContext.cpp.o
 .PHONY : platform/RendererContext.o
@@ -418,6 +490,30 @@ platform/Swapchain.s: platform/Swapchain.cpp.s
 platform/Swapchain.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/Swapchain.cpp.s
 .PHONY : platform/Swapchain.cpp.s
+
+platform/UniformManager.o: platform/UniformManager.cpp.o
+.PHONY : platform/UniformManager.o
+
+# target to build an object file
+platform/UniformManager.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/UniformManager.cpp.o
+.PHONY : platform/UniformManager.cpp.o
+
+platform/UniformManager.i: platform/UniformManager.cpp.i
+.PHONY : platform/UniformManager.i
+
+# target to preprocess a source file
+platform/UniformManager.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/UniformManager.cpp.i
+.PHONY : platform/UniformManager.cpp.i
+
+platform/UniformManager.s: platform/UniformManager.cpp.s
+.PHONY : platform/UniformManager.s
+
+# target to generate assembly for a file
+platform/UniformManager.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/UniformManager.cpp.s
+.PHONY : platform/UniformManager.cpp.s
 
 platform/VulkanDevice.o: platform/VulkanDevice.cpp.o
 .PHONY : platform/VulkanDevice.o
@@ -1025,21 +1121,33 @@ help:
 	@echo "... platform/CommandManager.o"
 	@echo "... platform/CommandManager.i"
 	@echo "... platform/CommandManager.s"
+	@echo "... platform/DepthResources.o"
+	@echo "... platform/DepthResources.i"
+	@echo "... platform/DepthResources.s"
 	@echo "... platform/DescriptorManager.o"
 	@echo "... platform/DescriptorManager.i"
 	@echo "... platform/DescriptorManager.s"
 	@echo "... platform/FrameSync.o"
 	@echo "... platform/FrameSync.i"
 	@echo "... platform/FrameSync.s"
+	@echo "... platform/FramebufferManager.o"
+	@echo "... platform/FramebufferManager.i"
+	@echo "... platform/FramebufferManager.s"
 	@echo "... platform/InputManager.o"
 	@echo "... platform/InputManager.i"
 	@echo "... platform/InputManager.s"
+	@echo "... platform/RenderPassManager.o"
+	@echo "... platform/RenderPassManager.i"
+	@echo "... platform/RenderPassManager.s"
 	@echo "... platform/RendererContext.o"
 	@echo "... platform/RendererContext.i"
 	@echo "... platform/RendererContext.s"
 	@echo "... platform/Swapchain.o"
 	@echo "... platform/Swapchain.i"
 	@echo "... platform/Swapchain.s"
+	@echo "... platform/UniformManager.o"
+	@echo "... platform/UniformManager.i"
+	@echo "... platform/UniformManager.s"
 	@echo "... platform/VulkanDevice.o"
 	@echo "... platform/VulkanDevice.i"
 	@echo "... platform/VulkanDevice.s"

@@ -1,10 +1,13 @@
 
 #pragma once
 
-#include "engine/platform/CommandBufferRecorder.hpp"
+#include "engine/platform/DepthResources.hpp"
 #include "engine/platform/DescriptorManager.hpp"
 #include "engine/platform/FrameSync.hpp"
+#include "engine/platform/FramebufferManager.hpp"
+#include "engine/platform/RenderPassManager.hpp"
 #include "engine/platform/Swapchain.hpp"
+#include "engine/platform/UniformManager.hpp"
 #include "engine/platform/VulkanDevice.hpp"
 #include "engine/render/Camera.hpp"
 #include "engine/render/Pipeline.hpp"
@@ -19,50 +22,38 @@ public:
   void beginFrame();
   void endFrame();
   void recreateSwapchain();
+  void cleanup();
+
   engine::render::Camera &camera() { return cam_; }
   VkCommandBuffer getCurrentCommandBuffer() const {
     return currentCommandBuffer_;
   }
-  void cleanup();
   uint32_t getCurrentImageIndex() const { return currentImageIndex_; }
+
   VulkanDevice *getDevice() const { return device_.get(); }
   Swapchain *getSwapchain() const { return swapchain_.get(); }
 
 private:
   static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
+
   void init(GLFWwindow *window);
-  void createRenderPass();
-  void createSyncObjects();
-  void createUniforms();
   void createFramebuffers();
+
   std::unique_ptr<VulkanDevice> device_;
   std::unique_ptr<Swapchain> swapchain_;
-  FrameSync frameSync_;
+  VmaAllocator allocator_{VK_NULL_HANDLE};
 
-  uint32_t currentFrame_ = 0;
-  uint32_t currentImageIndex_ = 0;
-  VkCommandBuffer currentCommandBuffer_ =
-      VK_NULL_HANDLE; // TODO: Hook up proper command buffer
+  engine::render::Camera cam_;
+  engine::render::Pipeline pipeline_;
+
+  FrameSync frameSync_;
+  RenderPassManager renderPassMgr_;
+  FramebufferManager framebufferMgr_;
+  DepthResources depthResources_;
+  UniformManager uniformMgr_;
 
   VkCommandBuffer commandBuffers_[MAX_FRAMES_IN_FLIGHT]{};
-
-  DescriptorManager descriptorMgr_;
-  VkBuffer uniformBuffer_{VK_NULL_HANDLE};
-  VmaAllocation uniformAllocation_{VK_NULL_HANDLE};
-  VmaAllocator allocator_{VK_NULL_HANDLE};
-  engine::render::Camera cam_;
-
-  VkRenderPass renderPass_{VK_NULL_HANDLE};
-  std::vector<VkFramebuffer> framebuffers_;
-  engine::render::Pipeline pipeline_; // your Pipeline struct
-  VkExtent2D extent_;                 // current swapchain size
-                                      //
-                                      //
-  VkFormat depthFormat_{};
-  VkImage depthImage_{VK_NULL_HANDLE};
-  VmaAllocation depthImageAllocation_{VK_NULL_HANDLE};
-  VkImageView depthImageView_{VK_NULL_HANDLE};
-  // helpers
-  void createDepthResources();
-  VkFormat findDepthFormat() const;
+  VkCommandBuffer currentCommandBuffer_{VK_NULL_HANDLE};
+  uint32_t currentImageIndex_ = 0;
+  uint32_t currentFrame_ = 0;
 };

@@ -239,63 +239,10 @@ src/CMakeFiles/engine.dir/main.cpp.o: \
  /usr/include/GL/gl.h /usr/include/GL/glext.h \
  /usr/include/KHR/khrplatform.h \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp \
- /home/jam/Documents/code/VulkanLearning/include/engine/platform/CommandBufferRecorder.hpp \
- /usr/include/c++/14/stdexcept /usr/include/c++/14/exception \
- /usr/include/c++/14/bits/exception_ptr.h \
- /usr/include/c++/14/bits/cxxabi_init_exception.h \
- /usr/include/c++/14/typeinfo /usr/include/c++/14/bits/hash_bytes.h \
- /usr/include/c++/14/bits/nested_exception.h /usr/include/c++/14/string \
- /usr/include/c++/14/bits/stringfwd.h \
- /usr/include/c++/14/bits/memoryfwd.h \
- /usr/include/c++/14/bits/char_traits.h \
- /usr/include/c++/14/bits/postypes.h /usr/include/c++/14/cwchar \
- /usr/include/wchar.h /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h \
- /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/c++/14/bits/allocator.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
- /usr/include/c++/14/bits/new_allocator.h \
- /usr/include/c++/14/bits/localefwd.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
- /usr/include/c++/14/clocale /usr/include/locale.h \
- /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/14/iosfwd \
- /usr/include/c++/14/cctype /usr/include/ctype.h \
- /usr/include/c++/14/bits/ostream_insert.h \
- /usr/include/c++/14/bits/cxxabi_forced.h \
- /usr/include/c++/14/bits/stl_function.h \
- /usr/include/c++/14/backward/binders.h \
- /usr/include/c++/14/bits/refwrap.h /usr/include/c++/14/bits/invoke.h \
- /usr/include/c++/14/bits/range_access.h \
- /usr/include/c++/14/initializer_list \
- /usr/include/c++/14/bits/basic_string.h \
- /usr/include/c++/14/ext/alloc_traits.h \
- /usr/include/c++/14/bits/alloc_traits.h /usr/include/c++/14/string_view \
- /usr/include/c++/14/bits/functional_hash.h \
- /usr/include/c++/14/bits/ranges_base.h \
- /usr/include/c++/14/bits/max_size_type.h /usr/include/c++/14/numbers \
- /usr/include/c++/14/bits/string_view.tcc \
- /usr/include/c++/14/ext/string_conversions.h /usr/include/c++/14/cstdlib \
- /usr/include/c++/14/cstdio /usr/include/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
- /usr/include/c++/14/cerrno /usr/include/errno.h \
- /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/x86_64-linux-gnu/asm/errno.h \
- /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
- /usr/include/c++/14/bits/charconv.h \
- /usr/include/c++/14/bits/basic_string.tcc \
- /usr/include/c++/14/bits/memory_resource.h \
- /usr/include/c++/14/bits/uses_allocator.h \
- /usr/include/c++/14/bits/uses_allocator_args.h /usr/include/c++/14/tuple \
- /usr/include/c++/14/bits/ranges_util.h /usr/include/vulkan/vulkan.h \
- /usr/include/vulkan/vk_platform.h /usr/include/vulkan/vulkan_core.h \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
+ /usr/include/vulkan/vulkan.h /usr/include/vulkan/vk_platform.h \
+ /usr/include/vulkan/vulkan_core.h \
  /usr/include/vk_video/vulkan_video_codec_h264std.h \
  /usr/include/vk_video/vulkan_video_codecs_common.h \
  /usr/include/vk_video/vulkan_video_codec_h264std_encode.h \
@@ -312,19 +259,76 @@ src/CMakeFiles/engine.dir/main.cpp.o: \
  /usr/include/X11/X.h /usr/include/X11/Xfuncproto.h \
  /usr/include/X11/Xosdefs.h /usr/include/vulkan/vulkan_xlib.h \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
- /usr/include/c++/14/vector /usr/include/c++/14/bits/stl_uninitialized.h \
+ /usr/include/c++/14/vector /usr/include/c++/14/bits/allocator.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
+ /usr/include/c++/14/bits/new_allocator.h \
+ /usr/include/c++/14/bits/memoryfwd.h \
+ /usr/include/c++/14/bits/stl_uninitialized.h \
+ /usr/include/c++/14/ext/alloc_traits.h \
+ /usr/include/c++/14/bits/alloc_traits.h \
  /usr/include/c++/14/bits/stl_vector.h \
+ /usr/include/c++/14/initializer_list \
  /usr/include/c++/14/bits/stl_bvector.h \
+ /usr/include/c++/14/bits/functional_hash.h \
+ /usr/include/c++/14/bits/hash_bytes.h /usr/include/c++/14/bits/refwrap.h \
+ /usr/include/c++/14/bits/invoke.h \
+ /usr/include/c++/14/bits/stl_function.h \
+ /usr/include/c++/14/backward/binders.h \
+ /usr/include/c++/14/bits/range_access.h \
  /usr/include/c++/14/bits/vector.tcc \
+ /usr/include/c++/14/bits/memory_resource.h \
+ /usr/include/c++/14/bits/uses_allocator.h \
+ /usr/include/c++/14/bits/uses_allocator_args.h /usr/include/c++/14/tuple \
+ /usr/include/c++/14/bits/ranges_util.h \
+ /usr/include/c++/14/bits/ranges_base.h \
+ /usr/include/c++/14/bits/max_size_type.h /usr/include/c++/14/numbers \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp \
+ /usr/include/c++/14/array \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
- /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/render/Pipeline.hpp \
- /usr/include/c++/14/memory /usr/include/c++/14/bits/stl_tempbuf.h \
+ /usr/include/c++/14/string /usr/include/c++/14/bits/stringfwd.h \
+ /usr/include/c++/14/bits/char_traits.h \
+ /usr/include/c++/14/bits/postypes.h /usr/include/c++/14/cwchar \
+ /usr/include/wchar.h /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h \
+ /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+ /usr/include/c++/14/bits/localefwd.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
+ /usr/include/c++/14/clocale /usr/include/locale.h \
+ /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/14/iosfwd \
+ /usr/include/c++/14/cctype /usr/include/ctype.h \
+ /usr/include/c++/14/bits/ostream_insert.h \
+ /usr/include/c++/14/bits/cxxabi_forced.h \
+ /usr/include/c++/14/bits/basic_string.h /usr/include/c++/14/string_view \
+ /usr/include/c++/14/bits/string_view.tcc \
+ /usr/include/c++/14/ext/string_conversions.h /usr/include/c++/14/cstdlib \
+ /usr/include/c++/14/cstdio /usr/include/stdio.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+ /usr/include/c++/14/cerrno /usr/include/errno.h \
+ /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
+ /usr/include/x86_64-linux-gnu/asm/errno.h \
+ /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+ /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+ /usr/include/c++/14/bits/charconv.h \
+ /usr/include/c++/14/bits/basic_string.tcc /usr/include/c++/14/memory \
+ /usr/include/c++/14/bits/stl_tempbuf.h \
  /usr/include/c++/14/bits/stl_raw_storage_iter.h \
  /usr/include/c++/14/bits/align.h /usr/include/c++/14/bits/unique_ptr.h \
  /usr/include/c++/14/ostream /usr/include/c++/14/ios \
+ /usr/include/c++/14/exception /usr/include/c++/14/bits/exception_ptr.h \
+ /usr/include/c++/14/bits/cxxabi_init_exception.h \
+ /usr/include/c++/14/typeinfo /usr/include/c++/14/bits/nested_exception.h \
  /usr/include/c++/14/bits/ios_base.h /usr/include/c++/14/ext/atomicity.h \
  /usr/include/x86_64-linux-gnu/c++/14/bits/gthr.h \
  /usr/include/x86_64-linux-gnu/c++/14/bits/gthr-default.h \
@@ -344,7 +348,8 @@ src/CMakeFiles/engine.dir/main.cpp.o: \
  /usr/include/c++/14/bits/locale_classes.tcc \
  /usr/include/c++/14/system_error \
  /usr/include/x86_64-linux-gnu/c++/14/bits/error_constants.h \
- /usr/include/c++/14/streambuf /usr/include/c++/14/bits/streambuf.tcc \
+ /usr/include/c++/14/stdexcept /usr/include/c++/14/streambuf \
+ /usr/include/c++/14/bits/streambuf.tcc \
  /usr/include/c++/14/bits/basic_ios.h \
  /usr/include/c++/14/bits/locale_facets.h /usr/include/c++/14/cwctype \
  /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
@@ -401,11 +406,11 @@ src/CMakeFiles/engine.dir/main.cpp.o: \
  /usr/include/c++/14/bits/hashtable_policy.h \
  /usr/include/c++/14/bits/enable_special_members.h \
  /usr/include/c++/14/bits/node_handle.h \
- /usr/include/c++/14/bits/erase_if.h /usr/include/c++/14/array \
- /usr/include/c++/14/mutex /usr/include/c++/14/queue \
- /usr/include/c++/14/deque /usr/include/c++/14/bits/stl_deque.h \
- /usr/include/c++/14/bits/deque.tcc /usr/include/c++/14/bits/stl_heap.h \
- /usr/include/c++/14/bits/stl_queue.h /usr/include/c++/14/thread \
+ /usr/include/c++/14/bits/erase_if.h /usr/include/c++/14/mutex \
+ /usr/include/c++/14/queue /usr/include/c++/14/deque \
+ /usr/include/c++/14/bits/stl_deque.h /usr/include/c++/14/bits/deque.tcc \
+ /usr/include/c++/14/bits/stl_heap.h /usr/include/c++/14/bits/stl_queue.h \
+ /usr/include/c++/14/thread \
  /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \

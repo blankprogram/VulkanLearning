@@ -3,12 +3,15 @@
 
 src/CMakeFiles/engine.dir/core/Application.cpp.o: /home/jam/Documents/code/VulkanLearning/src/core/Application.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/core/Application.hpp \
-  /home/jam/Documents/code/VulkanLearning/include/engine/platform/CommandBufferRecorder.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/InputManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/WindowManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
@@ -507,12 +510,15 @@ src/CMakeFiles/engine.dir/ecs/ECSManager.cpp.o: /home/jam/Documents/code/VulkanL
 
 src/CMakeFiles/engine.dir/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/main.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/core/Application.hpp \
-  /home/jam/Documents/code/VulkanLearning/include/engine/platform/CommandBufferRecorder.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/InputManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/WindowManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
@@ -1006,6 +1012,185 @@ src/CMakeFiles/engine.dir/math/Math.cpp.o: /home/jam/Documents/code/VulkanLearni
 src/CMakeFiles/engine.dir/platform/CommandManager.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp \
   /usr/include/stdc-predef.h
 
+src/CMakeFiles/engine.dir/platform/DepthResources.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/DepthResources.cpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
+  /usr/include/X11/X.h \
+  /usr/include/X11/Xfuncproto.h \
+  /usr/include/X11/Xlib.h \
+  /usr/include/X11/Xosdefs.h \
+  /usr/include/alloca.h \
+  /usr/include/asm-generic/errno-base.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/c++/14/backward/binders.h \
+  /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/alloc_traits.h \
+  /usr/include/c++/14/bits/allocator.h \
+  /usr/include/c++/14/bits/basic_string.h \
+  /usr/include/c++/14/bits/basic_string.tcc \
+  /usr/include/c++/14/bits/char_traits.h \
+  /usr/include/c++/14/bits/charconv.h \
+  /usr/include/c++/14/bits/concept_check.h \
+  /usr/include/c++/14/bits/cpp_type_traits.h \
+  /usr/include/c++/14/bits/cxxabi_forced.h \
+  /usr/include/c++/14/bits/cxxabi_init_exception.h \
+  /usr/include/c++/14/bits/exception.h \
+  /usr/include/c++/14/bits/exception_defines.h \
+  /usr/include/c++/14/bits/exception_ptr.h \
+  /usr/include/c++/14/bits/functexcept.h \
+  /usr/include/c++/14/bits/functional_hash.h \
+  /usr/include/c++/14/bits/hash_bytes.h \
+  /usr/include/c++/14/bits/invoke.h \
+  /usr/include/c++/14/bits/iterator_concepts.h \
+  /usr/include/c++/14/bits/localefwd.h \
+  /usr/include/c++/14/bits/max_size_type.h \
+  /usr/include/c++/14/bits/memory_resource.h \
+  /usr/include/c++/14/bits/memoryfwd.h \
+  /usr/include/c++/14/bits/move.h \
+  /usr/include/c++/14/bits/nested_exception.h \
+  /usr/include/c++/14/bits/new_allocator.h \
+  /usr/include/c++/14/bits/ostream_insert.h \
+  /usr/include/c++/14/bits/postypes.h \
+  /usr/include/c++/14/bits/predefined_ops.h \
+  /usr/include/c++/14/bits/ptr_traits.h \
+  /usr/include/c++/14/bits/range_access.h \
+  /usr/include/c++/14/bits/ranges_base.h \
+  /usr/include/c++/14/bits/ranges_cmp.h \
+  /usr/include/c++/14/bits/ranges_util.h \
+  /usr/include/c++/14/bits/refwrap.h \
+  /usr/include/c++/14/bits/requires_hosted.h \
+  /usr/include/c++/14/bits/std_abs.h \
+  /usr/include/c++/14/bits/stl_algobase.h \
+  /usr/include/c++/14/bits/stl_construct.h \
+  /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_iterator.h \
+  /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/14/bits/stl_iterator_base_types.h \
+  /usr/include/c++/14/bits/stl_pair.h \
+  /usr/include/c++/14/bits/string_view.tcc \
+  /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uses_allocator.h \
+  /usr/include/c++/14/bits/uses_allocator_args.h \
+  /usr/include/c++/14/bits/utility.h \
+  /usr/include/c++/14/bits/version.h \
+  /usr/include/c++/14/cctype \
+  /usr/include/c++/14/cerrno \
+  /usr/include/c++/14/clocale \
+  /usr/include/c++/14/compare \
+  /usr/include/c++/14/concepts \
+  /usr/include/c++/14/cstddef \
+  /usr/include/c++/14/cstdio \
+  /usr/include/c++/14/cstdlib \
+  /usr/include/c++/14/cwchar \
+  /usr/include/c++/14/debug/assertions.h \
+  /usr/include/c++/14/debug/debug.h \
+  /usr/include/c++/14/exception \
+  /usr/include/c++/14/ext/alloc_traits.h \
+  /usr/include/c++/14/ext/numeric_traits.h \
+  /usr/include/c++/14/ext/string_conversions.h \
+  /usr/include/c++/14/ext/type_traits.h \
+  /usr/include/c++/14/initializer_list \
+  /usr/include/c++/14/iosfwd \
+  /usr/include/c++/14/new \
+  /usr/include/c++/14/numbers \
+  /usr/include/c++/14/pstl/pstl_config.h \
+  /usr/include/c++/14/stdexcept \
+  /usr/include/c++/14/string \
+  /usr/include/c++/14/string_view \
+  /usr/include/c++/14/tuple \
+  /usr/include/c++/14/type_traits \
+  /usr/include/c++/14/typeinfo \
+  /usr/include/ctype.h \
+  /usr/include/endian.h \
+  /usr/include/errno.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/linux/errno.h \
+  /usr/include/locale.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/vk_video/vulkan_video_codec_av1std.h \
+  /usr/include/vk_video/vulkan_video_codec_av1std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std_encode.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std_encode.h \
+  /usr/include/vk_video/vulkan_video_codecs_common.h \
+  /usr/include/vulkan/vk_platform.h \
+  /usr/include/vulkan/vulkan.h \
+  /usr/include/vulkan/vulkan_core.h \
+  /usr/include/vulkan/vulkan_wayland.h \
+  /usr/include/vulkan/vulkan_xlib.h \
+  /usr/include/wchar.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endianness.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/locale.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
+  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
+  /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/os_defines.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
+
 src/CMakeFiles/engine.dir/platform/DescriptorManager.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/DescriptorManager.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
   /usr/include/X11/X.h \
@@ -1191,6 +1376,189 @@ src/CMakeFiles/engine.dir/platform/DescriptorManager.cpp.o: /home/jam/Documents/
 
 src/CMakeFiles/engine.dir/platform/FrameSync.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/FrameSync.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
+  /usr/include/X11/X.h \
+  /usr/include/X11/Xfuncproto.h \
+  /usr/include/X11/Xlib.h \
+  /usr/include/X11/Xosdefs.h \
+  /usr/include/alloca.h \
+  /usr/include/asm-generic/errno-base.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/c++/14/backward/binders.h \
+  /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/alloc_traits.h \
+  /usr/include/c++/14/bits/allocator.h \
+  /usr/include/c++/14/bits/basic_string.h \
+  /usr/include/c++/14/bits/basic_string.tcc \
+  /usr/include/c++/14/bits/char_traits.h \
+  /usr/include/c++/14/bits/charconv.h \
+  /usr/include/c++/14/bits/concept_check.h \
+  /usr/include/c++/14/bits/cpp_type_traits.h \
+  /usr/include/c++/14/bits/cxxabi_forced.h \
+  /usr/include/c++/14/bits/cxxabi_init_exception.h \
+  /usr/include/c++/14/bits/exception.h \
+  /usr/include/c++/14/bits/exception_defines.h \
+  /usr/include/c++/14/bits/exception_ptr.h \
+  /usr/include/c++/14/bits/functexcept.h \
+  /usr/include/c++/14/bits/functional_hash.h \
+  /usr/include/c++/14/bits/hash_bytes.h \
+  /usr/include/c++/14/bits/invoke.h \
+  /usr/include/c++/14/bits/iterator_concepts.h \
+  /usr/include/c++/14/bits/localefwd.h \
+  /usr/include/c++/14/bits/max_size_type.h \
+  /usr/include/c++/14/bits/memory_resource.h \
+  /usr/include/c++/14/bits/memoryfwd.h \
+  /usr/include/c++/14/bits/move.h \
+  /usr/include/c++/14/bits/nested_exception.h \
+  /usr/include/c++/14/bits/new_allocator.h \
+  /usr/include/c++/14/bits/ostream_insert.h \
+  /usr/include/c++/14/bits/postypes.h \
+  /usr/include/c++/14/bits/predefined_ops.h \
+  /usr/include/c++/14/bits/ptr_traits.h \
+  /usr/include/c++/14/bits/range_access.h \
+  /usr/include/c++/14/bits/ranges_base.h \
+  /usr/include/c++/14/bits/ranges_cmp.h \
+  /usr/include/c++/14/bits/ranges_util.h \
+  /usr/include/c++/14/bits/refwrap.h \
+  /usr/include/c++/14/bits/requires_hosted.h \
+  /usr/include/c++/14/bits/std_abs.h \
+  /usr/include/c++/14/bits/stl_algobase.h \
+  /usr/include/c++/14/bits/stl_bvector.h \
+  /usr/include/c++/14/bits/stl_construct.h \
+  /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_iterator.h \
+  /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/14/bits/stl_iterator_base_types.h \
+  /usr/include/c++/14/bits/stl_pair.h \
+  /usr/include/c++/14/bits/stl_uninitialized.h \
+  /usr/include/c++/14/bits/stl_vector.h \
+  /usr/include/c++/14/bits/string_view.tcc \
+  /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uses_allocator.h \
+  /usr/include/c++/14/bits/uses_allocator_args.h \
+  /usr/include/c++/14/bits/utility.h \
+  /usr/include/c++/14/bits/vector.tcc \
+  /usr/include/c++/14/bits/version.h \
+  /usr/include/c++/14/cctype \
+  /usr/include/c++/14/cerrno \
+  /usr/include/c++/14/clocale \
+  /usr/include/c++/14/compare \
+  /usr/include/c++/14/concepts \
+  /usr/include/c++/14/cstddef \
+  /usr/include/c++/14/cstdio \
+  /usr/include/c++/14/cstdlib \
+  /usr/include/c++/14/cwchar \
+  /usr/include/c++/14/debug/assertions.h \
+  /usr/include/c++/14/debug/debug.h \
+  /usr/include/c++/14/exception \
+  /usr/include/c++/14/ext/alloc_traits.h \
+  /usr/include/c++/14/ext/numeric_traits.h \
+  /usr/include/c++/14/ext/string_conversions.h \
+  /usr/include/c++/14/ext/type_traits.h \
+  /usr/include/c++/14/initializer_list \
+  /usr/include/c++/14/iosfwd \
+  /usr/include/c++/14/new \
+  /usr/include/c++/14/numbers \
+  /usr/include/c++/14/pstl/pstl_config.h \
+  /usr/include/c++/14/stdexcept \
+  /usr/include/c++/14/string \
+  /usr/include/c++/14/string_view \
+  /usr/include/c++/14/tuple \
+  /usr/include/c++/14/type_traits \
+  /usr/include/c++/14/typeinfo \
+  /usr/include/c++/14/vector \
+  /usr/include/ctype.h \
+  /usr/include/endian.h \
+  /usr/include/errno.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/linux/errno.h \
+  /usr/include/locale.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/vk_video/vulkan_video_codec_av1std.h \
+  /usr/include/vk_video/vulkan_video_codec_av1std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std_encode.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std_encode.h \
+  /usr/include/vk_video/vulkan_video_codecs_common.h \
+  /usr/include/vulkan/vk_platform.h \
+  /usr/include/vulkan/vulkan.h \
+  /usr/include/vulkan/vulkan_core.h \
+  /usr/include/vulkan/vulkan_wayland.h \
+  /usr/include/vulkan/vulkan_xlib.h \
+  /usr/include/wchar.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endianness.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/locale.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
+  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
+  /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/os_defines.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
+
+src/CMakeFiles/engine.dir/platform/FramebufferManager.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/FramebufferManager.cpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp \
   /usr/include/X11/X.h \
   /usr/include/X11/Xfuncproto.h \
   /usr/include/X11/Xlib.h \
@@ -1651,12 +2019,194 @@ src/CMakeFiles/engine.dir/platform/InputManager.cpp.o: /home/jam/Documents/code/
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/syslimits.h
 
+src/CMakeFiles/engine.dir/platform/RenderPassManager.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/RenderPassManager.cpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp \
+  /usr/include/X11/X.h \
+  /usr/include/X11/Xfuncproto.h \
+  /usr/include/X11/Xlib.h \
+  /usr/include/X11/Xosdefs.h \
+  /usr/include/alloca.h \
+  /usr/include/asm-generic/errno-base.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/c++/14/array \
+  /usr/include/c++/14/backward/binders.h \
+  /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/alloc_traits.h \
+  /usr/include/c++/14/bits/allocator.h \
+  /usr/include/c++/14/bits/basic_string.h \
+  /usr/include/c++/14/bits/basic_string.tcc \
+  /usr/include/c++/14/bits/char_traits.h \
+  /usr/include/c++/14/bits/charconv.h \
+  /usr/include/c++/14/bits/concept_check.h \
+  /usr/include/c++/14/bits/cpp_type_traits.h \
+  /usr/include/c++/14/bits/cxxabi_forced.h \
+  /usr/include/c++/14/bits/cxxabi_init_exception.h \
+  /usr/include/c++/14/bits/exception.h \
+  /usr/include/c++/14/bits/exception_defines.h \
+  /usr/include/c++/14/bits/exception_ptr.h \
+  /usr/include/c++/14/bits/functexcept.h \
+  /usr/include/c++/14/bits/functional_hash.h \
+  /usr/include/c++/14/bits/hash_bytes.h \
+  /usr/include/c++/14/bits/invoke.h \
+  /usr/include/c++/14/bits/iterator_concepts.h \
+  /usr/include/c++/14/bits/localefwd.h \
+  /usr/include/c++/14/bits/max_size_type.h \
+  /usr/include/c++/14/bits/memory_resource.h \
+  /usr/include/c++/14/bits/memoryfwd.h \
+  /usr/include/c++/14/bits/move.h \
+  /usr/include/c++/14/bits/nested_exception.h \
+  /usr/include/c++/14/bits/new_allocator.h \
+  /usr/include/c++/14/bits/ostream_insert.h \
+  /usr/include/c++/14/bits/postypes.h \
+  /usr/include/c++/14/bits/predefined_ops.h \
+  /usr/include/c++/14/bits/ptr_traits.h \
+  /usr/include/c++/14/bits/range_access.h \
+  /usr/include/c++/14/bits/ranges_base.h \
+  /usr/include/c++/14/bits/ranges_cmp.h \
+  /usr/include/c++/14/bits/ranges_util.h \
+  /usr/include/c++/14/bits/refwrap.h \
+  /usr/include/c++/14/bits/requires_hosted.h \
+  /usr/include/c++/14/bits/std_abs.h \
+  /usr/include/c++/14/bits/stl_algobase.h \
+  /usr/include/c++/14/bits/stl_construct.h \
+  /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_iterator.h \
+  /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/14/bits/stl_iterator_base_types.h \
+  /usr/include/c++/14/bits/stl_pair.h \
+  /usr/include/c++/14/bits/string_view.tcc \
+  /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uses_allocator.h \
+  /usr/include/c++/14/bits/uses_allocator_args.h \
+  /usr/include/c++/14/bits/utility.h \
+  /usr/include/c++/14/bits/version.h \
+  /usr/include/c++/14/cctype \
+  /usr/include/c++/14/cerrno \
+  /usr/include/c++/14/clocale \
+  /usr/include/c++/14/compare \
+  /usr/include/c++/14/concepts \
+  /usr/include/c++/14/cstddef \
+  /usr/include/c++/14/cstdio \
+  /usr/include/c++/14/cstdlib \
+  /usr/include/c++/14/cwchar \
+  /usr/include/c++/14/debug/assertions.h \
+  /usr/include/c++/14/debug/debug.h \
+  /usr/include/c++/14/exception \
+  /usr/include/c++/14/ext/alloc_traits.h \
+  /usr/include/c++/14/ext/numeric_traits.h \
+  /usr/include/c++/14/ext/string_conversions.h \
+  /usr/include/c++/14/ext/type_traits.h \
+  /usr/include/c++/14/initializer_list \
+  /usr/include/c++/14/iosfwd \
+  /usr/include/c++/14/new \
+  /usr/include/c++/14/numbers \
+  /usr/include/c++/14/pstl/pstl_config.h \
+  /usr/include/c++/14/stdexcept \
+  /usr/include/c++/14/string \
+  /usr/include/c++/14/string_view \
+  /usr/include/c++/14/tuple \
+  /usr/include/c++/14/type_traits \
+  /usr/include/c++/14/typeinfo \
+  /usr/include/ctype.h \
+  /usr/include/endian.h \
+  /usr/include/errno.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/linux/errno.h \
+  /usr/include/locale.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/vk_video/vulkan_video_codec_av1std.h \
+  /usr/include/vk_video/vulkan_video_codec_av1std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std_encode.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std_encode.h \
+  /usr/include/vk_video/vulkan_video_codecs_common.h \
+  /usr/include/vulkan/vk_platform.h \
+  /usr/include/vulkan/vulkan.h \
+  /usr/include/vulkan/vulkan_core.h \
+  /usr/include/vulkan/vulkan_wayland.h \
+  /usr/include/vulkan/vulkan_xlib.h \
+  /usr/include/wchar.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endianness.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/locale.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
+  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
+  /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/os_defines.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
+
 src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/RendererContext.cpp \
-  /home/jam/Documents/code/VulkanLearning/include/engine/platform/CommandBufferRecorder.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Pipeline.hpp \
@@ -2382,6 +2932,368 @@ src/CMakeFiles/engine.dir/platform/Swapchain.cpp.o: /home/jam/Documents/code/Vul
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
+
+src/CMakeFiles/engine.dir/platform/UniformManager.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/UniformManager.cpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
+  /usr/include/X11/X.h \
+  /usr/include/X11/Xfuncproto.h \
+  /usr/include/X11/Xlib.h \
+  /usr/include/X11/Xosdefs.h \
+  /usr/include/alloca.h \
+  /usr/include/asm-generic/errno-base.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/assert.h \
+  /usr/include/c++/14/backward/binders.h \
+  /usr/include/c++/14/bit \
+  /usr/include/c++/14/bits/alloc_traits.h \
+  /usr/include/c++/14/bits/allocator.h \
+  /usr/include/c++/14/bits/basic_string.h \
+  /usr/include/c++/14/bits/basic_string.tcc \
+  /usr/include/c++/14/bits/char_traits.h \
+  /usr/include/c++/14/bits/charconv.h \
+  /usr/include/c++/14/bits/concept_check.h \
+  /usr/include/c++/14/bits/cpp_type_traits.h \
+  /usr/include/c++/14/bits/cxxabi_forced.h \
+  /usr/include/c++/14/bits/cxxabi_init_exception.h \
+  /usr/include/c++/14/bits/exception.h \
+  /usr/include/c++/14/bits/exception_defines.h \
+  /usr/include/c++/14/bits/exception_ptr.h \
+  /usr/include/c++/14/bits/functexcept.h \
+  /usr/include/c++/14/bits/functional_hash.h \
+  /usr/include/c++/14/bits/hash_bytes.h \
+  /usr/include/c++/14/bits/invoke.h \
+  /usr/include/c++/14/bits/iterator_concepts.h \
+  /usr/include/c++/14/bits/localefwd.h \
+  /usr/include/c++/14/bits/max_size_type.h \
+  /usr/include/c++/14/bits/memory_resource.h \
+  /usr/include/c++/14/bits/memoryfwd.h \
+  /usr/include/c++/14/bits/move.h \
+  /usr/include/c++/14/bits/nested_exception.h \
+  /usr/include/c++/14/bits/new_allocator.h \
+  /usr/include/c++/14/bits/ostream_insert.h \
+  /usr/include/c++/14/bits/postypes.h \
+  /usr/include/c++/14/bits/predefined_ops.h \
+  /usr/include/c++/14/bits/ptr_traits.h \
+  /usr/include/c++/14/bits/range_access.h \
+  /usr/include/c++/14/bits/ranges_base.h \
+  /usr/include/c++/14/bits/ranges_cmp.h \
+  /usr/include/c++/14/bits/ranges_util.h \
+  /usr/include/c++/14/bits/refwrap.h \
+  /usr/include/c++/14/bits/requires_hosted.h \
+  /usr/include/c++/14/bits/specfun.h \
+  /usr/include/c++/14/bits/std_abs.h \
+  /usr/include/c++/14/bits/stl_algobase.h \
+  /usr/include/c++/14/bits/stl_bvector.h \
+  /usr/include/c++/14/bits/stl_construct.h \
+  /usr/include/c++/14/bits/stl_function.h \
+  /usr/include/c++/14/bits/stl_iterator.h \
+  /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/14/bits/stl_iterator_base_types.h \
+  /usr/include/c++/14/bits/stl_pair.h \
+  /usr/include/c++/14/bits/stl_uninitialized.h \
+  /usr/include/c++/14/bits/stl_vector.h \
+  /usr/include/c++/14/bits/string_view.tcc \
+  /usr/include/c++/14/bits/stringfwd.h \
+  /usr/include/c++/14/bits/uses_allocator.h \
+  /usr/include/c++/14/bits/uses_allocator_args.h \
+  /usr/include/c++/14/bits/utility.h \
+  /usr/include/c++/14/bits/vector.tcc \
+  /usr/include/c++/14/bits/version.h \
+  /usr/include/c++/14/cassert \
+  /usr/include/c++/14/cctype \
+  /usr/include/c++/14/cerrno \
+  /usr/include/c++/14/cfloat \
+  /usr/include/c++/14/climits \
+  /usr/include/c++/14/clocale \
+  /usr/include/c++/14/cmath \
+  /usr/include/c++/14/compare \
+  /usr/include/c++/14/concepts \
+  /usr/include/c++/14/cstddef \
+  /usr/include/c++/14/cstdint \
+  /usr/include/c++/14/cstdio \
+  /usr/include/c++/14/cstdlib \
+  /usr/include/c++/14/cstring \
+  /usr/include/c++/14/cwchar \
+  /usr/include/c++/14/debug/assertions.h \
+  /usr/include/c++/14/debug/debug.h \
+  /usr/include/c++/14/exception \
+  /usr/include/c++/14/ext/alloc_traits.h \
+  /usr/include/c++/14/ext/numeric_traits.h \
+  /usr/include/c++/14/ext/string_conversions.h \
+  /usr/include/c++/14/ext/type_traits.h \
+  /usr/include/c++/14/initializer_list \
+  /usr/include/c++/14/iosfwd \
+  /usr/include/c++/14/limits \
+  /usr/include/c++/14/new \
+  /usr/include/c++/14/numbers \
+  /usr/include/c++/14/pstl/pstl_config.h \
+  /usr/include/c++/14/stdexcept \
+  /usr/include/c++/14/string \
+  /usr/include/c++/14/string_view \
+  /usr/include/c++/14/tr1/bessel_function.tcc \
+  /usr/include/c++/14/tr1/beta_function.tcc \
+  /usr/include/c++/14/tr1/ell_integral.tcc \
+  /usr/include/c++/14/tr1/exp_integral.tcc \
+  /usr/include/c++/14/tr1/gamma.tcc \
+  /usr/include/c++/14/tr1/hypergeometric.tcc \
+  /usr/include/c++/14/tr1/legendre_function.tcc \
+  /usr/include/c++/14/tr1/modified_bessel_func.tcc \
+  /usr/include/c++/14/tr1/poly_hermite.tcc \
+  /usr/include/c++/14/tr1/poly_laguerre.tcc \
+  /usr/include/c++/14/tr1/riemann_zeta.tcc \
+  /usr/include/c++/14/tr1/special_function_util.h \
+  /usr/include/c++/14/tuple \
+  /usr/include/c++/14/type_traits \
+  /usr/include/c++/14/typeinfo \
+  /usr/include/c++/14/vector \
+  /usr/include/ctype.h \
+  /usr/include/endian.h \
+  /usr/include/errno.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/glm/common.hpp \
+  /usr/include/glm/detail/_fixes.hpp \
+  /usr/include/glm/detail/_vectorize.hpp \
+  /usr/include/glm/detail/compute_common.hpp \
+  /usr/include/glm/detail/compute_vector_relational.hpp \
+  /usr/include/glm/detail/func_common.inl \
+  /usr/include/glm/detail/func_exponential.inl \
+  /usr/include/glm/detail/func_geometric.inl \
+  /usr/include/glm/detail/func_integer.inl \
+  /usr/include/glm/detail/func_matrix.inl \
+  /usr/include/glm/detail/func_packing.inl \
+  /usr/include/glm/detail/func_trigonometric.inl \
+  /usr/include/glm/detail/func_vector_relational.inl \
+  /usr/include/glm/detail/qualifier.hpp \
+  /usr/include/glm/detail/setup.hpp \
+  /usr/include/glm/detail/type_half.hpp \
+  /usr/include/glm/detail/type_half.inl \
+  /usr/include/glm/detail/type_mat2x2.hpp \
+  /usr/include/glm/detail/type_mat2x2.inl \
+  /usr/include/glm/detail/type_mat2x3.hpp \
+  /usr/include/glm/detail/type_mat2x3.inl \
+  /usr/include/glm/detail/type_mat2x4.hpp \
+  /usr/include/glm/detail/type_mat2x4.inl \
+  /usr/include/glm/detail/type_mat3x2.hpp \
+  /usr/include/glm/detail/type_mat3x2.inl \
+  /usr/include/glm/detail/type_mat3x3.hpp \
+  /usr/include/glm/detail/type_mat3x3.inl \
+  /usr/include/glm/detail/type_mat3x4.hpp \
+  /usr/include/glm/detail/type_mat3x4.inl \
+  /usr/include/glm/detail/type_mat4x2.hpp \
+  /usr/include/glm/detail/type_mat4x2.inl \
+  /usr/include/glm/detail/type_mat4x3.hpp \
+  /usr/include/glm/detail/type_mat4x3.inl \
+  /usr/include/glm/detail/type_mat4x4.hpp \
+  /usr/include/glm/detail/type_mat4x4.inl \
+  /usr/include/glm/detail/type_vec1.hpp \
+  /usr/include/glm/detail/type_vec1.inl \
+  /usr/include/glm/detail/type_vec2.hpp \
+  /usr/include/glm/detail/type_vec2.inl \
+  /usr/include/glm/detail/type_vec3.hpp \
+  /usr/include/glm/detail/type_vec3.inl \
+  /usr/include/glm/detail/type_vec4.hpp \
+  /usr/include/glm/detail/type_vec4.inl \
+  /usr/include/glm/exponential.hpp \
+  /usr/include/glm/ext/matrix_double2x2.hpp \
+  /usr/include/glm/ext/matrix_double2x2_precision.hpp \
+  /usr/include/glm/ext/matrix_double2x3.hpp \
+  /usr/include/glm/ext/matrix_double2x3_precision.hpp \
+  /usr/include/glm/ext/matrix_double2x4.hpp \
+  /usr/include/glm/ext/matrix_double2x4_precision.hpp \
+  /usr/include/glm/ext/matrix_double3x2.hpp \
+  /usr/include/glm/ext/matrix_double3x2_precision.hpp \
+  /usr/include/glm/ext/matrix_double3x3.hpp \
+  /usr/include/glm/ext/matrix_double3x3_precision.hpp \
+  /usr/include/glm/ext/matrix_double3x4.hpp \
+  /usr/include/glm/ext/matrix_double3x4_precision.hpp \
+  /usr/include/glm/ext/matrix_double4x2.hpp \
+  /usr/include/glm/ext/matrix_double4x2_precision.hpp \
+  /usr/include/glm/ext/matrix_double4x3.hpp \
+  /usr/include/glm/ext/matrix_double4x3_precision.hpp \
+  /usr/include/glm/ext/matrix_double4x4.hpp \
+  /usr/include/glm/ext/matrix_double4x4_precision.hpp \
+  /usr/include/glm/ext/matrix_float2x2.hpp \
+  /usr/include/glm/ext/matrix_float2x2_precision.hpp \
+  /usr/include/glm/ext/matrix_float2x3.hpp \
+  /usr/include/glm/ext/matrix_float2x3_precision.hpp \
+  /usr/include/glm/ext/matrix_float2x4.hpp \
+  /usr/include/glm/ext/matrix_float2x4_precision.hpp \
+  /usr/include/glm/ext/matrix_float3x2.hpp \
+  /usr/include/glm/ext/matrix_float3x2_precision.hpp \
+  /usr/include/glm/ext/matrix_float3x3.hpp \
+  /usr/include/glm/ext/matrix_float3x3_precision.hpp \
+  /usr/include/glm/ext/matrix_float3x4.hpp \
+  /usr/include/glm/ext/matrix_float3x4_precision.hpp \
+  /usr/include/glm/ext/matrix_float4x2.hpp \
+  /usr/include/glm/ext/matrix_float4x2_precision.hpp \
+  /usr/include/glm/ext/matrix_float4x3.hpp \
+  /usr/include/glm/ext/matrix_float4x3_precision.hpp \
+  /usr/include/glm/ext/matrix_float4x4.hpp \
+  /usr/include/glm/ext/matrix_float4x4_precision.hpp \
+  /usr/include/glm/ext/scalar_int_sized.hpp \
+  /usr/include/glm/ext/scalar_uint_sized.hpp \
+  /usr/include/glm/ext/vector_bool2.hpp \
+  /usr/include/glm/ext/vector_bool2_precision.hpp \
+  /usr/include/glm/ext/vector_bool3.hpp \
+  /usr/include/glm/ext/vector_bool3_precision.hpp \
+  /usr/include/glm/ext/vector_bool4.hpp \
+  /usr/include/glm/ext/vector_bool4_precision.hpp \
+  /usr/include/glm/ext/vector_double2.hpp \
+  /usr/include/glm/ext/vector_double2_precision.hpp \
+  /usr/include/glm/ext/vector_double3.hpp \
+  /usr/include/glm/ext/vector_double3_precision.hpp \
+  /usr/include/glm/ext/vector_double4.hpp \
+  /usr/include/glm/ext/vector_double4_precision.hpp \
+  /usr/include/glm/ext/vector_float2.hpp \
+  /usr/include/glm/ext/vector_float2_precision.hpp \
+  /usr/include/glm/ext/vector_float3.hpp \
+  /usr/include/glm/ext/vector_float3_precision.hpp \
+  /usr/include/glm/ext/vector_float4.hpp \
+  /usr/include/glm/ext/vector_float4_precision.hpp \
+  /usr/include/glm/ext/vector_int2.hpp \
+  /usr/include/glm/ext/vector_int2_sized.hpp \
+  /usr/include/glm/ext/vector_int3.hpp \
+  /usr/include/glm/ext/vector_int3_sized.hpp \
+  /usr/include/glm/ext/vector_int4.hpp \
+  /usr/include/glm/ext/vector_int4_sized.hpp \
+  /usr/include/glm/ext/vector_uint2.hpp \
+  /usr/include/glm/ext/vector_uint2_sized.hpp \
+  /usr/include/glm/ext/vector_uint3.hpp \
+  /usr/include/glm/ext/vector_uint3_sized.hpp \
+  /usr/include/glm/ext/vector_uint4.hpp \
+  /usr/include/glm/ext/vector_uint4_sized.hpp \
+  /usr/include/glm/fwd.hpp \
+  /usr/include/glm/geometric.hpp \
+  /usr/include/glm/glm.hpp \
+  /usr/include/glm/integer.hpp \
+  /usr/include/glm/mat2x2.hpp \
+  /usr/include/glm/mat2x3.hpp \
+  /usr/include/glm/mat2x4.hpp \
+  /usr/include/glm/mat3x2.hpp \
+  /usr/include/glm/mat3x3.hpp \
+  /usr/include/glm/mat3x4.hpp \
+  /usr/include/glm/mat4x2.hpp \
+  /usr/include/glm/mat4x3.hpp \
+  /usr/include/glm/mat4x4.hpp \
+  /usr/include/glm/matrix.hpp \
+  /usr/include/glm/packing.hpp \
+  /usr/include/glm/simd/platform.h \
+  /usr/include/glm/trigonometric.hpp \
+  /usr/include/glm/vec2.hpp \
+  /usr/include/glm/vec3.hpp \
+  /usr/include/glm/vec4.hpp \
+  /usr/include/glm/vector_relational.hpp \
+  /usr/include/limits.h \
+  /usr/include/linux/errno.h \
+  /usr/include/linux/limits.h \
+  /usr/include/locale.h \
+  /usr/include/math.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  /usr/include/vk_video/vulkan_video_codec_av1std.h \
+  /usr/include/vk_video/vulkan_video_codec_av1std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h264std_encode.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std_decode.h \
+  /usr/include/vk_video/vulkan_video_codec_h265std_encode.h \
+  /usr/include/vk_video/vulkan_video_codecs_common.h \
+  /usr/include/vulkan/vk_platform.h \
+  /usr/include/vulkan/vulkan.h \
+  /usr/include/vulkan/vulkan_core.h \
+  /usr/include/vulkan/vulkan_wayland.h \
+  /usr/include/vulkan/vulkan_xlib.h \
+  /usr/include/wchar.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endianness.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
+  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
+  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/locale.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
+  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
+  /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/c++locale.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/cpu_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/14/bits/os_defines.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/float.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/limits.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/syslimits.h
 
 src/CMakeFiles/engine.dir/platform/VulkanDevice.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/VulkanDevice.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
@@ -5005,11 +5917,14 @@ src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o: /home/jam/Documents/code/Vul
 
 src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: /home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/math/FrustumCulling.hpp \
-  /home/jam/Documents/code/VulkanLearning/include/engine/platform/CommandBufferRecorder.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Mesh.hpp \
@@ -5840,6 +6755,8 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /home/jam/Documents/code/VulkanLearning/src/render/Camera.cpp:
 
+/home/jam/Documents/code/VulkanLearning/src/platform/UniformManager.cpp:
+
 /usr/include/c++/14/istream:
 
 /usr/include/c++/14/iostream:
@@ -5852,11 +6769,13 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/gtc/vec1.hpp:
 
-/usr/include/glm/ext/matrix_double2x3.hpp:
+/usr/include/glm/gtc/epsilon.inl:
 
-/usr/include/glm/detail/type_vec3.inl:
+/usr/include/glm/gtc/epsilon.hpp:
 
 /usr/include/glm/detail/type_vec3.hpp:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp:
 
 /usr/include/glm/detail/type_vec2.inl:
 
@@ -5896,10 +6815,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/vector_uint4_sized.hpp:
 
-/usr/include/glm/ext/matrix_double2x3_precision.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
-
 /usr/include/glm/detail/type_mat3x2.hpp:
 
 /usr/include/glm/detail/type_mat2x3.inl:
@@ -5930,6 +6845,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/pstl/glue_memory_defs.h:
 
+/usr/include/glm/gtc/type_ptr.inl:
+
+/usr/include/glm/common.hpp:
+
 /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp:
 
 /usr/include/c++/14/debug/assertions.h:
@@ -5941,10 +6860,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/type_traits:
 
 /usr/include/vk_video/vulkan_video_codec_h264std_encode.h:
-
-/home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp:
-
-/usr/include/c++/14/tuple:
 
 /usr/include/c++/14/tr1/special_function_util.h:
 
@@ -5980,6 +6895,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/tr1/bessel_function.tcc:
 
+/usr/include/glm/gtc/type_ptr.hpp:
+
+/usr/include/vulkan/vulkan_core.h:
+
 /usr/include/c++/14/thread:
 
 /usr/include/c++/14/pstl/execution_defs.h:
@@ -5993,8 +6912,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h:
 
 /usr/include/glm/mat4x4.hpp:
-
-/usr/include/glm/ext/quaternion_float.hpp:
 
 /usr/include/c++/14/ext/type_traits.h:
 
@@ -6058,11 +6975,25 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/detail/type_mat4x2.inl:
 
-/usr/include/c++/14/string_view:
+/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
 
-/usr/include/x86_64-linux-gnu/bits/syscall.h:
+/usr/include/c++/14/limits:
 
-/usr/include/c++/14/bits/cxxabi_init_exception.h:
+/usr/include/c++/14/bits/ranges_algo.h:
+
+/usr/include/c++/14/bits/functional_hash.h:
+
+/usr/include/c++/14/bits/unique_ptr.h:
+
+/usr/include/glm/fwd.hpp:
+
+/usr/include/c++/14/bits/unique_lock.h:
+
+/usr/include/glm/ext/vector_double3.hpp:
+
+/usr/include/glm/detail/type_vec4.inl:
+
+/usr/include/glm/ext/quaternion_float_precision.hpp:
 
 /usr/include/c++/14/bits/functexcept.h:
 
@@ -6085,10 +7016,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/bits/stl_vector.h:
 
 /usr/include/c++/14/deque:
-
-/usr/include/c++/14/bits/unique_ptr.h:
-
-/usr/include/glm/fwd.hpp:
 
 /usr/include/c++/14/bits/align.h:
 
@@ -6134,23 +7061,35 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/vector_int3_sized.hpp:
 
-/home/jam/Documents/code/VulkanLearning/include/engine/render/Pipeline.hpp:
+/usr/include/glm/ext/vector_bool4_precision.hpp:
 
-/usr/include/c++/14/ios:
+/usr/include/c++/14/bits/algorithmfwd.h:
 
-/usr/include/c++/14/bits/streambuf.tcc:
-
-/usr/include/glm/ext/matrix_double2x4.hpp:
-
-/usr/include/c++/14/bits/nested_exception.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
-
-/usr/include/c++/14/bits/basic_ios.h:
-
-/usr/include/glm/ext/matrix_transform.hpp:
+/usr/include/c++/14/bits/ptr_traits.h:
 
 /usr/include/linux/limits.h:
+
+/usr/include/c++/14/string_view:
+
+/usr/include/x86_64-linux-gnu/bits/syscall.h:
+
+/usr/include/c++/14/bits/cxxabi_init_exception.h:
+
+/usr/include/c++/14/bits/cxxabi_forced.h:
+
+/usr/include/c++/14/ratio:
+
+/usr/include/x86_64-linux-gnu/asm/errno.h:
+
+/usr/include/glm/detail/func_vector_relational.inl:
+
+/usr/include/c++/14/bits/alloc_traits.h:
+
+/home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp:
+
+/home/jam/Documents/code/VulkanLearning/src/resources/Texture.cpp:
+
+/usr/include/glm/ext/vector_int2_sized.hpp:
 
 /usr/include/c++/14/tr1/modified_bessel_func.tcc:
 
@@ -6160,15 +7099,57 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/vk_video/vulkan_video_codec_av1std.h:
 
+/usr/include/glm/detail/type_vec2.hpp:
+
+/usr/include/c++/14/bits/atomic_timed_wait.h:
+
+/usr/include/glm/mat2x2.hpp:
+
+/usr/include/c++/14/bits/stl_pair.h:
+
+/usr/include/vk_video/vulkan_video_codec_h265std_decode.h:
+
+/usr/include/c++/14/bits/ostream_insert.h:
+
+/usr/include/c++/14/bits/basic_ios.h:
+
+/usr/include/glm/ext/matrix_transform.hpp:
+
+/home/jam/Documents/code/VulkanLearning/src/platform/DepthResources.cpp:
+
+/usr/include/glm/detail/type_vec3.inl:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp:
+
 /usr/include/glm/detail/type_mat4x2.hpp:
 
 /usr/include/glm/detail/func_exponential.inl:
 
 /usr/include/wctype.h:
 
+/usr/include/glm/ext/quaternion_transform.inl:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp:
+
+/usr/include/c++/14/bits/atomic_base.h:
+
+/usr/include/glm/detail/type_mat2x4.hpp:
+
+/usr/include/c++/14/condition_variable:
+
+/usr/include/c++/14/bits/exception_ptr.h:
+
+/usr/include/GL/gl.h:
+
+/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
+
 /usr/include/glm/ext/matrix_double4x3_precision.hpp:
 
 /usr/include/c++/14/bit:
+
+/usr/include/c++/14/bits/locale_facets.tcc:
+
+/usr/include/c++/14/bits/chrono.h:
 
 /usr/include/c++/14/bits/semaphore_base.h:
 
@@ -6186,10 +7167,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/bits/stl_iterator_base_types.h:
 
-/usr/include/c++/14/bits/atomic_lockfree_defines.h:
-
-/usr/include/c++/14/backward/auto_ptr.h:
-
 /usr/include/glm/detail/type_mat2x4.inl:
 
 /usr/include/c++/14/bits/shared_ptr.h:
@@ -6202,37 +7179,41 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/bits/stl_raw_storage_iter.h:
 
-/usr/include/c++/14/bits/ranges_algo.h:
+/home/jam/Documents/code/VulkanLearning/include/engine/render/Pipeline.hpp:
 
-/usr/include/c++/14/bits/functional_hash.h:
+/usr/include/c++/14/ios:
 
-/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
+/usr/include/c++/14/bits/streambuf.tcc:
 
-/usr/include/c++/14/limits:
+/usr/include/glm/ext/matrix_double2x4.hpp:
 
-/home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp:
+/usr/include/c++/14/bits/nested_exception.h:
 
-/usr/include/c++/14/bits/atomic_base.h:
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
 
-/usr/include/glm/detail/type_mat2x4.hpp:
+/usr/include/c++/14/bits/iterator_concepts.h:
 
-/usr/include/c++/14/condition_variable:
+/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
-/usr/include/c++/14/bits/exception_ptr.h:
+/usr/include/GL/glext.h:
 
-/usr/include/c++/14/bits/chrono.h:
+/usr/include/c++/14/cwchar:
 
-/usr/include/c++/14/bits/locale_facets.tcc:
+/usr/include/glm/ext/quaternion_trigonometric.hpp:
 
-/usr/include/GL/gl.h:
+/usr/include/c++/14/bits/atomic_lockfree_defines.h:
 
-/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
+/usr/include/c++/14/backward/auto_ptr.h:
 
 /home/jam/Documents/code/VulkanLearning/include/engine/render/Vertex.hpp:
 
-/usr/include/glm/ext/vector_float1.hpp:
+/usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h:
 
-/usr/include/c++/14/bits/erase_if.h:
+/usr/include/glm/detail/type_half.inl:
+
+/usr/include/glm/ext/vector_bool4.hpp:
+
+/usr/include/glm/ext/matrix_float3x2.hpp:
 
 /usr/include/c++/14/bits/locale_classes.tcc:
 
@@ -6256,6 +7237,12 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp:
 
+/usr/include/c++/14/bits/allocated_ptr.h:
+
+/usr/include/c++/14/bits/stl_deque.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
+
 /usr/include/c++/14/bits/stringfwd.h:
 
 /usr/include/c++/14/bits/deque.tcc:
@@ -6266,51 +7253,9 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
 
-/usr/include/glm/ext/vector_bool4_precision.hpp:
+/usr/include/glm/ext/vector_float1.hpp:
 
-/usr/include/c++/14/bits/algorithmfwd.h:
-
-/usr/include/c++/14/bits/ptr_traits.h:
-
-/usr/include/c++/14/bits/allocated_ptr.h:
-
-/usr/include/c++/14/bits/stl_deque.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
-
-/usr/include/c++/14/bits/iterator_concepts.h:
-
-/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
-
-/usr/include/GL/glext.h:
-
-/usr/include/c++/14/cwchar:
-
-/usr/include/glm/ext/quaternion_trigonometric.hpp:
-
-/usr/include/glm/detail/func_vector_relational.inl:
-
-/usr/include/c++/14/bits/alloc_traits.h:
-
-/home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp:
-
-/home/jam/Documents/code/VulkanLearning/src/resources/Texture.cpp:
-
-/usr/include/glm/ext/vector_int2_sized.hpp:
-
-/usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h:
-
-/usr/include/glm/detail/type_half.inl:
-
-/usr/include/glm/ext/vector_bool4.hpp:
-
-/usr/include/glm/ext/matrix_float3x2.hpp:
-
-/usr/include/c++/14/bits/cxxabi_forced.h:
-
-/usr/include/c++/14/ratio:
-
-/usr/include/x86_64-linux-gnu/asm/errno.h:
+/usr/include/c++/14/bits/erase_if.h:
 
 /usr/include/c++/14/cctype:
 
@@ -6338,9 +7283,21 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/x86_64-linux-gnu/bits/confname.h:
 
+/usr/include/c++/14/bits/this_thread_sleep.h:
+
+/usr/include/c++/14/semaphore:
+
+/usr/include/c++/14/bits/invoke.h:
+
+/usr/include/vk_video/vulkan_video_codec_h264std.h:
+
 /usr/include/stdint.h:
 
 /usr/include/syscall.h:
+
+/usr/include/glm/gtc/quaternion.inl:
+
+/usr/include/c++/14/bits/localefwd.h:
 
 /usr/include/c++/14/new:
 
@@ -6366,6 +7323,8 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/vector_int4.hpp:
 
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp:
+
 /usr/include/sched.h:
 
 /usr/include/c++/14/bits/new_allocator.h:
@@ -6375,12 +7334,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/glm/detail/type_mat3x3.hpp:
 
 /usr/include/glm/ext/matrix_double4x2_precision.hpp:
-
-/usr/include/vk_video/vulkan_video_codec_h265std_decode.h:
-
-/usr/include/c++/14/bits/ostream_insert.h:
-
-/usr/include/c++/14/bits/stl_pair.h:
 
 /usr/include/c++/14/bits/parse_numbers.h:
 
@@ -6408,8 +7361,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/bits/streambuf_iterator.h:
 
-/home/jam/Documents/code/VulkanLearning/include/engine/platform/CommandBufferRecorder.hpp:
-
 /usr/include/c++/14/queue:
 
 /usr/include/locale.h:
@@ -6432,14 +7383,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/bits/std_mutex.h:
 
-/usr/include/c++/14/semaphore:
-
-/usr/include/c++/14/bits/invoke.h:
-
-/usr/include/vk_video/vulkan_video_codec_h264std.h:
-
-/usr/include/c++/14/bits/this_thread_sleep.h:
-
 /usr/include/glm/detail/type_mat3x2.inl:
 
 /usr/include/c++/14/functional:
@@ -6460,12 +7403,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/bits/stl_iterator.h:
 
-/usr/include/glm/detail/type_vec2.hpp:
-
-/usr/include/c++/14/bits/atomic_timed_wait.h:
-
-/usr/include/glm/mat2x2.hpp:
-
 /usr/include/c++/14/bits/uses_allocator_args.h:
 
 /usr/include/glm/ext/matrix_float2x3_precision.hpp:
@@ -6478,13 +7415,11 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/c++/14/bits/stl_tempbuf.h:
 
-/usr/include/c++/14/bits/unique_lock.h:
+/usr/include/glm/ext/matrix_double2x3.hpp:
 
-/usr/include/glm/ext/vector_double3.hpp:
+/usr/include/glm/ext/matrix_double2x3_precision.hpp:
 
-/usr/include/glm/detail/type_vec4.inl:
-
-/usr/include/glm/ext/quaternion_float_precision.hpp:
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
 
 /usr/include/glm/ext/matrix_double3x2_precision.hpp:
 
@@ -6501,10 +7436,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelMesher.hpp:
 
 /usr/include/glm/ext/matrix_double4x2.hpp:
-
-/usr/include/glm/common.hpp:
-
-/usr/include/glm/gtc/type_ptr.inl:
 
 /usr/include/alloca.h:
 
@@ -6523,8 +7454,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/glm/ext/matrix_float2x2.hpp:
 
 /usr/include/stdc-predef.h:
-
-/usr/include/glm/gtc/epsilon.hpp:
 
 /usr/include/glm/ext/matrix_float2x3.hpp:
 
@@ -6549,6 +7478,12 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/glm/ext/matrix_float4x2_precision.hpp:
 
 /usr/include/glm/ext/vector_double4.hpp:
+
+/usr/include/glm/gtc/quaternion.hpp:
+
+/usr/include/endian.h:
+
+/usr/include/glm/ext/matrix_float4x3_precision.hpp:
 
 /home/jam/Documents/code/VulkanLearning/src/core/Window.cpp:
 
@@ -6628,6 +7563,8 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/vk_video/vulkan_video_codec_h265std.h:
 
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp:
+
 /usr/include/glm/gtc/constants.hpp:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/basic_file.h:
@@ -6691,10 +7628,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/glm/matrix.hpp:
 
 /usr/include/pthread.h:
-
-/usr/include/c++/14/bits/localefwd.h:
-
-/usr/include/glm/gtc/quaternion.inl:
 
 /usr/include/semaphore.h:
 
@@ -6878,6 +7811,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h:
 
+/usr/include/glm/ext/quaternion_float.hpp:
+
+/home/jam/Documents/code/VulkanLearning/src/platform/RenderPassManager.cpp:
+
 /usr/include/features-time64.h:
 
 /usr/include/glm/ext/matrix_double2x4_precision.hpp:
@@ -6928,6 +7865,12 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp:
 
+/home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp:
+
+/usr/include/c++/14/tuple:
+
+/home/jam/Documents/code/VulkanLearning/src/platform/FramebufferManager.cpp:
+
 /home/jam/Documents/code/VulkanLearning/src/platform/RendererContext.cpp:
 
 /usr/include/c++/14/cstring:
@@ -6944,8 +7887,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/glm/ext/quaternion_relational.inl:
 
-/usr/include/glm/ext/quaternion_transform.inl:
-
 /usr/include/assert.h:
 
 /usr/include/glm/ext/quaternion_trigonometric.inl:
@@ -6961,15 +7902,3 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/bits/basic_string.h:
 
 /usr/include/glm/ext/vector_uint1.hpp:
-
-/usr/include/glm/gtc/epsilon.inl:
-
-/usr/include/endian.h:
-
-/usr/include/glm/ext/matrix_float4x3_precision.hpp:
-
-/usr/include/glm/gtc/quaternion.hpp:
-
-/usr/include/vulkan/vulkan_core.h:
-
-/usr/include/glm/gtc/type_ptr.hpp:
