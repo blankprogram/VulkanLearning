@@ -48,7 +48,8 @@ void RenderGraph::beginFrame(RenderResources &resources,
 
   VkRenderPassBeginInfo rpBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
   rpBeginInfo.renderPass = resources.getRenderPass();
-  rpBeginInfo.framebuffer = resources.getFramebuffers()[frameIndex];
+
+  rpBeginInfo.framebuffer = resources.getFramebuffers()[imageIndex];
   rpBeginInfo.renderArea = {{0, 0}, resources.getSwapchain()->getExtent()};
   rpBeginInfo.clearValueCount = 2;
   rpBeginInfo.pClearValues = clears;

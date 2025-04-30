@@ -9,13 +9,21 @@ class RenderCommandManager;
 
 class RenderGraph {
 public:
-  void beginFrame(RenderResources &resources,
-                  RenderCommandManager &commandManager, size_t frameIndex,
-                  const glm::mat4 &viewProj, VkImage swapchainImage,
-                  VkImageLayout currentLayout); // NEW PARAM
+
+void beginFrame(RenderResources &resources,
+                RenderCommandManager &commandManager,
+                size_t frameIndex,
+                uint32_t imageIndex, // <- add this
+                const glm::mat4 &viewProj,
+                VkImage swapchainImage,
+                VkImageLayout currentLayout);
+
 
   void endFrame();
 
+void reset() {
+  finalLayout_ = VK_IMAGE_LAYOUT_UNDEFINED;
+}
   VkCommandBuffer &getCurrentCommandBuffer() { return commandBuffer_; }
 
   // For layout tracking
