@@ -1,9 +1,9 @@
 #include "engine/world/ChunkManager.hpp"
 #include "engine/voxel/VoxelMesher.hpp"
 #include "engine/world/TerrainGenerator.hpp"
-
 #include <cmath> // std::floor
 #include <glm/glm.hpp>
+#include <iostream>
 
 using namespace engine::world;
 using engine::voxel::VoxelMesher;
@@ -24,25 +24,31 @@ void ChunkManager::updateChunks(const glm::vec3 &playerPos,
       for (int dx = -viewRadius_; dx <= viewRadius_; ++dx) {
         glm::ivec3 coord = pChunk + glm::ivec3{dx, dy, dz};
         auto &chunk = chunks_[coord];
-
-        // allocate & generate volume
         if (!chunk.volume) {
-          chunk.volume =
-              std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
+          std::cout << "[ChunkManager] Created new chunk at " << coord.x << ", "
+                    << coord.y << ", " << coord.z << std::endl;
+          // allocate & generate volume
+          if (!chunk.volume) {
+            chunk.volume =
+                std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
 
-          TerrainGenerator::Generate(*chunk.volume, coord * CHUNK_DIM);
+            TerrainGenerator::Generate(*chunk.volume, coord * CHUNK_DIM);
 
-          chunk.dirty = true;
-          chunk.meshJobQueued = false;
-        }
+            chunk.dirty = true;
+            chunk.meshJobQueued = false;
+          }
 
-        // enqueue mesh job if needed
-        if (chunk.dirty && !chunk.meshJobQueued) {
-          // capture raw pointer to volume
-          auto *volPtr = chunk.volume.get();
-          threadPool.enqueueMesh(
-              coord, [volPtr]() { return VoxelMesher::GenerateMesh(*volPtr); });
-          chunk.meshJobQueued = true;
+          // enqueue mesh job if needed
+          if (chunk.dirty && !chunk.meshJobQueued) {
+            std::cout << "[ChunkManager] Queued mesh job for chunk at "
+                      << coord.x << ", " << coord.y << ", " << coord.z
+                      << std::endl;
+            auto *volPtr = chunk.volume.get();
+            threadPool.enqueueMesh(coord, [volPtr]() {
+              return VoxelMesher::GenerateMesh(*volPtr);
+            });
+            chunk.meshJobQueued = true;
+          }
         }
       }
 }
