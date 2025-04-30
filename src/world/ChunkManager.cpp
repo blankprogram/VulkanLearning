@@ -1,4 +1,5 @@
 
+
 // src/world/ChunkManager.cpp
 #include "engine/world/ChunkManager.hpp"
 #include "engine/voxel/VoxelMesher.hpp"
@@ -17,10 +18,11 @@ void ChunkManager::initChunks(engine::utils::ThreadPool &threadPool) {
 
 void ChunkManager::updateChunks(const glm::vec3 &playerPos,
                                 engine::utils::ThreadPool &threadPool) {
+  // Fix: Correct chunk coord calculation from world position
   glm::ivec2 playerChunkXZ =
+      glm::ivec2(glm::floor(playerPos.x / float(CHUNK_DIM.x)),
+                 glm::floor(playerPos.z / float(CHUNK_DIM.z)));
 
-      glm::ivec2(glm::floor(playerPos.z / float(CHUNK_DIM.z)),
-                 glm::floor(playerPos.x / float(CHUNK_DIM.x)));
   for (int dz = -viewRadius_; dz <= viewRadius_; ++dz) {
     for (int dx = -viewRadius_; dx <= viewRadius_; ++dx) {
       glm::ivec2 coordXZ = playerChunkXZ + glm::ivec2(dx, dz);
