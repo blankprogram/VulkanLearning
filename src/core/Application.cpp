@@ -15,6 +15,12 @@ Application::Application()
   chunkManager_.initChunks(threadPool_);
 }
 
+Application::~Application() {
+  // Make sure the GPU is idle, then clean up
+  vkDeviceWaitIdle(rendererContext_.getDevice()->device);
+  rendererContext_.cleanup();
+}
+
 void Application::Run() {
   while (!windowManager_.shouldClose())
     mainLoop();

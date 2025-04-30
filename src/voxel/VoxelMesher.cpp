@@ -1,67 +1,125 @@
+
+// engine/voxel/VoxelMesher.cpp
 #include "engine/voxel/VoxelMesher.hpp"
 #include "engine/render/Vertex.hpp"
 #include <glm/vec3.hpp>
+#include <memory>
+#include <vector>
 
 using namespace engine;
 using namespace engine::voxel;
 
 std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
+  const glm::ivec3 size = vol.extent;
   std::vector<Vertex> verts;
   std::vector<uint32_t> idxs;
 
-  auto inBounds = [&](int x, int y, int z) {
-    return x >= 0 && y >= 0 && z >= 0 && x < vol.extent.x && y < vol.extent.y &&
-           z < vol.extent.z;
-  };
-  auto isSolid = [&](int x, int y, int z) {
-    return inBounds(x, y, z) ? vol.at(x, y, z).solid : false;
-  };
+  // For each dimension d = 0 (X),1 (Y),2 (Z)
+  for (int d = 0; d < 3; ++d) {
+    int u = (d + 1) % 3;
+    int v = (d + 2) % 3;
+    glm::ivec3 dims = size;
+    // we’ll sweep from slice 0..size[d], so size[d]+1 planes
+    std::vector<int> mask((dims[u]) * (dims[v]));
 
-  struct Face {
-    glm::ivec3 offset; // neighbour check
-    glm::vec3 dir;     // outward normal
-    glm::vec3 u, v;    // quad axes
-  };
-  static const Face faces[6] = {
-      {{0, 0, -1}, {0, 0, -1}, {1, 0, 0}, {0, 1, 0}}, // back
-      {{0, 0, +1}, {0, 0, +1}, {1, 0, 0}, {0, 1, 0}}, // front
-      {{-1, 0, 0}, {-1, 0, 0}, {0, 0, 1}, {0, 1, 0}}, // left
-      {{+1, 0, 0}, {+1, 0, 0}, {0, 0, 1}, {0, 1, 0}}, // right
-      {{0, -1, 0}, {0, -1, 0}, {1, 0, 0}, {0, 0, 1}}, // bottom
-      {{0, +1, 0}, {0, +1, 0}, {1, 0, 0}, {0, 0, 1}}, // top
-  };
+    // both directions: +1 face (mask=+1) and -1 face (mask=-1)
+    for (int dir = 1; dir >= -1; dir -= 2) {
+      for (int x = 0; x <= size[d]; ++x) {
+        // build mask for this slice
+        for (int j = 0; j < dims[v]; ++j) {
+          for (int i = 0; i < dims[u]; ++i) {
+            // voxel coords a and b on either side of plane
+            glm::ivec3 a{0}, b{0};
+            a[d] = x - (dir == 1);
+            b[d] = x - (dir == -1);
+            a[u] = b[u] = i;
+            a[v] = b[v] = j;
 
-  for (int z = 0; z < vol.extent.z; ++z)
-    for (int y = 0; y < vol.extent.y; ++y)
-      for (int x = 0; x < vol.extent.x; ++x) {
-        if (!isSolid(x, y, z))
-          continue;
-        glm::vec3 p{float(x), float(y), float(z)};
+            bool va = (a.x >= 0 && a.y >= 0 && a.z >= 0 && a.x < size.x &&
+                       a.y < size.y && a.z < size.z)
+                          ? vol.at(a.x, a.y, a.z).solid
+                          : false;
+            bool vb = (b.x >= 0 && b.y >= 0 && b.z >= 0 && b.x < size.x &&
+                       b.y < size.y && b.z < size.z)
+                          ? vol.at(b.x, b.y, b.z).solid
+                          : false;
+            // we want faces where va!=vb, and face normal points from
+            // filled->empty
+            mask[j * dims[u] + i] = (va != vb) ? (va ? dir : -dir) : 0;
+          }
+        }
 
-        for (int f = 0; f < 6; ++f) {
-          const Face &face = faces[f];
-          // skip if neighbour is solid
-          if (isSolid(x + face.offset.x, y + face.offset.y, z + face.offset.z))
-            continue;
+        // now greedy‐merge rectangles in mask
+        for (int j = 0; j < dims[v]; ++j) {
+          for (int i = 0; i < dims[u]; ++i) {
+            int m = mask[j * dims[u] + i];
+            if (m == 0)
+              continue;
+            // find width
+            int w;
+            for (w = 1; i + w < dims[u] && mask[j * dims[u] + i + w] == m; ++w)
+              ;
+            // find height
+            int h;
+            bool done = false;
+            for (h = 1; j + h < dims[v] && !done; ++h) {
+              for (int k = 0; k < w; ++k) {
+                if (mask[(j + h) * dims[u] + i + k] != m) {
+                  done = true;
+                  break;
+                }
+              }
+            }
+            --h;
 
-          // place the quad **only** at +1 along the positive axes
-          glm::vec3 origin = p + glm::vec3(face.dir.x > 0 ? 1.f : 0.f,
-                                           face.dir.y > 0 ? 1.f : 0.f,
-                                           face.dir.z > 0 ? 1.f : 0.f);
+            // compute quad corners
+            glm::vec3 du{0}, dv{0}, origin{0};
+            du[u] = (float)w;
+            dv[v] = (float)h;
+            origin[d] = (float)x;
+            origin[u] = (float)i;
+            origin[v] = (float)j;
 
-          uint32_t base = uint32_t(verts.size());
-          glm::vec3 corners[4] = {origin, origin + face.u,
-                                  origin + face.u + face.v, origin + face.v};
-          glm::vec2 uvs[4] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
+            // normal
+            glm::vec3 normal{0};
+            normal[d] = (float)m;
 
-          for (int i = 0; i < 4; ++i)
-            verts.push_back({corners[i], face.dir, uvs[i]});
+            // four corners
+            glm::vec3 p0 = origin;
+            glm::vec3 p1 = origin + du;
+            glm::vec3 p2 = origin + du + dv;
+            glm::vec3 p3 = origin + dv;
 
-          // two CCW triangles
-          idxs.insert(idxs.end(),
-                      {base, base + 1, base + 2, base, base + 2, base + 3});
+            // push vertices and indices
+            uint32_t base = (uint32_t)verts.size();
+            if (m > 0) {
+              verts.push_back({p0, normal, {0, 0}});
+              verts.push_back({p1, normal, {w, 0}});
+              verts.push_back({p2, normal, {w, h}});
+              verts.push_back({p3, normal, {0, h}});
+              idxs.insert(idxs.end(),
+                          {base, base + 1, base + 2, base, base + 2, base + 3});
+            } else {
+              // flip for negative faces
+              verts.push_back({p0, normal, {0, 0}});
+              verts.push_back({p3, normal, {0, h}});
+              verts.push_back({p2, normal, {w, h}});
+              verts.push_back({p1, normal, {w, 0}});
+              idxs.insert(idxs.end(),
+                          {base, base + 1, base + 2, base, base + 2, base + 3});
+            }
+
+            // zero‐out mask
+            for (int yy = 0; yy <= h; ++yy)
+              for (int xx = 0; xx < w; ++xx)
+                mask[(j + yy) * dims[u] + (i + xx)] = 0;
+
+            i += w - 1; // advance x
+          }
         }
       }
+    }
+  }
 
   auto mesh = std::make_unique<Mesh>();
   mesh->setVertices(std::move(verts));
