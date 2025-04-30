@@ -419,6 +419,54 @@ platform/InputManager.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/InputManager.cpp.s
 .PHONY : platform/InputManager.cpp.s
 
+platform/RenderCommandManager.o: platform/RenderCommandManager.cpp.o
+.PHONY : platform/RenderCommandManager.o
+
+# target to build an object file
+platform/RenderCommandManager.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderCommandManager.cpp.o
+.PHONY : platform/RenderCommandManager.cpp.o
+
+platform/RenderCommandManager.i: platform/RenderCommandManager.cpp.i
+.PHONY : platform/RenderCommandManager.i
+
+# target to preprocess a source file
+platform/RenderCommandManager.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderCommandManager.cpp.i
+.PHONY : platform/RenderCommandManager.cpp.i
+
+platform/RenderCommandManager.s: platform/RenderCommandManager.cpp.s
+.PHONY : platform/RenderCommandManager.s
+
+# target to generate assembly for a file
+platform/RenderCommandManager.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderCommandManager.cpp.s
+.PHONY : platform/RenderCommandManager.cpp.s
+
+platform/RenderGraph.o: platform/RenderGraph.cpp.o
+.PHONY : platform/RenderGraph.o
+
+# target to build an object file
+platform/RenderGraph.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderGraph.cpp.o
+.PHONY : platform/RenderGraph.cpp.o
+
+platform/RenderGraph.i: platform/RenderGraph.cpp.i
+.PHONY : platform/RenderGraph.i
+
+# target to preprocess a source file
+platform/RenderGraph.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderGraph.cpp.i
+.PHONY : platform/RenderGraph.cpp.i
+
+platform/RenderGraph.s: platform/RenderGraph.cpp.s
+.PHONY : platform/RenderGraph.s
+
+# target to generate assembly for a file
+platform/RenderGraph.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderGraph.cpp.s
+.PHONY : platform/RenderGraph.cpp.s
+
 platform/RenderPassManager.o: platform/RenderPassManager.cpp.o
 .PHONY : platform/RenderPassManager.o
 
@@ -442,6 +490,30 @@ platform/RenderPassManager.s: platform/RenderPassManager.cpp.s
 platform/RenderPassManager.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderPassManager.cpp.s
 .PHONY : platform/RenderPassManager.cpp.s
+
+platform/RenderResources.o: platform/RenderResources.cpp.o
+.PHONY : platform/RenderResources.o
+
+# target to build an object file
+platform/RenderResources.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderResources.cpp.o
+.PHONY : platform/RenderResources.cpp.o
+
+platform/RenderResources.i: platform/RenderResources.cpp.i
+.PHONY : platform/RenderResources.i
+
+# target to preprocess a source file
+platform/RenderResources.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderResources.cpp.i
+.PHONY : platform/RenderResources.cpp.i
+
+platform/RenderResources.s: platform/RenderResources.cpp.s
+.PHONY : platform/RenderResources.s
+
+# target to generate assembly for a file
+platform/RenderResources.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/platform/RenderResources.cpp.s
+.PHONY : platform/RenderResources.cpp.s
 
 platform/RendererContext.o: platform/RendererContext.cpp.o
 .PHONY : platform/RendererContext.o
@@ -1136,9 +1208,18 @@ help:
 	@echo "... platform/InputManager.o"
 	@echo "... platform/InputManager.i"
 	@echo "... platform/InputManager.s"
+	@echo "... platform/RenderCommandManager.o"
+	@echo "... platform/RenderCommandManager.i"
+	@echo "... platform/RenderCommandManager.s"
+	@echo "... platform/RenderGraph.o"
+	@echo "... platform/RenderGraph.i"
+	@echo "... platform/RenderGraph.s"
 	@echo "... platform/RenderPassManager.o"
 	@echo "... platform/RenderPassManager.i"
 	@echo "... platform/RenderPassManager.s"
+	@echo "... platform/RenderResources.o"
+	@echo "... platform/RenderResources.i"
+	@echo "... platform/RenderResources.s"
 	@echo "... platform/RendererContext.o"
 	@echo "... platform/RendererContext.i"
 	@echo "... platform/RendererContext.s"

@@ -239,26 +239,7 @@ src/CMakeFiles/engine.dir/main.cpp.o: \
  /usr/include/GL/gl.h /usr/include/GL/glext.h \
  /usr/include/KHR/khrplatform.h \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp \
- /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
- /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
- /usr/include/vulkan/vulkan.h /usr/include/vulkan/vk_platform.h \
- /usr/include/vulkan/vulkan_core.h \
- /usr/include/vk_video/vulkan_video_codec_h264std.h \
- /usr/include/vk_video/vulkan_video_codecs_common.h \
- /usr/include/vk_video/vulkan_video_codec_h264std_encode.h \
- /usr/include/vk_video/vulkan_video_codec_h264std.h \
- /usr/include/vk_video/vulkan_video_codec_h265std.h \
- /usr/include/vk_video/vulkan_video_codec_h265std_encode.h \
- /usr/include/vk_video/vulkan_video_codec_h265std.h \
- /usr/include/vk_video/vulkan_video_codec_h264std_decode.h \
- /usr/include/vk_video/vulkan_video_codec_h265std_decode.h \
- /usr/include/vk_video/vulkan_video_codec_av1std.h \
- /usr/include/vk_video/vulkan_video_codec_av1std_decode.h \
- /usr/include/vk_video/vulkan_video_codec_av1std.h \
- /usr/include/vulkan/vulkan_wayland.h /usr/include/X11/Xlib.h \
- /usr/include/X11/X.h /usr/include/X11/Xfuncproto.h \
- /usr/include/X11/Xosdefs.h /usr/include/vulkan/vulkan_xlib.h \
- /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
  /usr/include/c++/14/vector /usr/include/c++/14/bits/allocator.h \
  /usr/include/x86_64-linux-gnu/c++/14/bits/c++allocator.h \
  /usr/include/c++/14/bits/new_allocator.h \
@@ -282,13 +263,35 @@ src/CMakeFiles/engine.dir/main.cpp.o: \
  /usr/include/c++/14/bits/ranges_util.h \
  /usr/include/c++/14/bits/ranges_base.h \
  /usr/include/c++/14/bits/max_size_type.h /usr/include/c++/14/numbers \
- /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
+ /usr/include/vulkan/vulkan.h /usr/include/vulkan/vk_platform.h \
+ /usr/include/vulkan/vulkan_core.h \
+ /usr/include/vk_video/vulkan_video_codec_h264std.h \
+ /usr/include/vk_video/vulkan_video_codecs_common.h \
+ /usr/include/vk_video/vulkan_video_codec_h264std_encode.h \
+ /usr/include/vk_video/vulkan_video_codec_h264std.h \
+ /usr/include/vk_video/vulkan_video_codec_h265std.h \
+ /usr/include/vk_video/vulkan_video_codec_h265std_encode.h \
+ /usr/include/vk_video/vulkan_video_codec_h265std.h \
+ /usr/include/vk_video/vulkan_video_codec_h264std_decode.h \
+ /usr/include/vk_video/vulkan_video_codec_h265std_decode.h \
+ /usr/include/vk_video/vulkan_video_codec_av1std.h \
+ /usr/include/vk_video/vulkan_video_codec_av1std_decode.h \
+ /usr/include/vk_video/vulkan_video_codec_av1std.h \
+ /usr/include/vulkan/vulkan_wayland.h /usr/include/X11/Xlib.h \
+ /usr/include/X11/X.h /usr/include/X11/Xfuncproto.h \
+ /usr/include/X11/Xosdefs.h /usr/include/vulkan/vulkan_xlib.h \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderCommandManager.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderGraph.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderResources.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/DepthResources.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp \
  /usr/include/c++/14/array \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/DescriptorManager.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/render/Pipeline.hpp \
  /usr/include/c++/14/string /usr/include/c++/14/bits/stringfwd.h \
  /usr/include/c++/14/bits/char_traits.h \

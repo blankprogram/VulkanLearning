@@ -79,9 +79,27 @@
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DENABLE_VALIDATION_LAYERS -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -g -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderCommandManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderCommandManager.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RenderCommandManager.cpp",
+  "output": "src/CMakeFiles/engine.dir/platform/RenderCommandManager.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DENABLE_VALIDATION_LAYERS -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -g -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderGraph.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderGraph.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RenderGraph.cpp",
+  "output": "src/CMakeFiles/engine.dir/platform/RenderGraph.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
   "command": "/usr/bin/c++ -DENABLE_VALIDATION_LAYERS -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -g -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderPassManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderPassManager.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RenderPassManager.cpp",
   "output": "src/CMakeFiles/engine.dir/platform/RenderPassManager.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DENABLE_VALIDATION_LAYERS -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/external -g -std=gnu++20 -o CMakeFiles/engine.dir/platform/RenderResources.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/platform/RenderResources.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/platform/RenderResources.cpp",
+  "output": "src/CMakeFiles/engine.dir/platform/RenderResources.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",

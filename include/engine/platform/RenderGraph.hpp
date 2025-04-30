@@ -15,7 +15,7 @@ public:
                   const glm::mat4 &viewProj);
   void endFrame();
 
-  VkCommandBuffer getCurrentCommandBuffer() const { return commandBuffer_; }
+  VkCommandBuffer &getCurrentCommandBuffer() { return commandBuffer_; }
 
 private:
   VkCommandBuffer commandBuffer_ = VK_NULL_HANDLE;
