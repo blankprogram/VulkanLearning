@@ -32,7 +32,7 @@ void RenderGraph::beginFrame(RenderResources &resources,
   rpBeginInfo.pClearValues = clears;
   VkImageMemoryBarrier barrier{};
   barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-  barrier.oldLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
   barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
   barrier.srcAccessMask = 0;
   barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
@@ -77,7 +77,9 @@ void RenderGraph::endFrame() {
   // 🔧 Insert image layout transition to PRESENT_SRC_KHR
   VkImageMemoryBarrier barrier{};
   barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-  barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+  barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
   barrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
   barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
   barrier.dstAccessMask = 0;
