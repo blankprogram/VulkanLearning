@@ -419,5 +419,10 @@ src/CMakeFiles/engine.dir/core/Application.cpp.o: \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/Voxel.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imconfig.h \
+ /usr/include/string.h /usr/include/strings.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.h \
  /usr/include/c++/14/iostream /usr/include/c++/14/istream \
  /usr/include/c++/14/bits/istream.tcc

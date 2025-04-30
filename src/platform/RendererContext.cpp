@@ -143,6 +143,7 @@ void RendererContext::initImGui(GLFWwindow *window) {
 
   // 3. Init backends
   ImGui_ImplGlfw_InitForVulkan(window, true);
+
   ImGui_ImplVulkan_InitInfo init_info{};
   init_info.Instance = device_->getInstance();
   init_info.PhysicalDevice = device_->getPhysicalDevice();
@@ -153,7 +154,9 @@ void RendererContext::initImGui(GLFWwindow *window) {
   init_info.MinImageCount = 2;
   init_info.ImageCount = 2;
   init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+  init_info.RenderPass = renderResources_.getRenderPass(); // ← ✅ THIS LINE
   init_info.CheckVkResultFn = nullptr;
+
   ImGui_ImplVulkan_Init(&init_info);
 
   // 4. Upload fonts

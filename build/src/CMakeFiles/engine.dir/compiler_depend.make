@@ -1148,6 +1148,10 @@ src/CMakeFiles/engine.dir/core/Application.cpp.o: /home/jam/Documents/code/Vulka
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.h \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.h \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imconfig.h \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.h \
   /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
@@ -1496,6 +1500,8 @@ src/CMakeFiles/engine.dir/core/Application.cpp.o: /home/jam/Documents/code/Vulka
   /usr/include/stdint.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/syscall.h \
   /usr/include/time.h \
   /usr/include/unistd.h \
@@ -4324,6 +4330,10 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/co
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Pipeline.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/utils/VulkanHelpers.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.h \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.h \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imconfig.h \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.h \
   /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
