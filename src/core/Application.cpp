@@ -17,7 +17,7 @@ Application::Application()
 
 Application::~Application() {
   // Make sure the GPU is idle, then clean up
-  vkDeviceWaitIdle(rendererContext_.getDevice()->device);
+  vkDeviceWaitIdle(rendererContext_.getDevice()->getDevice());
   rendererContext_.cleanup();
 }
 

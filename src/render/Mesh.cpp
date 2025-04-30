@@ -12,13 +12,13 @@ void Mesh::setIndices(std::vector<uint32_t> &&i) {
 }
 void Mesh::uploadToGPU(VulkanDevice *dev) {
   // build GPU buffers via staging
-  CreateBuffer(dev->device, dev->physicalDevice, dev->commandPool,
-               dev->graphicsQueue, vertices_.data(),
+  CreateBuffer(dev->getDevice(), dev->getPhysicalDevice(),
+               dev->getCommandPool(), dev->getGraphicsQueue(), vertices_.data(),
                sizeof(Vertex) * vertices_.size(),
                VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vbo_, vboMem_);
 
-  CreateBuffer(dev->device, dev->physicalDevice, dev->commandPool,
-               dev->graphicsQueue, indices_.data(),
+  CreateBuffer(dev->getDevice(), dev->getPhysicalDevice(),
+               dev->getCommandPool(), dev->getGraphicsQueue(), indices_.data(),
                sizeof(uint32_t) * indices_.size(),
                VK_BUFFER_USAGE_INDEX_BUFFER_BIT, ibo_, iboMem_);
 

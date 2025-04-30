@@ -22,26 +22,26 @@ void Swapchain::recreate() {
 
 void Swapchain::cleanup() {
   for (auto view : imageViews_) {
-    vkDestroyImageView(device_->device, view, nullptr);
+    vkDestroyImageView(device_->getDevice(), view, nullptr);
   }
   imageViews_.clear();
 
   if (swapchain_ != VK_NULL_HANDLE) {
-    vkDestroySwapchainKHR(device_->device, swapchain_, nullptr);
+    vkDestroySwapchainKHR(device_->getDevice(), swapchain_, nullptr);
     swapchain_ = VK_NULL_HANDLE;
   }
 }
 
 void Swapchain::create() {
   VkSurfaceCapabilitiesKHR capabilities;
-  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device_->physicalDevice, surface_,
-                                            &capabilities);
+  vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device_->getPhysicalDevice(),
+                                            surface_, &capabilities);
 
   uint32_t formatCount;
-  vkGetPhysicalDeviceSurfaceFormatsKHR(device_->physicalDevice, surface_,
+  vkGetPhysicalDeviceSurfaceFormatsKHR(device_->getPhysicalDevice(), surface_,
                                        &formatCount, nullptr);
   std::vector<VkSurfaceFormatKHR> formats(formatCount);
-  vkGetPhysicalDeviceSurfaceFormatsKHR(device_->physicalDevice, surface_,
+  vkGetPhysicalDeviceSurfaceFormatsKHR(device_->getPhysicalDevice(), surface_,
                                        &formatCount, formats.data());
 
   VkSurfaceFormatKHR surfaceFormat = formats[0];
@@ -55,11 +55,11 @@ void Swapchain::create() {
   imageFormat_ = surfaceFormat.format;
 
   uint32_t presentModeCount;
-  vkGetPhysicalDeviceSurfacePresentModesKHR(device_->physicalDevice, surface_,
-                                            &presentModeCount, nullptr);
+  vkGetPhysicalDeviceSurfacePresentModesKHR(
+      device_->getPhysicalDevice(), surface_, &presentModeCount, nullptr);
   std::vector<VkPresentModeKHR> presentModes(presentModeCount);
-  vkGetPhysicalDeviceSurfacePresentModesKHR(device_->physicalDevice, surface_,
-                                            &presentModeCount,
+  vkGetPhysicalDeviceSurfacePresentModesKHR(device_->getPhysicalDevice(),
+                                            surface_, &presentModeCount,
                                             presentModes.data());
 
   VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
@@ -103,14 +103,15 @@ void Swapchain::create() {
 
   extent_ = createInfo.imageExtent;
 
-  if (vkCreateSwapchainKHR(device_->device, &createInfo, nullptr,
+  if (vkCreateSwapchainKHR(device_->getDevice(), &createInfo, nullptr,
                            &swapchain_) != VK_SUCCESS) {
     throw std::runtime_error("Failed to create swapchain");
   }
 
-  vkGetSwapchainImagesKHR(device_->device, swapchain_, &imageCount, nullptr);
+  vkGetSwapchainImagesKHR(device_->getDevice(), swapchain_, &imageCount,
+                          nullptr);
   images_.resize(imageCount);
-  vkGetSwapchainImagesKHR(device_->device, swapchain_, &imageCount,
+  vkGetSwapchainImagesKHR(device_->getDevice(), swapchain_, &imageCount,
                           images_.data());
 }
 
@@ -131,7 +132,7 @@ void Swapchain::createImageViews() {
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount = 1;
 
-    if (vkCreateImageView(device_->device, &viewInfo, nullptr,
+    if (vkCreateImageView(device_->getDevice(), &viewInfo, nullptr,
                           &imageViews_[i]) != VK_SUCCESS) {
       throw std::runtime_error("Failed to create image view");
     }

@@ -22,12 +22,12 @@ void RendererContext::init(GLFWwindow *window) {
   // 1) device, swapchain, sync objects
   device_ = std::make_unique<VulkanDevice>(window);
   swapchain_ =
-      std::make_unique<Swapchain>(device_.get(), device_->surface, window);
-  frameSync_.init(device_->device, MAX_FRAMES_IN_FLIGHT);
+      std::make_unique<Swapchain>(device_.get(), device_->getSurface(), window);
+  frameSync_.init(device_->getDevice(), MAX_FRAMES_IN_FLIGHT);
   VmaAllocatorCreateInfo ai{};
-  ai.physicalDevice = device_->physicalDevice;
-  ai.device = device_->device;
-  ai.instance = device_->instance;
+  ai.physicalDevice = device_->getPhysicalDevice();
+  ai.device = device_->getDevice();
+  ai.instance = device_->getInstance();
   vmaCreateAllocator(&ai, &allocator_);
   extent_ = swapchain_->getExtent();
 
@@ -39,25 +39,25 @@ void RendererContext::init(GLFWwindow *window) {
   // ready
   createUniforms();
 
-  pipeline_.init(device_->device, renderPass_, descriptorMgr_.getLayout(),
+  pipeline_.init(device_->getDevice(), renderPass_, descriptorMgr_.getLayout(),
                  std::string(SPIRV_OUT) + "/vert.spv",
                  std::string(SPIRV_OUT) + "/frag.spv");
 
   // 2) allocate command buffers
   VkCommandBufferAllocateInfo allocInfo{
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
-  allocInfo.commandPool = device_->commandPool;
+  allocInfo.commandPool = device_->getCommandPool();
   allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
   allocInfo.commandBufferCount = MAX_FRAMES_IN_FLIGHT;
-  if (vkAllocateCommandBuffers(device_->device, &allocInfo, commandBuffers_) !=
-      VK_SUCCESS) {
+  if (vkAllocateCommandBuffers(device_->getDevice(), &allocInfo,
+                               commandBuffers_) != VK_SUCCESS) {
     throw std::runtime_error("Failed to allocate command buffers!");
   }
 }
 
 void RendererContext::createUniforms() {
-  VkDevice dev = device_->device;
-  VkPhysicalDevice phys = device_->physicalDevice;
+  VkDevice dev = device_->getDevice();
+  VkPhysicalDevice phys = device_->getPhysicalDevice();
 
   // — Allocate one big HOST_VISIBLE, coherent UBO for all frames via VMA —
   VkDeviceSize totalSize = sizeof(glm::mat4) * MAX_FRAMES_IN_FLIGHT;
@@ -96,11 +96,11 @@ void RendererContext::createUniforms() {
 void RendererContext::beginFrame() {
   // 1) Wait for last frame’s fence and acquire the next swapchain image
   VkFence fence = frameSync_.getInFlightFence(currentFrame_);
-  vkWaitForFences(device_->device, 1, &fence, VK_TRUE, UINT64_MAX);
-  vkResetFences(device_->device, 1, &fence);
+  vkWaitForFences(device_->getDevice(), 1, &fence, VK_TRUE, UINT64_MAX);
+  vkResetFences(device_->getDevice(), 1, &fence);
 
   VkResult res = vkAcquireNextImageKHR(
-      device_->device, swapchain_->getSwapchain(), UINT64_MAX,
+      device_->getDevice(), swapchain_->getSwapchain(), UINT64_MAX,
       frameSync_.getImageAvailable(currentFrame_), VK_NULL_HANDLE,
       &currentImageIndex_);
   if (res == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -175,7 +175,7 @@ void RendererContext::endFrame() {
   si.signalSemaphoreCount = 1;
   si.pSignalSemaphores = sigSems;
 
-  vkQueueSubmit(device_->graphicsQueue, 1, &si,
+  vkQueueSubmit(device_->getGraphicsQueue(), 1, &si,
                 frameSync_.getInFlightFence(currentFrame_));
 
   VkPresentInfoKHR pi{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
@@ -186,7 +186,7 @@ void RendererContext::endFrame() {
   pi.pSwapchains = scs;
   pi.pImageIndices = &currentImageIndex_;
 
-  VkResult pres = vkQueuePresentKHR(device_->graphicsQueue, &pi);
+  VkResult pres = vkQueuePresentKHR(device_->getGraphicsQueue(), &pi);
   if (pres == VK_ERROR_OUT_OF_DATE_KHR || pres == VK_SUBOPTIMAL_KHR) {
     recreateSwapchain();
   } else if (pres != VK_SUCCESS) {
@@ -199,7 +199,7 @@ void RendererContext::endFrame() {
 void RendererContext::createFramebuffers() {
   // destroy old ones if any
   for (auto fb : framebuffers_)
-    vkDestroyFramebuffer(device_->device, fb, nullptr);
+    vkDestroyFramebuffer(device_->getDevice(), fb, nullptr);
   framebuffers_.clear();
 
   auto &colorViews = swapchain_->getImageViews();
@@ -216,17 +216,17 @@ void RendererContext::createFramebuffers() {
     fci.height = extent_.height;
     fci.layers = 1;
 
-    if (vkCreateFramebuffer(device_->device, &fci, nullptr,
+    if (vkCreateFramebuffer(device_->getDevice(), &fci, nullptr,
                             &framebuffers_[i]) != VK_SUCCESS)
       throw std::runtime_error("Failed to create framebuffer");
   }
 }
 void RendererContext::recreateSwapchain() {
-  vkDeviceWaitIdle(device_->device);
+  vkDeviceWaitIdle(device_->getDevice());
   swapchain_->cleanup();
   swapchain_->cleanup();
-  vkDestroyRenderPass(device_->device, renderPass_, nullptr);
-  pipeline_.cleanup(device_->device);
+  vkDestroyRenderPass(device_->getDevice(), renderPass_, nullptr);
+  pipeline_.cleanup(device_->getDevice());
   swapchain_->recreate();
   extent_ = swapchain_->getExtent();
 
@@ -234,7 +234,7 @@ void RendererContext::recreateSwapchain() {
   createDepthResources();
   createRenderPass();
   createFramebuffers();
-  pipeline_.init(device_->device, renderPass_, descriptorMgr_.getLayout(),
+  pipeline_.init(device_->getDevice(), renderPass_, descriptorMgr_.getLayout(),
                  std::string(SPIRV_OUT) + "/vert.spv",
                  std::string(SPIRV_OUT) + "/frag.spv");
 }
@@ -242,16 +242,16 @@ void RendererContext::recreateSwapchain() {
 void RendererContext::cleanup() {
   // 1) Destroy framebuffers
   for (auto fb : framebuffers_)
-    vkDestroyFramebuffer(device_->device, fb, nullptr);
+    vkDestroyFramebuffer(device_->getDevice(), fb, nullptr);
   framebuffers_.clear();
 
   // 2) Destroy render pass
   if (renderPass_ != VK_NULL_HANDLE)
-    vkDestroyRenderPass(device_->device, renderPass_, nullptr);
+    vkDestroyRenderPass(device_->getDevice(), renderPass_, nullptr);
 
   // 3) Destroy depth view & image
   if (depthImageView_ != VK_NULL_HANDLE)
-    vkDestroyImageView(device_->device, depthImageView_, nullptr);
+    vkDestroyImageView(device_->getDevice(), depthImageView_, nullptr);
   if (depthImage_ != VK_NULL_HANDLE)
     vmaDestroyImage(allocator_, depthImage_, depthImageAllocation_);
 
@@ -262,8 +262,8 @@ void RendererContext::cleanup() {
   vmaDestroyBuffer(allocator_, uniformBuffer_, uniformAllocation_);
   vmaDestroyAllocator(allocator_);
 
-  descriptorMgr_.cleanup(device_->device);
-  frameSync_.cleanup(device_->device);
+  descriptorMgr_.cleanup(device_->getDevice());
+  frameSync_.cleanup(device_->getDevice());
   device_.reset();
 }
 
@@ -309,7 +309,7 @@ void RendererContext::createRenderPass() {
   rpci.subpassCount = 1;
   rpci.pSubpasses = &subpass;
 
-  if (vkCreateRenderPass(device_->device, &rpci, nullptr, &renderPass_) !=
+  if (vkCreateRenderPass(device_->getDevice(), &rpci, nullptr, &renderPass_) !=
       VK_SUCCESS)
     throw std::runtime_error("Failed to create render pass");
 }
@@ -321,7 +321,8 @@ VkFormat RendererContext::findDepthFormat() const {
 
   for (auto fmt : candidates) {
     VkFormatProperties props;
-    vkGetPhysicalDeviceFormatProperties(device_->physicalDevice, fmt, &props);
+    vkGetPhysicalDeviceFormatProperties(device_->getPhysicalDevice(), fmt,
+                                        &props);
     if (props.optimalTilingFeatures &
         VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
       return fmt;
@@ -366,7 +367,7 @@ void RendererContext::createDepthResources() {
   viewInfo.subresourceRange.baseArrayLayer = 0;
   viewInfo.subresourceRange.layerCount = 1;
 
-  if (vkCreateImageView(device_->device, &viewInfo, nullptr,
+  if (vkCreateImageView(device_->getDevice(), &viewInfo, nullptr,
                         &depthImageView_) != VK_SUCCESS)
     throw std::runtime_error("Failed to create depth image view");
 }

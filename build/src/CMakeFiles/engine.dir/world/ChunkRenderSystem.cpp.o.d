@@ -159,39 +159,7 @@ src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: \
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
  /usr/include/GLFW/glfw3.h /usr/include/GL/gl.h /usr/include/GL/glext.h \
- /usr/include/KHR/khrplatform.h /usr/include/c++/14/iostream \
- /usr/include/c++/14/ostream /usr/include/c++/14/ios \
- /usr/include/c++/14/bits/ios_base.h /usr/include/c++/14/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/gthr.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/gthr-default.h \
- /usr/include/pthread.h /usr/include/sched.h \
- /usr/include/x86_64-linux-gnu/bits/sched.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
- /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
- /usr/include/x86_64-linux-gnu/bits/time.h \
- /usr/include/x86_64-linux-gnu/bits/timex.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
- /usr/include/x86_64-linux-gnu/bits/setjmp.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
- /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h \
- /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
- /usr/include/c++/14/bits/locale_classes.h \
- /usr/include/c++/14/bits/locale_classes.tcc \
- /usr/include/c++/14/system_error \
- /usr/include/x86_64-linux-gnu/c++/14/bits/error_constants.h \
- /usr/include/c++/14/streambuf /usr/include/c++/14/bits/streambuf.tcc \
- /usr/include/c++/14/bits/basic_ios.h \
- /usr/include/c++/14/bits/locale_facets.h /usr/include/c++/14/cwctype \
- /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_base.h \
- /usr/include/c++/14/bits/streambuf_iterator.h \
- /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_inline.h \
- /usr/include/c++/14/bits/locale_facets.tcc \
- /usr/include/c++/14/bits/basic_ios.tcc \
- /usr/include/c++/14/bits/ostream.tcc /usr/include/c++/14/istream \
- /usr/include/c++/14/bits/istream.tcc \
+ /usr/include/KHR/khrplatform.h \
  /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
  /usr/include/glm/glm.hpp /usr/include/glm/detail/_fixes.hpp \
  /usr/include/c++/14/cmath /usr/include/math.h \
@@ -225,6 +193,7 @@ src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
+ /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
  /usr/include/x86_64-linux-gnu/bits/uio_lim.h /usr/include/c++/14/cfloat \
@@ -356,6 +325,36 @@ src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: \
  /usr/include/c++/14/memory /usr/include/c++/14/bits/stl_tempbuf.h \
  /usr/include/c++/14/bits/stl_raw_storage_iter.h \
  /usr/include/c++/14/bits/align.h /usr/include/c++/14/bits/unique_ptr.h \
+ /usr/include/c++/14/ostream /usr/include/c++/14/ios \
+ /usr/include/c++/14/bits/ios_base.h /usr/include/c++/14/ext/atomicity.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/gthr.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/gthr-default.h \
+ /usr/include/pthread.h /usr/include/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
+ /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
+ /usr/include/x86_64-linux-gnu/bits/time.h \
+ /usr/include/x86_64-linux-gnu/bits/timex.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+ /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/atomic_word.h \
+ /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
+ /usr/include/c++/14/bits/locale_classes.h \
+ /usr/include/c++/14/bits/locale_classes.tcc \
+ /usr/include/c++/14/system_error \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/error_constants.h \
+ /usr/include/c++/14/streambuf /usr/include/c++/14/bits/streambuf.tcc \
+ /usr/include/c++/14/bits/basic_ios.h \
+ /usr/include/c++/14/bits/locale_facets.h /usr/include/c++/14/cwctype \
+ /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_base.h \
+ /usr/include/c++/14/bits/streambuf_iterator.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/ctype_inline.h \
+ /usr/include/c++/14/bits/locale_facets.tcc \
+ /usr/include/c++/14/bits/basic_ios.tcc \
+ /usr/include/c++/14/bits/ostream.tcc \
  /usr/include/c++/14/bits/shared_ptr.h \
  /usr/include/c++/14/bits/shared_ptr_base.h \
  /usr/include/c++/14/bits/allocated_ptr.h \
