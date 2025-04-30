@@ -21,7 +21,7 @@ void CreateBuffer(VkDevice device, VkPhysicalDevice physDevice,
                   VkCommandPool cmdPool, VkQueue queue, const void *data,
                   VkDeviceSize size, VkBufferUsageFlags usage,
                   VkBuffer &outBuffer, VkDeviceMemory &outMemory) {
-  // 1) Create staging buffer (HOST_VISIBLE | COHERENT)
+  // 1) staging buffer
   VkBuffer stagingBuf;
   VkDeviceMemory stagingMem;
   VkBufferCreateInfo bufInfo{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
@@ -41,15 +41,14 @@ void CreateBuffer(VkDevice device, VkPhysicalDevice physDevice,
   vkAllocateMemory(device, &allocInfo, nullptr, &stagingMem);
   vkBindBufferMemory(device, stagingBuf, stagingMem, 0);
 
-  // Copy data into staging
+  // copy into staging
   void *mapped;
   vkMapMemory(device, stagingMem, 0, size, 0, &mapped);
-  if (data) {
-    std::memcpy(mapped, data, static_cast<size_t>(size));
-  }
+  if (data)
+    std::memcpy(mapped, data, (size_t)size);
   vkUnmapMemory(device, stagingMem);
 
-  // 2) Create device-local buffer
+  // 2) device-local buffer
   VkBufferCreateInfo devBufInfo = bufInfo;
   devBufInfo.usage = usage | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
   vkCreateBuffer(device, &devBufInfo, nullptr, &outBuffer);
@@ -61,7 +60,7 @@ void CreateBuffer(VkDevice device, VkPhysicalDevice physDevice,
   vkAllocateMemory(device, &allocInfo, nullptr, &outMemory);
   vkBindBufferMemory(device, outBuffer, outMemory, 0);
 
-  // 3) Copy from staging to device-local
+  // 3) one‐time copy with its own fence
   VkCommandBufferAllocateInfo cmdAlloc{
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
   cmdAlloc.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -82,10 +81,18 @@ void CreateBuffer(VkDevice device, VkPhysicalDevice physDevice,
   VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
   submit.commandBufferCount = 1;
   submit.pCommandBuffers = &cmd;
-  vkQueueSubmit(queue, 1, &submit, VK_NULL_HANDLE);
-  vkQueueWaitIdle(queue);
 
-  // Cleanup staging
+  // create and submit with a fence
+  VkFence copyFence;
+  VkFenceCreateInfo fci{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+  vkCreateFence(device, &fci, nullptr, &copyFence);
+
+  vkQueueSubmit(queue, 1, &submit, copyFence);
+  // wait *only* on this copy
+  vkWaitForFences(device, 1, &copyFence, VK_TRUE, UINT64_MAX);
+  vkDestroyFence(device, copyFence, nullptr);
+
+  // cleanup
   vkFreeCommandBuffers(device, cmdPool, 1, &cmd);
   vkDestroyBuffer(device, stagingBuf, nullptr);
   vkFreeMemory(device, stagingMem, nullptr);
