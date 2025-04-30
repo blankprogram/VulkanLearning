@@ -1,0 +1,63 @@
+
+#include "engine/platform/RenderGraph.hpp"
+#include "engine/platform/RenderCommandManager.hpp"
+#include "engine/platform/RenderResources.hpp"
+#include <glm/gtc/type_ptr.hpp>
+#include <stdexcept>
+
+void RenderGraph::beginFrame(RenderResources &resources,
+                             RenderCommandManager &commandManager,
+                             size_t frameIndex, const glm::mat4 &viewProj) {
+  resources.updateUniforms(frameIndex, viewProj);
+  commandBuffer_ = commandManager.get(frameIndex);
+
+  VkCommandBufferBeginInfo beginInfo{
+      VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+  if (vkBeginCommandBuffer(commandBuffer_, &beginInfo) != VK_SUCCESS) {
+    throw std::runtime_error("Failed to begin command buffer");
+  }
+
+  VkClearValue clears[2] = {};
+  clears[0].color = {{0.1f, 0.1f, 0.1f, 1.0f}};
+  clears[1].depthStencil = {1.0f, 0};
+
+  VkRenderPassBeginInfo rpBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+  rpBeginInfo.renderPass = resources.getRenderPass();
+  rpBeginInfo.framebuffer = resources.getFramebuffers()[frameIndex];
+  rpBeginInfo.renderArea = {{0, 0}, resources.getSwapchain()->getExtent()};
+  rpBeginInfo.clearValueCount = 2;
+  rpBeginInfo.pClearValues = clears;
+
+  vkCmdBeginRenderPass(commandBuffer_, &rpBeginInfo,
+                       VK_SUBPASS_CONTENTS_INLINE);
+
+  const auto &pipeline = resources.getPipeline();
+  vkCmdBindPipeline(commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    pipeline.pipeline);
+
+  uint32_t dynOffset = static_cast<uint32_t>(sizeof(glm::mat4) * frameIndex);
+  vkCmdBindDescriptorSets(commandBuffer_, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                          pipeline.layout, 0, 1,
+                          &resources.getDescriptorSets()[0], 1, &dynOffset);
+
+  VkViewport viewport = {
+      0.f,
+      0.f,
+      static_cast<float>(resources.getSwapchain()->getExtent().width),
+      static_cast<float>(resources.getSwapchain()->getExtent().height),
+      0.f,
+      1.f};
+  VkRect2D scissor = {{0, 0}, resources.getSwapchain()->getExtent()};
+
+  vkCmdSetViewport(commandBuffer_, 0, 1, &viewport);
+  vkCmdSetScissor(commandBuffer_, 0, 1, &scissor);
+}
+
+void RenderGraph::endFrame() {
+  vkCmdEndRenderPass(commandBuffer_);
+  if (vkEndCommandBuffer(commandBuffer_) != VK_SUCCESS) {
+    throw std::runtime_error("Failed to end command buffer");
+  }
+}
