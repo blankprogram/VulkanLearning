@@ -12,32 +12,24 @@ using namespace engine;
 using namespace engine::voxel;
 
 std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
-  // 1) Dimensions of our volume
   const glm::ivec3 size = vol.extent;
-
-  // 2) Buffers for output
   std::vector<Vertex> verts;
   std::vector<uint32_t> idxs;
 
-  // 3) Iterate over the 3 principal axes: 0=X, 1=Y, 2=Z
   for (int d = 0; d < 3; ++d) {
-    // u and v are the other two axes
     int u = (d + 1) % 3;
     int v = (d + 2) % 3;
 
-    // extent along u and v
     const int U = size[u], V = size[v];
     std::vector<int> mask(U * V);
+    std::vector<glm::vec3> faceColorMask(U * V);
 
-    // 4) Two passes: one for +faces (dir=1), one for −faces (dir=−1)
     for (int dir = 1; dir >= -1; dir -= 2) {
-      // sweep through slices perpendicular to axis d
       for (int x = 0; x <= size[d]; ++x) {
 
-        // 4a) Build the mask for this slice
+        // --- Build mask and color mask ---
         for (int j = 0; j < V; ++j) {
           for (int i = 0; i < U; ++i) {
-            // voxel coords on either side of the plane
             glm::ivec3 a{0}, b{0};
             a[d] = x - (dir == 1);
             b[d] = x;
@@ -52,35 +44,41 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
             bool va = inBounds(a) ? vol.at(a.x, a.y, a.z).solid : false;
             bool vb = inBounds(b) ? vol.at(b.x, b.y, b.z).solid : false;
 
-            // mask = ±1 if face needed, 0 otherwise
             if (va != vb) {
-              // face normal should point from solid → empty
               mask[j * U + i] = (va ? dir : -dir);
+              glm::ivec3 voxelCoord = va ? a : b;
+              faceColorMask[j * U + i] =
+                  vol.at(voxelCoord.x, voxelCoord.y, voxelCoord.z).color;
             } else {
               mask[j * U + i] = 0;
+              faceColorMask[j * U + i] = glm::vec3(0.0f);
             }
           }
         }
 
-        // 4b) Greedy‐merge rectangles in the mask
+        // --- Greedy merging ---
         for (int j = 0; j < V; ++j) {
           for (int i = 0; i < U; ++i) {
             int m = mask[j * U + i];
             if (m == 0)
               continue;
 
-            // 1) Compute width w
+            glm::vec3 currentColor = faceColorMask[j * U + i];
+
+            // 1) Compute width
             int w = 1;
-            while (i + w < U && mask[j * U + (i + w)] == m) {
+            while (i + w < U && mask[j * U + (i + w)] == m &&
+                   faceColorMask[j * U + (i + w)] == currentColor) {
               ++w;
             }
 
-            // 2) Compute height h (at least 1!)
+            // 2) Compute height
             int h = 1;
             bool rowOK = true;
             while (j + h < V && rowOK) {
               for (int k = 0; k < w; ++k) {
-                if (mask[(j + h) * U + (i + k)] != m) {
+                int idx = (j + h) * U + (i + k);
+                if (mask[idx] != m || faceColorMask[idx] != currentColor) {
                   rowOK = false;
                   break;
                 }
@@ -89,59 +87,47 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
                 ++h;
             }
 
-            // 3) Compute quad geometry
+            // 3) Quad geometry
             glm::vec3 origin{0}, du{0}, dv{0}, normal{0};
-            // position along the sweep axis
             origin[d] = float(x);
-            // offsets in the u/v plane
             origin[u] = float(i);
             origin[v] = float(j);
             du[u] = float(w);
             dv[v] = float(h);
             normal[d] = float(m);
 
-            // corners
             glm::vec3 p0 = origin;
             glm::vec3 p1 = origin + du;
             glm::vec3 p2 = origin + du + dv;
             glm::vec3 p3 = origin + dv;
 
-            // 4) Emit vertices & indices
             uint32_t base = uint32_t(verts.size());
+
             if (m > 0) {
-              // front‐facing winding
-
-              glm::vec3 faceColor = va ? vol.at(a.x, a.y, a.z).color
-                                       : vol.at(b.x, b.y, b.z).color;
-
-              verts.push_back({p0, normal, {0, 0}, faceColor});
-              verts.push_back({p1, normal, {float(w), 0}, faceColor});
-              verts.push_back({p2, normal, {float(w), float(h)}, faceColor});
-              verts.push_back({p3, normal, {0, float(h)}, faceColor});
+              verts.push_back({p0, normal, {0, 0}, currentColor});
+              verts.push_back({p1, normal, {float(w), 0}, currentColor});
+              verts.push_back({p2, normal, {float(w), float(h)}, currentColor});
+              verts.push_back({p3, normal, {0, float(h)}, currentColor});
               idxs.insert(idxs.end(),
                           {base, base + 1, base + 2, base, base + 2, base + 3});
             } else {
-              // back‐facing winding (flip p1/p3)
-
-              glm::vec3 faceColor = va ? vol.at(a.x, a.y, a.z).color
-                                       : vol.at(b.x, b.y, b.z).color;
-
-              verts.push_back({p0, normal, {0, 0}, faceColor});
-              verts.push_back({p3, normal, {0, float(h)}, faceColor});
-              verts.push_back({p2, normal, {float(w), float(h)}, faceColor});
-              verts.push_back({p1, normal, {float(w), 0}, faceColor});
+              verts.push_back({p0, normal, {0, 0}, currentColor});
+              verts.push_back({p3, normal, {0, float(h)}, currentColor});
+              verts.push_back({p2, normal, {float(w), float(h)}, currentColor});
+              verts.push_back({p1, normal, {float(w), 0}, currentColor});
               idxs.insert(idxs.end(),
                           {base, base + 1, base + 2, base, base + 2, base + 3});
             }
 
-            // 5) Zero‐out used mask so we don’t re‐emit
+            // 4) Clear mask
             for (int yy = 0; yy < h; ++yy) {
               for (int xx = 0; xx < w; ++xx) {
-                mask[(j + yy) * U + (i + xx)] = 0;
+                int idx = (j + yy) * U + (i + xx);
+                mask[idx] = 0;
+                faceColorMask[idx] = glm::vec3(0.0f);
               }
             }
 
-            // advance i past this rectangle
             i += w - 1;
           }
         }
@@ -149,7 +135,6 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
     }
   }
 
-  // 6) Pack into a Mesh and return
   auto mesh = std::make_unique<Mesh>();
   mesh->setVertices(std::move(verts));
   mesh->setIndices(std::move(idxs));

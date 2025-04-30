@@ -11,7 +11,7 @@ using engine::voxel::VoxelMesher;
 ChunkManager::ChunkManager() = default;
 void ChunkManager::initChunks(engine::utils::ThreadPool &threadPool) {
   // generate initial chunks around origin
-  updateChunks(glm::vec3{0, 0, 0}, threadPool);
+  updateChunks(glm::vec3{3, 3, 3}, threadPool);
 }
 void ChunkManager::updateChunks(const glm::vec3 &playerPos,
                                 engine::utils::ThreadPool &threadPool) {
