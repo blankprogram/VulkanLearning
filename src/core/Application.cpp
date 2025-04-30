@@ -51,16 +51,21 @@ void Application::mainLoop() {
   auto results = threadPool_.collectResults();
 
   for (auto &r : results) {
-    auto &chunk = chunkManager_.getChunk(r.coord);
+    try {
+      Chunk &chunk = chunkManager_.getChunk(r.coord);
 
-    if (!chunk.mesh) {
-      chunk.mesh = std::move(r.mesh);
-      chunk.mesh->uploadToGPU(rendererContext_.getDevice());
+      if (!chunk.mesh) {
+        chunk.mesh = std::move(r.mesh);
+        chunk.mesh->uploadToGPU(rendererContext_.getDevice());
 
-      chunk.dirty = false;         // ✅ no longer dirty
-      chunk.meshJobQueued = false; // ✅ mark mesh as done
-      std::cout << "[MainLoop] Uploaded mesh for " << r.coord.x << ", "
-                << r.coord.y << ", " << r.coord.z << "\n";
+        chunk.dirty = false;
+        chunk.meshJobQueued = false;
+        std::cout << "[MainLoop] Uploaded mesh for " << r.coord.x << ", "
+                  << r.coord.y << ", " << r.coord.z << "\n";
+      }
+    } catch (const std::out_of_range &) {
+      std::cerr << "[MainLoop] Skipped mesh upload: chunk " << r.coord.x << ", "
+                << r.coord.y << ", " << r.coord.z << " not found\n";
     }
   }
 

@@ -43,9 +43,11 @@ void ChunkManager::updateChunks(const glm::vec3 &playerPos,
           std::cout << "[ChunkManager] Queued mesh job for " << coord.x << ", "
                     << coord.y << ", " << coord.z << std::endl;
 
-          auto *volPtr = chunk.volume.get();
-          threadPool.enqueueMesh(
-              coord, [volPtr]() { return VoxelMesher::GenerateMesh(*volPtr); });
+          auto volumeCopy =
+              std::make_shared<engine::voxel::VoxelVolume>(*chunk.volume);
+          threadPool.enqueueMesh(coord, [volumeCopy]() {
+            return VoxelMesher::GenerateMesh(*volumeCopy);
+          });
 
           chunk.meshJobQueued = true;
         }
