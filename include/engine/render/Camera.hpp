@@ -10,7 +10,7 @@ public:
   Camera(float fovY, float aspect, float nearPlane, float farPlane);
 
   void setPosition(const glm::vec3 &pos) { position = pos; }
-
+  void setAspect(float a) { aspect = a; }
   void setRotation(float newYaw, float newPitch) {
     yaw = newYaw;
 

@@ -22,7 +22,10 @@ void Application::Run() {
 
 void Application::mainLoop() {
   windowManager_.pollEvents();
-
+  if (WindowManager::framebufferResized) {
+    WindowManager::framebufferResized = false;
+    rendererContext_.recreateSwapchain();
+  }
   static double last = glfwGetTime();
   double now = glfwGetTime();
   float dt = float(now - last);

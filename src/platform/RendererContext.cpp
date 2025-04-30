@@ -231,6 +231,8 @@ void RendererContext::recreateSwapchain() {
 
   swapchain_->recreate();
   extent_ = swapchain_->getExtent();
+
+  cam_.setAspect(float(extent_.width) / float(extent_.height));
   createDepthResources();
   createRenderPass();
   createFramebuffers();
