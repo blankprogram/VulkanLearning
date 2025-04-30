@@ -272,6 +272,7 @@ src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o: \
  /usr/include/c++/14/bits/stl_queue.h /usr/include/c++/14/thread \
  /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/voxel/Voxel.hpp \
  /usr/include/c++/14/memory /usr/include/c++/14/bits/stl_tempbuf.h \
  /usr/include/c++/14/bits/stl_raw_storage_iter.h \
  /usr/include/c++/14/bits/shared_ptr_atomic.h \

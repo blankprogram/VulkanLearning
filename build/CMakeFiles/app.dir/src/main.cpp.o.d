@@ -414,4 +414,5 @@ CMakeFiles/app.dir/src/main.cpp.o: \
  /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/voxel/Voxel.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp

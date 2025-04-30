@@ -2,6 +2,7 @@ src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o: \
  /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp \
  /usr/include/stdc-predef.h \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/voxel/Voxel.hpp \
  /usr/include/glm/vec3.hpp /usr/include/glm/ext/vector_bool3.hpp \
  /usr/include/glm/detail/type_vec3.hpp \
  /usr/include/glm/detail/qualifier.hpp /usr/include/glm/detail/setup.hpp \

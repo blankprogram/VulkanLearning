@@ -2,11 +2,11 @@
 
 #version 450
 
-
-layout(location = 2) in vec3 fragColor;
+// we no longer need normals or UVs here
 layout(location = 0) out vec4 outColor;
 
 void main() {
-    outColor = vec4(fragColor, 1.0);
+    // flat, constant color for every fragment:
+    outColor = vec4(0.6, 0.7, 0.8, 1.0);
 }
 

@@ -145,6 +145,7 @@ src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o: \
  /usr/include/c++/14/bits/ranges_base.h \
  /usr/include/c++/14/bits/max_size_type.h /usr/include/c++/14/numbers \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \
+ /home/jam/Documents/code/VulkanLearning/include/engine/voxel/Voxel.hpp \
  /usr/include/c++/14/memory /usr/include/c++/14/bits/stl_tempbuf.h \
  /usr/include/c++/14/bits/stl_raw_storage_iter.h \
  /usr/include/c++/14/bits/align.h /usr/include/c++/14/bits/unique_ptr.h \
