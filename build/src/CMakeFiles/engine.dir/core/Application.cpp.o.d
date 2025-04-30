@@ -418,4 +418,6 @@ src/CMakeFiles/engine.dir/core/Application.cpp.o: \
  /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \
  /home/jam/Documents/code/VulkanLearning/include/engine/voxel/Voxel.hpp \
- /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp
+ /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+ /usr/include/c++/14/iostream /usr/include/c++/14/istream \
+ /usr/include/c++/14/bits/istream.tcc

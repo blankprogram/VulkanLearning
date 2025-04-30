@@ -1,7 +1,7 @@
 #include "engine/core/Application.hpp"
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-
+#include <iostream>
 using namespace engine;
 using namespace engine::world;
 
@@ -49,12 +49,19 @@ void Application::mainLoop() {
 
   // collect finished meshes
   auto results = threadPool_.collectResults();
+
   for (auto &r : results) {
     auto &chunk = chunkManager_.getChunk(r.coord);
-    chunk.mesh = std::move(r.mesh);
-    chunk.mesh->uploadToGPU(rendererContext_.getDevice());
-    chunk.dirty = false;
-    chunk.meshJobQueued = false;
+
+    if (!chunk.mesh) {
+      chunk.mesh = std::move(r.mesh);
+      chunk.mesh->uploadToGPU(rendererContext_.getDevice());
+
+      chunk.dirty = false;         // ✅ no longer dirty
+      chunk.meshJobQueued = false; // ✅ mark mesh as done
+      std::cout << "[MainLoop] Uploaded mesh for " << r.coord.x << ", "
+                << r.coord.y << ", " << r.coord.z << "\n";
+    }
   }
 
   // render all chunks

@@ -29,6 +29,7 @@ public:
   }
   uint32_t getCurrentImageIndex() const { return currentImageIndex_; }
 
+  RenderResources &getRenderResources() { return renderResources_; }
   VulkanDevice *getDevice() const { return device_.get(); }
   Swapchain *getSwapchain() const { return swapchain_.get(); }
 
