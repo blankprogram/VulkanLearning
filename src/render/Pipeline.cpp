@@ -58,15 +58,18 @@ void Pipeline::init(VkDevice dev, VkRenderPass rp, VkDescriptorSetLayout dsl,
   // — 4) vertex‐input
   VkVertexInputBindingDescription bind{0, sizeof(Vertex),
                                        VK_VERTEX_INPUT_RATE_VERTEX};
-  VkVertexInputAttributeDescription attr[3] = {
+
+  VkVertexInputAttributeDescription attr[4] = {
       {0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, pos)},
       {1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal)},
-      {2, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv)}};
+      {2, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv)},
+      {3, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)}};
+
   VkPipelineVertexInputStateCreateInfo vis{
       VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO};
   vis.vertexBindingDescriptionCount = 1;
   vis.pVertexBindingDescriptions = &bind;
-  vis.vertexAttributeDescriptionCount = 3;
+  vis.vertexAttributeDescriptionCount = 4;
   vis.pVertexAttributeDescriptions = attr;
 
   // — 5) input‐assembly
