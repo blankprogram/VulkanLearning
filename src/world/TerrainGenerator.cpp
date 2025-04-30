@@ -23,7 +23,7 @@ void TerrainGenerator::Generate(engine::voxel::VoxelVolume &vol,
         if (y == 0) {
           voxel.solid = true;
 
-          glm::ivec3 worldPos = chunkCoord + glm::ivec3{x, y, z};
+          glm::vec3 worldPos = glm::vec3(chunkCoord + glm::ivec3{x, y, z});
           float noiseVal = noise.GetNoise((float)worldPos.x * 0.1f,
                                           (float)worldPos.z * 0.1f);
           float grey = glm::clamp(0.3f + 0.7f * noiseVal, 0.0f, 1.0f);
