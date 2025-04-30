@@ -1,33 +1,39 @@
 
-
-// src/world/TerrainGenerator.cpp
 #include "engine/world/TerrainGenerator.hpp"
 #include "engine/voxel/VoxelVolume.hpp"
-
-#include <algorithm>             // std::clamp
-#include <cmath>                 // std::sin, std::cos, std::floor
-#include <glm/glm.hpp>           // glm::ivec3
-#include <glm/gtc/constants.hpp> // glm::pi, glm::two_pi
+#include <externals/FastNoiseLite.h>
+#include <glm/glm.hpp>
 
 namespace engine::world {
 
 void TerrainGenerator::Generate(engine::voxel::VoxelVolume &vol,
                                 const glm::ivec3 &chunkCoord) {
-  const glm::ivec3 ext = vol.extent;
+  static FastNoiseLite noise;
+  noise.SetSeed(1337); // fixed seed for consistent colors
+  noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+
+  glm::ivec3 ext = vol.extent;
 
   for (int z = 0; z < ext.z; ++z) {
     for (int x = 0; x < ext.x; ++x) {
       for (int y = 0; y < ext.y; ++y) {
-        bool isGround = (y == 0); // You can use noise instead
         auto &voxel = vol.at(x, y, z);
-        voxel.solid = isGround;
 
-        if (isGround) {
-          float hue = glm::fract((chunkCoord.x + x + chunkCoord.z + z) * 0.1f);
-          voxel.color = glm::vec3(hue, 0.6f, 0.2f); // earthy tone
+        // Only fill y=0 layer with voxels
+        if (y == 0) {
+          voxel.solid = true;
+
+          glm::ivec3 worldPos = chunkCoord + glm::ivec3{x, y, z};
+          float noiseVal = noise.GetNoise((float)worldPos.x * 0.1f,
+                                          (float)worldPos.z * 0.1f);
+          float grey = glm::clamp(0.3f + 0.7f * noiseVal, 0.0f, 1.0f);
+          voxel.color = glm::vec3(grey);
+        } else {
+          voxel.solid = false;
         }
       }
     }
   }
 }
+
 } // namespace engine::world
