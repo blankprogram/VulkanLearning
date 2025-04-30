@@ -1,4 +1,5 @@
 
+
 #include "engine/platform/RenderGraph.hpp"
 #include "engine/platform/RenderCommandManager.hpp"
 #include "engine/platform/RenderResources.hpp"
@@ -8,10 +9,12 @@
 void RenderGraph::beginFrame(RenderResources &resources,
                              RenderCommandManager &commandManager,
                              size_t frameIndex, const glm::mat4 &viewProj,
-                             VkImage swapchainImage) {
+                             VkImage swapchainImage,
+                             VkImageLayout currentLayout) {
+
   resources.updateUniforms(frameIndex, viewProj);
   commandBuffer_ = commandManager.get(frameIndex);
-  swapchainImage_ = swapchainImage; // ← STORE IT
+  swapchainImage_ = swapchainImage;
 
   VkCommandBufferBeginInfo beginInfo{
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
@@ -20,6 +23,25 @@ void RenderGraph::beginFrame(RenderResources &resources,
   if (vkBeginCommandBuffer(commandBuffer_, &beginInfo) != VK_SUCCESS) {
     throw std::runtime_error("Failed to begin command buffer");
   }
+
+  // TRANSITION IMAGE: undefined → color_attachment (BEFORE render pass)
+  VkImageMemoryBarrier barrier{};
+  barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+  barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+  barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+  barrier.srcAccessMask = 0;
+  barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+  barrier.image = swapchainImage_;
+  barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  barrier.subresourceRange.baseMipLevel = 0;
+  barrier.subresourceRange.levelCount = 1;
+  barrier.subresourceRange.baseArrayLayer = 0;
+  barrier.subresourceRange.layerCount = 1;
+
+  vkCmdPipelineBarrier(commandBuffer_, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0,
+                       nullptr, 0, nullptr, 1, &barrier);
+
   VkClearValue clears[2] = {};
   clears[0].color = {{0.1f, 0.1f, 0.1f, 1.0f}};
   clears[1].depthStencil = {1.0f, 0};
@@ -30,22 +52,7 @@ void RenderGraph::beginFrame(RenderResources &resources,
   rpBeginInfo.renderArea = {{0, 0}, resources.getSwapchain()->getExtent()};
   rpBeginInfo.clearValueCount = 2;
   rpBeginInfo.pClearValues = clears;
-  VkImageMemoryBarrier barrier{};
-  barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-  barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-  barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-  barrier.srcAccessMask = 0;
-  barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-  barrier.image = swapchainImage;
-  barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-  barrier.subresourceRange.baseMipLevel = 0;
-  barrier.subresourceRange.levelCount = 1;
-  barrier.subresourceRange.baseArrayLayer = 0;
-  barrier.subresourceRange.layerCount = 1;
 
-  vkCmdPipelineBarrier(commandBuffer_, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
-                       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0,
-                       nullptr, 0, nullptr, 1, &barrier);
   vkCmdBeginRenderPass(commandBuffer_, &rpBeginInfo,
                        VK_SUBPASS_CONTENTS_INLINE);
 
@@ -74,7 +81,7 @@ void RenderGraph::beginFrame(RenderResources &resources,
 void RenderGraph::endFrame() {
   vkCmdEndRenderPass(commandBuffer_);
 
-  // now safe to transition layout to PRESENT
+  // TRANSITION IMAGE: color_attachment → present_src (AFTER render pass)
   VkImageMemoryBarrier presentBarrier{};
   presentBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
   presentBarrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;

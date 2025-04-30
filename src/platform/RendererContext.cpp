@@ -47,7 +47,8 @@ void RendererContext::beginFrame() {
 
   renderGraph_.beginFrame(
       renderResources_, commandManager_, currentFrame_, viewProj,
-      renderResources_.getSwapchain()->getImages()[currentImageIndex_]);
+      renderResources_.getSwapchain()->getImages()[currentImageIndex_],
+      VK_IMAGE_LAYOUT_UNDEFINED); // <-- add this
 }
 
 void RendererContext::endFrame() {
