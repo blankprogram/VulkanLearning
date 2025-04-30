@@ -1,5 +1,3 @@
-
-
 #include "engine/world/TerrainGenerator.hpp"
 #include "engine/voxel/VoxelVolume.hpp"
 #include <externals/FastNoiseLite.h>
@@ -40,7 +38,7 @@ void TerrainGenerator::Generate(engine::voxel::VoxelVolume &vol,
       // Add mountain on top
       float m = mountainNoise.GetNoise(wx, wz);
       m = glm::clamp(m, 0.0f, 1.0f);
-      int mountainHeight = int(m * 8.0f); // up to 8 voxels above
+      int mountainHeight = int(m * 32.0f); // up to 8 voxels above
 
       for (int y = 0; y < ext.y; ++y) {
         auto &voxel = vol.at(x, y, z);
