@@ -24,31 +24,24 @@ void ChunkManager::updateChunks(const glm::vec3 &playerPos,
       for (int dx = -viewRadius_; dx <= viewRadius_; ++dx) {
         glm::ivec3 coord = pChunk + glm::ivec3{dx, dy, dz};
         auto &chunk = chunks_[coord];
+
         if (!chunk.volume) {
-          std::cout << "[ChunkManager] Created new chunk at " << coord.x << ", "
-                    << coord.y << ", " << coord.z << std::endl;
-          // allocate & generate volume
-          if (!chunk.volume) {
-            chunk.volume =
-                std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
+          // First time seeing this chunk: create voxel data + generate terrain
+          chunk.volume =
+              std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
+          TerrainGenerator::Generate(*chunk.volume, coord * CHUNK_DIM);
+          chunk.dirty = true;
+        }
 
-            TerrainGenerator::Generate(*chunk.volume, coord * CHUNK_DIM);
+        // Whether new or existing, check if we need to (re)mesh
+        if (chunk.dirty && !chunk.meshJobQueued) {
+          std::cout << "[ChunkManager] Queued mesh job for chunk at " << coord.x
+                    << ", " << coord.y << ", " << coord.z << std::endl;
 
-            chunk.dirty = true;
-            chunk.meshJobQueued = false;
-          }
-
-          // enqueue mesh job if needed
-          if (chunk.dirty && !chunk.meshJobQueued) {
-            std::cout << "[ChunkManager] Queued mesh job for chunk at "
-                      << coord.x << ", " << coord.y << ", " << coord.z
-                      << std::endl;
-            auto *volPtr = chunk.volume.get();
-            threadPool.enqueueMesh(coord, [volPtr]() {
-              return VoxelMesher::GenerateMesh(*volPtr);
-            });
-            chunk.meshJobQueued = true;
-          }
+          auto *volPtr = chunk.volume.get();
+          threadPool.enqueueMesh(
+              coord, [volPtr]() { return VoxelMesher::GenerateMesh(*volPtr); });
+          chunk.meshJobQueued = true;
         }
       }
 }
