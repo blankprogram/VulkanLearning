@@ -1,5 +1,6 @@
 
 // src/platform/RendererContext.cpp
+#define VMA_IMPLEMENTATION
 #include "engine/platform/RendererContext.hpp"
 #include "engine/platform/DescriptorManager.hpp"
 #include "engine/utils/VulkanHelpers.hpp"

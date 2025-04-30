@@ -66,7 +66,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
   /usr/include/c++/14/bits/hashtable_policy.h \
   /usr/include/c++/14/bits/invoke.h \
   /usr/include/c++/14/bits/ios_base.h \
-  /usr/include/c++/14/bits/istream.tcc \
   /usr/include/c++/14/bits/iterator_concepts.h \
   /usr/include/c++/14/bits/locale_classes.h \
   /usr/include/c++/14/bits/locale_classes.tcc \
@@ -163,8 +162,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
   /usr/include/c++/14/initializer_list \
   /usr/include/c++/14/ios \
   /usr/include/c++/14/iosfwd \
-  /usr/include/c++/14/iostream \
-  /usr/include/c++/14/istream \
   /usr/include/c++/14/limits \
   /usr/include/c++/14/memory \
   /usr/include/c++/14/mutex \
@@ -498,6 +495,8 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/lib/gcc/x86_64-linux-gnu/14/include/limits.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/14/include/float.h:
+
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
 /usr/include/x86_64-linux-gnu/sys/time.h:
@@ -781,12 +780,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/glm/ext/matrix_double3x4.hpp:
 
 /usr/include/glm/ext/matrix_double3x3_precision.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/local_lim.h:
-
-/usr/include/glm/ext/matrix_double3x3.hpp:
-
-/usr/include/glm/ext/matrix_double3x2_precision.hpp:
 
 /usr/include/glm/detail/func_geometric.inl:
 
@@ -1078,8 +1071,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/basic_ios.h:
 
-/usr/include/c++/14/iostream:
-
 /home/jam/Documents/code/VulkanLearning/include/engine/render/Mesh.hpp:
 
 /usr/include/c++/14/system_error:
@@ -1146,8 +1137,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/exception_ptr.h:
 
-/usr/include/c++/14/bits/istream.tcc:
-
 /usr/include/glm/fwd.hpp:
 
 /usr/include/c++/14/bits/unique_ptr.h:
@@ -1190,6 +1179,10 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/exception_defines.h:
 
+/usr/include/glm/detail/type_mat4x4.inl:
+
+/usr/include/c++/14/tr1/legendre_function.tcc:
+
 /usr/include/c++/14/bits/functexcept.h:
 
 /usr/include/c++/14/bits/unordered_map.h:
@@ -1198,23 +1191,11 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/glm/detail/type_mat4x2.inl:
 
-/usr/include/c++/14/tr1/legendre_function.tcc:
-
-/usr/include/glm/detail/type_mat4x4.inl:
-
 /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
 
 /usr/include/c++/14/bits/vector.tcc:
-
-/usr/include/glm/ext/matrix_double4x3.hpp:
-
-/usr/include/glm/ext/matrix_double3x2.hpp:
-
-/home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp:
-
-/usr/include/c++/14/bits/version.h:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/c++config.h:
 
@@ -1290,10 +1271,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/iosfwd:
 
-/usr/lib/gcc/x86_64-linux-gnu/14/include/float.h:
-
-/usr/include/c++/14/istream:
-
 /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
@@ -1329,6 +1306,8 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/c++/14/bits/refwrap.h:
 
 /usr/include/glm/ext/matrix_double2x2_precision.hpp:
+
+/usr/include/glm/ext/matrix_double3x2_precision.hpp:
 
 /usr/include/c++/14/debug/debug.h:
 
@@ -1475,3 +1454,15 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/glm/detail/type_vec3.inl:
 
 /usr/include/glm/ext/matrix_double2x3.hpp:
+
+/usr/include/glm/ext/matrix_double4x3.hpp:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp:
+
+/usr/include/c++/14/bits/version.h:
+
+/usr/include/glm/ext/matrix_double3x2.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/glm/ext/matrix_double3x3.hpp:
