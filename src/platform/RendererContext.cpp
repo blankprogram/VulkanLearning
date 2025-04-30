@@ -224,11 +224,9 @@ void RendererContext::createFramebuffers() {
 void RendererContext::recreateSwapchain() {
   vkDeviceWaitIdle(device_->device);
   swapchain_->cleanup();
-  for (auto fb : framebuffers_)
-    vkDestroyFramebuffer(device_->device, fb, nullptr);
+  swapchain_->cleanup();
   vkDestroyRenderPass(device_->device, renderPass_, nullptr);
   pipeline_.cleanup(device_->device);
-
   swapchain_->recreate();
   extent_ = swapchain_->getExtent();
 
