@@ -110,18 +110,26 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
             uint32_t base = uint32_t(verts.size());
             if (m > 0) {
               // front‐facing winding
-              verts.push_back({p0, normal, {0, 0}});
-              verts.push_back({p1, normal, {float(w), 0}});
-              verts.push_back({p2, normal, {float(w), float(h)}});
-              verts.push_back({p3, normal, {0, float(h)}});
+
+              glm::vec3 faceColor = va ? vol.at(a.x, a.y, a.z).color
+                                       : vol.at(b.x, b.y, b.z).color;
+
+              verts.push_back({p0, normal, {0, 0}, faceColor});
+              verts.push_back({p1, normal, {float(w), 0}, faceColor});
+              verts.push_back({p2, normal, {float(w), float(h)}, faceColor});
+              verts.push_back({p3, normal, {0, float(h)}, faceColor});
               idxs.insert(idxs.end(),
                           {base, base + 1, base + 2, base, base + 2, base + 3});
             } else {
               // back‐facing winding (flip p1/p3)
-              verts.push_back({p0, normal, {0, 0}});
-              verts.push_back({p3, normal, {0, float(h)}});
-              verts.push_back({p2, normal, {float(w), float(h)}});
-              verts.push_back({p1, normal, {float(w), 0}});
+
+              glm::vec3 faceColor = va ? vol.at(a.x, a.y, a.z).color
+                                       : vol.at(b.x, b.y, b.z).color;
+
+              verts.push_back({p0, normal, {0, 0}, faceColor});
+              verts.push_back({p3, normal, {0, float(h)}, faceColor});
+              verts.push_back({p2, normal, {float(w), float(h)}, faceColor});
+              verts.push_back({p1, normal, {float(w), 0}, faceColor});
               idxs.insert(idxs.end(),
                           {base, base + 1, base + 2, base, base + 2, base + 3});
             }
