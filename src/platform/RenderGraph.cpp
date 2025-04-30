@@ -7,9 +7,11 @@
 
 void RenderGraph::beginFrame(RenderResources &resources,
                              RenderCommandManager &commandManager,
-                             size_t frameIndex, const glm::mat4 &viewProj) {
+                             size_t frameIndex, const glm::mat4 &viewProj,
+                             VkImage swapchainImage) {
   resources.updateUniforms(frameIndex, viewProj);
   commandBuffer_ = commandManager.get(frameIndex);
+  swapchainImage_ = swapchainImage; // ← STORE IT
 
   VkCommandBufferBeginInfo beginInfo{
       VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
@@ -18,7 +20,6 @@ void RenderGraph::beginFrame(RenderResources &resources,
   if (vkBeginCommandBuffer(commandBuffer_, &beginInfo) != VK_SUCCESS) {
     throw std::runtime_error("Failed to begin command buffer");
   }
-
   VkClearValue clears[2] = {};
   clears[0].color = {{0.1f, 0.1f, 0.1f, 1.0f}};
   clears[1].depthStencil = {1.0f, 0};
@@ -57,6 +58,26 @@ void RenderGraph::beginFrame(RenderResources &resources,
 
 void RenderGraph::endFrame() {
   vkCmdEndRenderPass(commandBuffer_);
+
+  // 🔧 Insert image layout transition to PRESENT_SRC_KHR
+  VkImageMemoryBarrier barrier{};
+  barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+  barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+  barrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+  barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+  barrier.dstAccessMask = 0;
+  barrier.image = swapchainImage_;
+  barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+  barrier.subresourceRange.baseMipLevel = 0;
+  barrier.subresourceRange.levelCount = 1;
+  barrier.subresourceRange.baseArrayLayer = 0;
+  barrier.subresourceRange.layerCount = 1;
+
+  vkCmdPipelineBarrier(commandBuffer_,
+                       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                       VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0,
+                       nullptr, 1, &barrier);
+
   if (vkEndCommandBuffer(commandBuffer_) != VK_SUCCESS) {
     throw std::runtime_error("Failed to end command buffer");
   }

@@ -18,6 +18,8 @@ public:
   const std::vector<VkImageView> &getImageViews() const { return imageViews_; }
   VkFormat getImageFormat() const { return imageFormat_; }
 
+  const std::vector<VkImage> &getImages() const { return images_; }
+
 private:
   VulkanDevice *device_;
   VkSurfaceKHR surface_;

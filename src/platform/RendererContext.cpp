@@ -44,8 +44,10 @@ void RendererContext::beginFrame() {
   }
 
   glm::mat4 viewProj = cam_.viewProjection();
-  renderGraph_.beginFrame(renderResources_, commandManager_, currentFrame_,
-                          viewProj);
+
+  renderGraph_.beginFrame(
+      renderResources_, commandManager_, currentFrame_, viewProj,
+      renderResources_.getSwapchain()->getImages()[currentImageIndex_]);
 }
 
 void RendererContext::endFrame() {

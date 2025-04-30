@@ -9,7 +9,10 @@ CMakeFiles/app.dir/src/main.cpp.o
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/InputManager.hpp
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderCommandManager.hpp
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderGraph.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp
+ /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderResources.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp

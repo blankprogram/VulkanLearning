@@ -8,7 +8,10 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/InputManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderCommandManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderGraph.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderPassManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderResources.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/Swapchain.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp \
@@ -612,8 +615,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/vk_video/vulkan_video_codecs_common.h:
 
-/usr/include/vk_video/vulkan_video_codec_h264std_decode.h:
-
 /usr/include/unistd.h:
 
 /usr/include/x86_64-linux-gnu/bits/setjmp.h:
@@ -790,11 +791,9 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/glm/ext/matrix_double3x2_precision.hpp:
 
-/usr/include/glm/detail/func_geometric.inl:
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
 
-/usr/include/glm/ext/vector_double3.hpp:
-
-/usr/include/c++/14/bits/unique_lock.h:
+/usr/include/glm/ext/matrix_double2x3_precision.hpp:
 
 /usr/include/c++/14/bits/stl_tempbuf.h:
 
@@ -802,17 +801,19 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/stl_queue.h:
 
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderGraph.hpp:
+
 /usr/include/glm/ext/matrix_float2x3_precision.hpp:
 
 /usr/include/c++/14/bits/uses_allocator_args.h:
 
 /usr/include/c++/14/bits/stl_iterator.h:
 
+/usr/include/asm-generic/errno-base.h:
+
 /usr/include/vk_video/vulkan_video_codec_av1std_decode.h:
 
 /usr/include/c++/14/bits/stl_algobase.h:
-
-/usr/include/asm-generic/errno-base.h:
 
 /usr/include/c++/14/bits/stl_heap.h:
 
@@ -898,14 +899,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/memory_resource.h:
 
-/usr/include/c++/14/bits/max_size_type.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
-
-/usr/include/c++/14/mutex:
-
-/usr/include/c++/14/new:
-
 /usr/include/c++/14/bits/localefwd.h:
 
 /usr/include/syscall.h:
@@ -936,13 +929,17 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/char_traits.h:
 
-/usr/include/c++/14/limits:
+/usr/include/c++/14/bits/exception.h:
 
-/usr/include/c++/14/bits/functional_hash.h:
+/usr/include/glm/ext/vector_int2.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
+/usr/include/c++/14/cctype:
 
-/usr/include/c++/14/bits/allocated_ptr.h:
+/usr/include/c++/14/bits/erase_if.h:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/core/Application.hpp:
+
+/usr/include/c++/14/numbers:
 
 /usr/include/c++/14/bits/stringfwd.h:
 
@@ -951,12 +948,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/c++/14/bits/exception_defines.h:
 
 /usr/include/c++/14/bits/deque.tcc:
-
-/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
-
-/usr/include/GL/gl.h:
-
-/usr/include/c++/14/bits/locale_facets.tcc:
 
 /usr/include/c++/14/bits/exception_ptr.h:
 
@@ -970,17 +961,23 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /home/jam/Documents/code/VulkanLearning/include/engine/platform/FrameSync.hpp:
 
-/usr/include/c++/14/bits/ptr_traits.h:
-
-/usr/include/glm/ext/vector_bool4_precision.hpp:
-
-/usr/include/alloca.h:
-
 /usr/include/c++/14/bits/hashtable.h:
 
 /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp:
 
-/home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp:
+/usr/include/c++/14/bits/max_size_type.h:
+
+/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
+
+/usr/include/c++/14/bits/locale_facets.tcc:
+
+/usr/include/GL/gl.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
+
+/usr/include/c++/14/mutex:
+
+/usr/include/c++/14/new:
 
 /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h:
 
@@ -1009,12 +1006,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp:
 
 /usr/include/glm/detail/type_half.inl:
-
-/usr/include/c++/14/bits/erase_if.h:
-
-/home/jam/Documents/code/VulkanLearning/include/engine/core/Application.hpp:
-
-/usr/include/c++/14/numbers:
 
 /home/jam/Documents/code/VulkanLearning/include/engine/render/Vertex.hpp:
 
@@ -1058,6 +1049,18 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/stl_function.h:
 
+/usr/include/glm/ext/matrix_transform.hpp:
+
+/usr/include/c++/14/bits/basic_ios.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/c++/14/bits/atomic_lockfree_defines.h:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/UniformManager.hpp:
+
 /usr/include/c++/14/bits/ostream_insert.h:
 
 /usr/include/c++/14/bits/stl_pair.h:
@@ -1074,9 +1077,9 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/glm/vec4.hpp:
 
-/usr/include/c++/14/bits/chrono.h:
-
 /usr/include/glm/ext/matrix_double2x4_precision.hpp:
+
+/usr/include/c++/14/bits/chrono.h:
 
 /usr/include/c++/14/bit:
 
@@ -1090,12 +1093,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/cassert:
 
-/usr/include/c++/14/bits/exception.h:
-
-/usr/include/glm/ext/vector_int2.hpp:
-
-/usr/include/c++/14/cctype:
-
 /usr/include/wctype.h:
 
 /usr/include/sched.h:
@@ -1104,13 +1101,17 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /home/jam/Documents/code/VulkanLearning/include/engine/platform/FramebufferManager.hpp:
 
-/usr/include/glm/ext/matrix_transform.hpp:
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
-/usr/include/c++/14/bits/basic_ios.h:
+/usr/include/c++/14/bits/allocated_ptr.h:
 
 /usr/include/glm/ext/vector_int2_sized.hpp:
 
 /usr/include/c++/14/bits/alloc_traits.h:
+
+/usr/include/vk_video/vulkan_video_codec_h264std_decode.h:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderResources.hpp:
 
 /usr/include/c++/14/bits/cxxabi_init_exception.h:
 
@@ -1118,11 +1119,11 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/string_view:
 
-/usr/include/linux/limits.h:
+/usr/include/c++/14/bits/ptr_traits.h:
 
-/usr/include/c++/14/bits/atomic_lockfree_defines.h:
+/usr/include/glm/ext/vector_bool4_precision.hpp:
 
-/home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp:
+/usr/include/alloca.h:
 
 /usr/include/c++/14/array:
 
@@ -1160,12 +1161,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/cxxabi_forced.h:
 
-/usr/include/glm/fwd.hpp:
-
-/usr/include/c++/14/bits/unique_ptr.h:
-
-/usr/include/c++/14/bits/stl_deque.h:
-
 /usr/include/c++/14/deque:
 
 /usr/include/c++/14/bits/stl_vector.h:
@@ -1192,11 +1187,27 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 
 /usr/include/c++/14/bits/functexcept.h:
 
-/usr/include/c++/14/bits/unordered_map.h:
+/usr/include/glm/ext/vector_double3.hpp:
+
+/usr/include/c++/14/bits/unique_lock.h:
+
+/usr/include/glm/fwd.hpp:
+
+/usr/include/c++/14/bits/stl_deque.h:
+
+/usr/include/c++/14/bits/unique_ptr.h:
+
+/usr/include/c++/14/bits/functional_hash.h:
+
+/usr/include/c++/14/limits:
+
+/usr/include/glm/detail/func_geometric.inl:
 
 /usr/include/glm/detail/type_mat4x2.hpp:
 
 /usr/include/glm/detail/type_mat4x2.inl:
+
+/usr/include/c++/14/bits/unordered_map.h:
 
 /usr/include/glm/vec2.hpp:
 
@@ -1215,6 +1226,8 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/glm/ext/matrix_double4x3.hpp:
 
 /usr/include/glm/ext/matrix_double3x2.hpp:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/platform/RenderCommandManager.hpp:
 
 /home/jam/Documents/code/VulkanLearning/include/engine/platform/RendererContext.hpp:
 
@@ -1413,10 +1426,6 @@ CMakeFiles/app.dir/src/main.cpp.o: /home/jam/Documents/code/VulkanLearning/src/m
 /usr/include/glm/detail/type_mat2x3.inl:
 
 /usr/include/glm/detail/type_mat3x2.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
-
-/usr/include/glm/ext/matrix_double2x3_precision.hpp:
 
 /usr/include/glm/detail/type_mat3x3.hpp:
 
