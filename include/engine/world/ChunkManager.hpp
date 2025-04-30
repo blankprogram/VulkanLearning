@@ -33,7 +33,7 @@ public:
 
 private:
   static constexpr glm::ivec3 CHUNK_DIM{16, 16, 16};
-  int viewRadius_ = 4;
+  int viewRadius_ = 1;
 
   // <-- note the third template parameter
   std::unordered_map<glm::ivec3, Chunk, ivec3_hash> chunks_;

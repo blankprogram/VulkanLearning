@@ -41,7 +41,8 @@ void Application::mainLoop() {
   rendererContext_.beginFrame();
 
   // get camera position (stubbed)
-  glm::vec3 camPos{0.0f, 0.0f, 0.0f}; // TODO: replace with actual camera query
+
+  glm::vec3 camPos = rendererContext_.camera().getPosition();
 
   // enqueue any new mesh jobs
   chunkManager_.updateChunks(camPos, threadPool_);

@@ -11,13 +11,13 @@ using engine::voxel::VoxelMesher;
 ChunkManager::ChunkManager() = default;
 void ChunkManager::initChunks(engine::utils::ThreadPool &threadPool) {
   // generate initial chunks around origin
-  updateChunks(glm::vec3{3, 3, 3}, threadPool);
+  updateChunks(glm::vec3{0, 0, 0}, threadPool);
 }
 void ChunkManager::updateChunks(const glm::vec3 &playerPos,
                                 engine::utils::ThreadPool &threadPool) {
   // compute player chunk
-  glm::ivec3 pChunk{int(std::floor(playerPos.x)), int(std::floor(playerPos.y)),
-                    int(std::floor(playerPos.z))};
+
+  glm::ivec3 pChunk = glm::ivec3(glm::floor(playerPos / glm::vec3(CHUNK_DIM)));
 
   for (int dz = -viewRadius_; dz <= viewRadius_; ++dz)
     for (int dy = -viewRadius_; dy <= viewRadius_; ++dy)
@@ -29,7 +29,9 @@ void ChunkManager::updateChunks(const glm::vec3 &playerPos,
         if (!chunk.volume) {
           chunk.volume =
               std::make_unique<engine::voxel::VoxelVolume>(CHUNK_DIM);
-          TerrainGenerator::Generate(*chunk.volume, coord);
+
+          TerrainGenerator::Generate(*chunk.volume, coord * CHUNK_DIM);
+
           chunk.dirty = true;
           chunk.meshJobQueued = false;
         }
