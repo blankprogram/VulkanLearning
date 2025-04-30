@@ -49,11 +49,10 @@ void RendererContext::beginFrame() {
   if (layout == VK_IMAGE_LAYOUT_UNDEFINED)
     layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-
-renderGraph_.beginFrame(
-    renderResources_, commandManager_, currentFrame_, viewProj,
-    renderResources_.getSwapchain()->getImages()[currentImageIndex_], layout);
-
+  renderGraph_.beginFrame(
+      renderResources_, commandManager_, currentFrame_, currentImageIndex_,
+      viewProj,
+      renderResources_.getSwapchain()->getImages()[currentImageIndex_], layout);
 }
 
 void RendererContext::endFrame() {
