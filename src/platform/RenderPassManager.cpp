@@ -44,6 +44,18 @@ void RenderPassManager::init(VkDevice device, VkFormat colorFormat,
   createInfo.subpassCount = 1;
   createInfo.pSubpasses = &subpass;
 
+  VkSubpassDependency dependency{};
+  dependency.srcSubpass = 0;
+  dependency.dstSubpass = 0;
+  dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+  dependency.srcAccessMask = 0;
+  dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+  dependency.dependencyFlags = 0;
+
+  createInfo.dependencyCount = 1;
+  createInfo.pDependencies = &dependency;
+
   if (vkCreateRenderPass(device, &createInfo, nullptr, &renderPass_) !=
       VK_SUCCESS) {
     throw std::runtime_error("Failed to create render pass");
