@@ -26,8 +26,11 @@ Application::Application()
 }
 
 Application::~Application() {
+
+  threadPool_.waitIdle();
+  uploadPool_.waitIdle();
   vkDeviceWaitIdle(rendererContext_.getDevice()->getDevice());
-  rendererContext_.cleanup();
+  // no manual cleanup(); let RendererContext's dtor clean up
 }
 
 void Application::Run() {

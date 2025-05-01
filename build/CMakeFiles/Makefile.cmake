@@ -51,6 +51,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/Shaders.dir/DependInfo.cmake"
-  "CMakeFiles/app.dir/DependInfo.cmake"
+  "CMakeFiles/VulkanEngine.dir/DependInfo.cmake"
   "src/CMakeFiles/engine.dir/DependInfo.cmake"
   )

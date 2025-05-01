@@ -59,9 +59,9 @@ add_subdirectory(src)
 add_dependencies(engine Shaders)
 
 # 3) build the final app
-add_executable(app src/main.cpp)
-target_include_directories(app PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(app PRIVATE
+add_executable(VulkanEngine src/main.cpp)
+target_include_directories(VulkanEngine PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(VulkanEngine PRIVATE
   engine
   Vulkan::Vulkan
   ${GLFW_LIBRARIES}

@@ -1,5 +1,5 @@
 /home/jam/Documents/code/VulkanLearning/build/CMakeFiles/Shaders.dir
-/home/jam/Documents/code/VulkanLearning/build/CMakeFiles/app.dir
+/home/jam/Documents/code/VulkanLearning/build/CMakeFiles/VulkanEngine.dir
 /home/jam/Documents/code/VulkanLearning/build/CMakeFiles/edit_cache.dir
 /home/jam/Documents/code/VulkanLearning/build/CMakeFiles/rebuild_cache.dir
 /home/jam/Documents/code/VulkanLearning/build/src/CMakeFiles/engine.dir

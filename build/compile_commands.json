@@ -1,9 +1,9 @@
 [
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/app.dir/src/main.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/main.cpp",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/VulkanEngine.dir/src/main.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/main.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/main.cpp",
-  "output": "CMakeFiles/app.dir/src/main.cpp.o"
+  "output": "CMakeFiles/VulkanEngine.dir/src/main.cpp.o"
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",

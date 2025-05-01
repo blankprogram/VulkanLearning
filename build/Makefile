@@ -131,17 +131,17 @@ Shaders/fast:
 .PHONY : Shaders/fast
 
 #=============================================================================
-# Target rules for targets named app
+# Target rules for targets named VulkanEngine
 
 # Build rule for target.
-app: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 app
-.PHONY : app
+VulkanEngine: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 VulkanEngine
+.PHONY : VulkanEngine
 
 # fast build rule for target.
-app/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/build
-.PHONY : app/fast
+VulkanEngine/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VulkanEngine.dir/build.make CMakeFiles/VulkanEngine.dir/build
+.PHONY : VulkanEngine/fast
 
 #=============================================================================
 # Target rules for targets named engine
@@ -161,7 +161,7 @@ src/main.o: src/main.cpp.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VulkanEngine.dir/build.make CMakeFiles/VulkanEngine.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -169,7 +169,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VulkanEngine.dir/build.make CMakeFiles/VulkanEngine.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -177,7 +177,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.dir/build.make CMakeFiles/app.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VulkanEngine.dir/build.make CMakeFiles/VulkanEngine.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 # Help Target
@@ -189,7 +189,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Shaders"
-	@echo "... app"
+	@echo "... VulkanEngine"
 	@echo "... engine"
 	@echo "... src/main.o"
 	@echo "... src/main.i"

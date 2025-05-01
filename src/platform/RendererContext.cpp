@@ -44,16 +44,13 @@ void RendererContext::beginFrame() {
                             VK_NULL_HANDLE, &currentImageIndex_);
 
   if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-    recreateSwapchain();
+    renderGraph_.endFrame();
     return;
   }
 
   glm::mat4 viewProj = cam_.viewProjection();
 
   VkImageLayout layout = renderGraph_.getFinalLayout(); // from previous frame
-  if (layout == VK_IMAGE_LAYOUT_UNDEFINED)
-    layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
   renderGraph_.beginFrame(
       renderResources_, commandManager_, currentFrame_, currentImageIndex_,
       viewProj,
@@ -91,6 +88,7 @@ void RendererContext::endFrame() {
 
   VkResult result = vkQueuePresentKHR(device_->getGraphicsQueue(), &present);
   if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+    renderGraph_.reset();
     recreateSwapchain();
   }
 

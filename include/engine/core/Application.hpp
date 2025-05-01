@@ -16,12 +16,11 @@ public:
 private:
   void mainLoop();
 
-  WindowManager windowManager_; // global-scope class
-  engine::utils::ThreadPool
-      threadPool_; // dedicated to volume‐generation & meshing
-  engine::utils::ThreadPool uploadPool_;           // fully qualified
-  RendererContext rendererContext_;                // global-scope class
-  engine::world::ChunkManager chunkManager_;       // fully qualified
-  engine::world::ChunkRenderSystem chunkRenderer_; // fully qualified
+  WindowManager windowManager_;
+  engine::utils::ThreadPool threadPool_;
+  engine::world::ChunkManager chunkManager_;
+  engine::world::ChunkRenderSystem chunkRenderer_;
   InputManager inputManager_;
+  engine::utils::ThreadPool uploadPool_; // moved **after** the context
+  RendererContext rendererContext_;      // now destroyed last
 };

@@ -1,3 +1,5 @@
+
+// include/engine/utils/ThreadPool.hpp
 #pragma once
 
 #include "engine/render/Mesh.hpp"
@@ -31,15 +33,28 @@ public:
   // call on main thread to collect completed MeshResults
   std::vector<MeshResult> collectResults();
 
+  // block until all queued+running jobs are complete
+  void waitIdle();
+
 private:
+  // worker threads
   std::vector<std::thread> workers_;
+
+  // pending jobs
   std::queue<std::function<void()>> jobs_;
   std::mutex jobsMtx_;
   std::condition_variable jobsCv_;
-  bool stop_ = false;
 
+  // results
   std::queue<MeshResult> results_;
   std::mutex resultsMtx_;
+
+  // shutdown flag
+  bool stop_ = false;
+
+  // for waitIdle(): count of queued+running tasks
+  size_t tasksInFlight_ = 0;
+  std::condition_variable idleCv_;
 };
 
 } // namespace engine::utils
