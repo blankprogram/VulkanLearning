@@ -13,7 +13,7 @@
 #include <backends/imgui_impl_vulkan.h>
 #include <imgui.h>
 RendererContext::RendererContext(GLFWwindow *window)
-    : cam_(glm::radians(45.0f), 1280.f / 720.f, 0.1f, 100.0f) {
+    : cam_(glm::radians(45.0f), 1280.f / 720.f, 0.1f, 1000.0f) {
   init(window);
 }
 
