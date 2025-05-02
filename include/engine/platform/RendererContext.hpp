@@ -43,6 +43,7 @@ public:
   std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsSubmitted_{};
   std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsRasterized_{};
   std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsSamples_{};
+  bool firstFrame_ = true;
 
 private:
   void init(GLFWwindow *window);

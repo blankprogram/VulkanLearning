@@ -66,21 +66,19 @@ void Application::mainLoop() {
   float dt = float(now - lastTime);
   lastTime = now;
 
-  // 3) Movement & begin frame
-  inputManager_.processInput(dt);
-  rendererContext_.beginFrame();
-
-  // 3a) Query‐slot for this frame
   VkCommandBuffer cmd = rendererContext_.getCurrentCommandBuffer();
   size_t frame = rendererContext_.getFrameIndex();
 
-  // reset & begin pipeline‐stats query
+  // reset & begin pipeline‐stats query for _this_ frame:
   vkCmdResetQueryPool(cmd, rendererContext_.pipelineStatsQueryPool_, frame, 1);
   vkCmdBeginQuery(cmd, rendererContext_.pipelineStatsQueryPool_, frame, 0);
 
-  // reset & begin occlusion (samples‐passed) query
   vkCmdResetQueryPool(cmd, rendererContext_.occlusionQueryPool_, frame, 1);
   vkCmdBeginQuery(cmd, rendererContext_.occlusionQueryPool_, frame, 0);
+
+  // 3) Movement & begin frame
+  inputManager_.processInput(dt);
+  rendererContext_.beginFrame();
 
   // 4) Draw world once to gather stats
   chunkRenderer_.drawAll(rendererContext_, chunkManager_);

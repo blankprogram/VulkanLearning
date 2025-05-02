@@ -72,22 +72,24 @@ void RendererContext::beginFrame() {
   vkWaitForFences(dev, 1, &fence, VK_TRUE, UINT64_MAX);
   vkResetFences(dev, 1, &fence);
 
-  // --- pull back last frame's query results ---
-  {
+  if (!firstFrame_) {
+    // pull back last frame's query results from the previous slot:
+    size_t lastSlot =
+        (currentFrame_ + MAX_FRAMES_IN_FLIGHT - 1) % MAX_FRAMES_IN_FLIGHT;
     uint64_t stats[2] = {};
-    vkGetQueryPoolResults(dev, pipelineStatsQueryPool_,
-                          currentFrame_, // query index == frame slot
-                          1,             // one query
+    vkGetQueryPoolResults(dev, pipelineStatsQueryPool_, lastSlot, 1,
                           sizeof(stats), stats, sizeof(uint64_t),
                           VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
-    statsSubmitted_[currentFrame_] = stats[0];
-    statsRasterized_[currentFrame_] = stats[1];
-  }
-  vkGetQueryPoolResults(dev, occlusionQueryPool_, currentFrame_, 1,
-                        sizeof(uint64_t), &statsSamples_[currentFrame_],
-                        sizeof(uint64_t),
-                        VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
+    statsSubmitted_[lastSlot] = stats[0];
+    statsRasterized_[lastSlot] = stats[1];
 
+    vkGetQueryPoolResults(dev, occlusionQueryPool_, lastSlot, 1,
+                          sizeof(uint64_t), &statsSamples_[lastSlot],
+                          sizeof(uint64_t),
+                          VK_QUERY_RESULT_64_BIT | VK_QUERY_RESULT_WAIT_BIT);
+  } else {
+    firstFrame_ = false;
+  }
   // --- acquire next swapchain image ---
   VkResult result =
       vkAcquireNextImageKHR(dev, swapchain_->getSwapchain(), UINT64_MAX,
