@@ -10,7 +10,6 @@ namespace engine::math {
 class FrustumCuller {
 public:
   void update(const glm::mat4 &viewProj);
-
   bool isBoxVisible(const glm::vec3 &mn, const glm::vec3 &mx) const;
 
 private:
