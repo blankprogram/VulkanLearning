@@ -306,7 +306,4 @@ src/CMakeFiles/engine.dir/platform/RenderResources.cpp.o: \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
  /usr/include/c++/14/bits/charconv.h \
- /usr/include/c++/14/bits/basic_string.tcc /usr/include/c++/14/stdexcept \
- /usr/include/c++/14/exception /usr/include/c++/14/bits/exception_ptr.h \
- /usr/include/c++/14/bits/cxxabi_init_exception.h \
- /usr/include/c++/14/typeinfo /usr/include/c++/14/bits/nested_exception.h
+ /usr/include/c++/14/bits/basic_string.tcc

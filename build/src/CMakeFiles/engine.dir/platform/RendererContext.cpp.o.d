@@ -384,9 +384,8 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: \
  /usr/include/c++/14/bits/ranges_uninitialized.h \
  /usr/include/c++/14/bits/ranges_algobase.h \
  /usr/include/c++/14/pstl/glue_memory_defs.h \
- /usr/include/c++/14/pstl/execution_defs.h \
- /home/jam/Documents/code/VulkanLearning/include/engine/utils/VulkanHelpers.hpp \
- /usr/include/c++/14/cstring /usr/include/string.h /usr/include/strings.h \
+ /usr/include/c++/14/pstl/execution_defs.h /usr/include/c++/14/cstring \
+ /usr/include/string.h /usr/include/strings.h \
  /usr/include/glm/gtc/type_ptr.hpp /usr/include/glm/gtc/quaternion.hpp \
  /usr/include/glm/ext/vector_relational.hpp \
  /usr/include/glm/ext/vector_relational.inl \

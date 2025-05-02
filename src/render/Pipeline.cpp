@@ -106,7 +106,6 @@ void Pipeline::init(VkDevice dev, VkRenderPass rp, VkDescriptorSetLayout dsl,
   dsc.dynamicStateCount = static_cast<uint32_t>(dyn.size());
   dsc.pDynamicStates = dyn.data();
 
-  // PUSH CONSTANT RANGE HERE
   VkPushConstantRange push{};
   push.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
   push.offset = 0;

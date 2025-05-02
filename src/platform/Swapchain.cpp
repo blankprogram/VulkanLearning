@@ -2,7 +2,6 @@
 #include "engine/platform/Swapchain.hpp"
 #include <GLFW/glfw3.h>
 #include <algorithm>
-#include <iostream>
 #include <stdexcept>
 
 Swapchain::Swapchain(VulkanDevice *device, VkSurfaceKHR surface,

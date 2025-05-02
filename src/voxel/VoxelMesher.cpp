@@ -27,7 +27,6 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
     for (int dir = 1; dir >= -1; dir -= 2) {
       for (int x = 0; x <= size[d]; ++x) {
 
-        // --- Build mask and color mask ---
         for (int j = 0; j < V; ++j) {
           for (int i = 0; i < U; ++i) {
             glm::ivec3 a{0}, b{0};
@@ -56,7 +55,6 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
           }
         }
 
-        // --- Greedy merging ---
         for (int j = 0; j < V; ++j) {
           for (int i = 0; i < U; ++i) {
             int m = mask[j * U + i];
@@ -65,14 +63,12 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
 
             glm::vec3 currentColor = faceColorMask[j * U + i];
 
-            // 1) Compute width
             int w = 1;
             while (i + w < U && mask[j * U + (i + w)] == m &&
                    faceColorMask[j * U + (i + w)] == currentColor) {
               ++w;
             }
 
-            // 2) Compute height
             int h = 1;
             bool rowOK = true;
             while (j + h < V && rowOK) {
@@ -87,7 +83,6 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
                 ++h;
             }
 
-            // 3) Quad geometry
             glm::vec3 origin{0}, du{0}, dv{0}, normal{0};
             origin[d] = float(x);
             origin[u] = float(i);
@@ -119,7 +114,6 @@ std::unique_ptr<Mesh> VoxelMesher::GenerateMesh(const VoxelVolume &vol) {
                           {base, base + 1, base + 2, base, base + 2, base + 3});
             }
 
-            // 4) Clear mask
             for (int yy = 0; yy < h; ++yy) {
               for (int xx = 0; xx < w; ++xx) {
                 int idx = (j + yy) * U + (i + xx);

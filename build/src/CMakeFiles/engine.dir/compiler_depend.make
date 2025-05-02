@@ -1148,6 +1148,7 @@ src/CMakeFiles/engine.dir/core/Application.cpp.o: /home/jam/Documents/code/Vulka
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/world/Config.hpp \
   /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.h \
   /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.h \
   /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imconfig.h \
@@ -1668,6 +1669,7 @@ src/CMakeFiles/engine.dir/main.cpp.o: /home/jam/Documents/code/VulkanLearning/sr
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/world/Config.hpp \
   /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
@@ -4598,7 +4600,6 @@ src/CMakeFiles/engine.dir/platform/RendererContext.cpp.o: /home/jam/Documents/co
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Pipeline.hpp \
-  /home/jam/Documents/code/VulkanLearning/include/engine/utils/VulkanHelpers.hpp \
   /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.h \
   /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.h \
   /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imconfig.h \
@@ -7976,6 +7977,7 @@ src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o: /home/jam/Documents/code/Vul
   /home/jam/Documents/code/VulkanLearning/include/engine/voxel/VoxelVolume.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/world/Config.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/TerrainGenerator.hpp \
   /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
@@ -8468,6 +8470,7 @@ src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: /home/jam/Documents/cod
   /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/engine/world/Config.hpp \
   /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
@@ -9628,8 +9631,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
-/usr/include/c++/14/bits/hash_bytes.h:
-
 /usr/include/x86_64-linux-gnu/bits/uio_lim.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
@@ -9833,6 +9834,12 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/type_traits:
 
 /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp:
+
+/usr/include/glm/gtc/quaternion.hpp:
+
+/usr/include/glm/ext/matrix_float4x3_precision.hpp:
+
+/usr/include/endian.h:
 
 /usr/include/x86_64-linux-gnu/bits/signum-generic.h:
 
@@ -10476,6 +10483,10 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 
 /home/jam/Documents/code/VulkanLearning/include/engine/platform/WindowManager.hpp:
 
+/usr/include/c++/14/bits/hash_bytes.h:
+
+/home/jam/Documents/code/VulkanLearning/include/engine/world/Config.hpp:
+
 /usr/lib/gcc/x86_64-linux-gnu/14/include/avx512vbmi2vlintrin.h:
 
 /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp:
@@ -10793,9 +10804,3 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /usr/include/c++/14/system_error:
 
 /usr/include/glm/ext/matrix_float4x3.hpp:
-
-/usr/include/glm/gtc/quaternion.hpp:
-
-/usr/include/endian.h:
-
-/usr/include/glm/ext/matrix_float4x3_precision.hpp:

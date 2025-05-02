@@ -1,8 +1,4 @@
-
-
-// RendererContext.cpp
 #include "engine/platform/RendererContext.hpp"
-#include "engine/utils/VulkanHelpers.hpp"
 #include <cstring>
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
@@ -18,35 +14,27 @@ RendererContext::RendererContext(GLFWwindow *window)
     : cam_(glm::radians(45.0f), 1280.f / 720.f, 0.1f, 1000.0f) {
   init(window);
 
-  // --- create pipeline‐statistics query pool ---
-  {
-    VkQueryPoolCreateInfo qpci{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
-    qpci.queryType = VK_QUERY_TYPE_PIPELINE_STATISTICS;
-    qpci.queryCount = MAX_FRAMES_IN_FLIGHT;
-    qpci.pipelineStatistics =
-        VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT |
-        VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT;
-    if (vkCreateQueryPool(device_->getDevice(), &qpci, nullptr,
-                          &pipelineStatsQueryPool_) != VK_SUCCESS) {
-      throw std::runtime_error(
-          "Failed to create pipeline statistics query pool");
-    }
+  VkQueryPoolCreateInfo qpci{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
+  qpci.queryType = VK_QUERY_TYPE_PIPELINE_STATISTICS;
+  qpci.queryCount = MAX_FRAMES_IN_FLIGHT;
+  qpci.pipelineStatistics =
+      VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT |
+      VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT;
+  if (vkCreateQueryPool(device_->getDevice(), &qpci, nullptr,
+                        &pipelineStatsQueryPool_) != VK_SUCCESS) {
+    throw std::runtime_error("Failed to create pipeline statistics query pool");
   }
 
-  // --- create occlusion (samples‐passed) query pool ---
-  {
-    VkQueryPoolCreateInfo qpci{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
-    qpci.queryType = VK_QUERY_TYPE_OCCLUSION;
-    qpci.queryCount = MAX_FRAMES_IN_FLIGHT;
-    if (vkCreateQueryPool(device_->getDevice(), &qpci, nullptr,
-                          &occlusionQueryPool_) != VK_SUCCESS) {
-      throw std::runtime_error("Failed to create occlusion query pool");
-    }
+  VkQueryPoolCreateInfo qpci2{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
+  qpci2.queryType = VK_QUERY_TYPE_OCCLUSION;
+  qpci2.queryCount = MAX_FRAMES_IN_FLIGHT;
+  if (vkCreateQueryPool(device_->getDevice(), &qpci2, nullptr,
+                        &occlusionQueryPool_) != VK_SUCCESS) {
+    throw std::runtime_error("Failed to create occlusion query pool");
   }
 }
 
 RendererContext::~RendererContext() {
-  // destroy our query pools before tearing down the device
   vkDestroyQueryPool(device_->getDevice(), pipelineStatsQueryPool_, nullptr);
   vkDestroyQueryPool(device_->getDevice(), occlusionQueryPool_, nullptr);
 
@@ -73,7 +61,6 @@ void RendererContext::beginFrame() {
   vkResetFences(dev, 1, &fence);
 
   if (!firstFrame_) {
-    // pull back last frame's query results from the previous slot:
     size_t lastSlot =
         (currentFrame_ + MAX_FRAMES_IN_FLIGHT - 1) % MAX_FRAMES_IN_FLIGHT;
     uint64_t stats[2] = {};
@@ -90,7 +77,6 @@ void RendererContext::beginFrame() {
   } else {
     firstFrame_ = false;
   }
-  // --- acquire next swapchain image ---
   VkResult result =
       vkAcquireNextImageKHR(dev, swapchain_->getSwapchain(), UINT64_MAX,
                             frameSync_.getImageAvailable(currentFrame_),
@@ -100,7 +86,6 @@ void RendererContext::beginFrame() {
     return;
   }
 
-  // --- begin our render‐graph with updated UBOs ---
   glm::mat4 viewProj = cam_.viewProjection();
   VkImageLayout layout = renderGraph_.getFinalLayout();
   renderGraph_.beginFrame(
@@ -113,7 +98,6 @@ void RendererContext::endFrame() {
   renderGraph_.endFrame();
   renderGraph_.reset();
 
-  // submit
   VkSubmitInfo submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
   VkSemaphore waitSems[] = {frameSync_.getImageAvailable(currentFrame_)};
   VkPipelineStageFlags waitStages[] = {
@@ -131,7 +115,6 @@ void RendererContext::endFrame() {
   vkQueueSubmit(device_->getGraphicsQueue(), 1, &submit,
                 frameSync_.getInFlightFence(currentFrame_));
 
-  // present
   VkPresentInfoKHR present{VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
   present.waitSemaphoreCount = 1;
   present.pWaitSemaphores = signalSems;
@@ -146,7 +129,6 @@ void RendererContext::endFrame() {
     recreateSwapchain();
   }
 
-  // advance our frame slot
   currentFrame_ = (currentFrame_ + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
@@ -171,7 +153,6 @@ void RendererContext::cleanup() {
 }
 
 void RendererContext::initImGui(GLFWwindow *window) {
-  // 1. Create ImGui Descriptor Pool
   VkDescriptorPoolSize pool_sizes[] = {
       {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000},
   };
@@ -185,14 +166,12 @@ void RendererContext::initImGui(GLFWwindow *window) {
                              &imguiDescriptorPool_) != VK_SUCCESS)
     throw std::runtime_error("Failed to create ImGui descriptor pool");
 
-  // 2. Setup ImGui context
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO &io = ImGui::GetIO();
   (void)io;
   ImGui::StyleColorsDark();
 
-  // 3. Init backends
   ImGui_ImplGlfw_InitForVulkan(window, true);
   ImGui_ImplVulkan_InitInfo init_info{};
   init_info.Instance = device_->getInstance();
@@ -208,7 +187,6 @@ void RendererContext::initImGui(GLFWwindow *window) {
   init_info.CheckVkResultFn = nullptr;
   ImGui_ImplVulkan_Init(&init_info);
 
-  // 4. Upload fonts
   VkCommandBuffer cmd = commandManager_.get(0);
   vkResetCommandBuffer(cmd, 0);
   VkCommandBufferBeginInfo bi{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};

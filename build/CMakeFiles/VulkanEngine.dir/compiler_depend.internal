@@ -28,6 +28,7 @@ CMakeFiles/VulkanEngine.dir/src/main.cpp.o
  /home/jam/Documents/code/VulkanLearning/include/engine/world/Chunk.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkManager.hpp
  /home/jam/Documents/code/VulkanLearning/include/engine/world/ChunkRenderSystem.hpp
+ /home/jam/Documents/code/VulkanLearning/include/engine/world/Config.hpp
  /home/jam/Documents/code/VulkanLearning/include/externals/vk_mem_alloc.h
  /usr/include/GL/gl.h
  /usr/include/GL/glext.h

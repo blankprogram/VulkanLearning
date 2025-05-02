@@ -1,5 +1,4 @@
 #include "engine/platform/RenderResources.hpp"
-#include <stdexcept>
 #include <string>
 
 void RenderResources::init(VulkanDevice *device, Swapchain *swapchain) {

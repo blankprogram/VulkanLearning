@@ -1,6 +1,5 @@
 #include "engine/platform/UniformManager.hpp"
 #include <cstring>
-#include <stdexcept>
 
 void UniformManager::init(VkDevice device, VmaAllocator allocator,
                           size_t frameCount) {

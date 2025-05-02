@@ -6,15 +6,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 
-
 void RenderGraph::beginFrame(RenderResources &resources,
                              RenderCommandManager &commandManager,
-                             size_t frameIndex,
-                             uint32_t imageIndex, // ← add this
-                             const glm::mat4 &viewProj,
-                             VkImage swapchainImage,
+                             size_t frameIndex, uint32_t imageIndex,
+                             const glm::mat4 &viewProj, VkImage swapchainImage,
                              VkImageLayout currentLayout) {
-
 
   resources.updateUniforms(frameIndex, viewProj);
   commandBuffer_ = commandManager.get(frameIndex);

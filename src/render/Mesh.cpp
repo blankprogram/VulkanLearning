@@ -3,7 +3,6 @@
 
 using engine::utils::CreateBuffer;
 
-// move in CPU-side data
 void Mesh::setVertices(std::vector<Vertex> &&v) { vertices_ = std::move(v); }
 
 void Mesh::setIndices(std::vector<uint32_t> &&i) {
@@ -11,7 +10,6 @@ void Mesh::setIndices(std::vector<uint32_t> &&i) {
   indices_count_ = indices_.size();
 }
 void Mesh::uploadToGPU(VulkanDevice *dev) {
-  // build GPU buffers via staging
   CreateBuffer(dev->getDevice(), dev->getPhysicalDevice(),
                dev->getCommandPool(), dev->getGraphicsQueue(), vertices_.data(),
                sizeof(Vertex) * vertices_.size(),
