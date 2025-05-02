@@ -8,29 +8,23 @@ class RenderResources;
 class RenderCommandManager;
 
 class RenderGraph {
-public:
+  public:
+    void beginFrame(RenderResources &resources,
+                    RenderCommandManager &commandManager, size_t frameIndex,
+                    uint32_t imageIndex, // <- add this
+                    const glm::mat4 &viewProj, VkImage swapchainImage,
+                    VkImageLayout currentLayout);
 
-void beginFrame(RenderResources &resources,
-                RenderCommandManager &commandManager,
-                size_t frameIndex,
-                uint32_t imageIndex, // <- add this
-                const glm::mat4 &viewProj,
-                VkImage swapchainImage,
-                VkImageLayout currentLayout);
+    void endFrame();
 
+    void reset() { finalLayout_ = VK_IMAGE_LAYOUT_UNDEFINED; }
+    VkCommandBuffer &getCurrentCommandBuffer() { return commandBuffer_; }
 
-  void endFrame();
+    // For layout tracking
+    VkImageLayout getFinalLayout() const { return finalLayout_; }
 
-void reset() {
-  finalLayout_ = VK_IMAGE_LAYOUT_UNDEFINED;
-}
-  VkCommandBuffer &getCurrentCommandBuffer() { return commandBuffer_; }
-
-  // For layout tracking
-  VkImageLayout getFinalLayout() const { return finalLayout_; }
-
-private:
-  VkCommandBuffer commandBuffer_ = VK_NULL_HANDLE;
-  VkImage swapchainImage_ = VK_NULL_HANDLE;
-  VkImageLayout finalLayout_ = VK_IMAGE_LAYOUT_UNDEFINED;
+  private:
+    VkCommandBuffer commandBuffer_ = VK_NULL_HANDLE;
+    VkImage swapchainImage_ = VK_NULL_HANDLE;
+    VkImageLayout finalLayout_ = VK_IMAGE_LAYOUT_UNDEFINED;
 };

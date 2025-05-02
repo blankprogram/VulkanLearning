@@ -3,25 +3,25 @@
 #include <string>
 
 class WindowManager {
-public:
-  WindowManager(uint32_t width, uint32_t height, const std::string &title);
-  ~WindowManager();
+  public:
+    WindowManager(uint32_t width, uint32_t height, const std::string &title);
+    ~WindowManager();
 
-  WindowManager(const WindowManager &) = delete;
-  WindowManager(WindowManager &&) = delete;
-  WindowManager &operator=(const WindowManager &) = delete;
-  WindowManager &operator=(WindowManager &&) = delete;
+    WindowManager(const WindowManager &) = delete;
+    WindowManager(WindowManager &&) = delete;
+    WindowManager &operator=(const WindowManager &) = delete;
+    WindowManager &operator=(WindowManager &&) = delete;
 
-  GLFWwindow *getWindow();
-  bool shouldClose();
-  void pollEvents();
+    GLFWwindow *getWindow();
+    bool shouldClose();
+    void pollEvents();
 
-  static bool framebufferResized; // <- Add this
+    static bool framebufferResized;
 
-private:
-  GLFWwindow *window_;
-  void setupCallbacks();
+  private:
+    GLFWwindow *window_;
+    void setupCallbacks();
 
-  static void framebufferResizeCallback(GLFWwindow *window, int width,
-                                        int height);
+    static void framebufferResizeCallback(GLFWwindow *window, int width,
+                                          int height);
 };

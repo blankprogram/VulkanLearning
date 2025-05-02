@@ -1,5 +1,3 @@
-
-// include/engine/world/ChunkRenderSystem.hpp
 #pragma once
 
 #include "engine/platform/RendererContext.hpp"
@@ -8,8 +6,8 @@
 namespace engine::world {
 
 class ChunkRenderSystem {
-public:
-  void drawAll(RendererContext &ctx, const ChunkManager &chunks);
+  public:
+    void drawAll(RendererContext &ctx, const ChunkManager &chunks);
 };
 
 } // namespace engine::world

@@ -6,65 +6,62 @@
 
 InputManager::InputManager(GLFWwindow *window, engine::render::Camera &cam)
     : window_(window), cam_(cam) {
-  // we only install the cursor-pos callback; Application flips GLFW_CURSOR mode
-  glfwSetCursorPosCallback(window_, &InputManager::mouseCallback);
-  glfwSetWindowUserPointer(window_, this);
+
+    glfwSetCursorPosCallback(window_, &InputManager::mouseCallback);
+    glfwSetWindowUserPointer(window_, this);
 }
 
 void InputManager::mouseCallback(GLFWwindow *w, double xpos, double ypos) {
-  ImGuiIO &io = ImGui::GetIO();
-  // if ImGui is capturing, or if cursor is free/visible, skip mouselook:
-  if (io.WantCaptureMouse ||
-      glfwGetInputMode(w, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
-    return;
+    ImGuiIO &io = ImGui::GetIO();
+    if (io.WantCaptureMouse)
+        return;
 
-  auto *self = reinterpret_cast<InputManager *>(glfwGetWindowUserPointer(w));
-  if (self->firstMouse_) {
+    auto *self = reinterpret_cast<InputManager *>(glfwGetWindowUserPointer(w));
+    if (self->firstMouse_) {
+        self->lastX_ = float(xpos);
+        self->lastY_ = float(ypos);
+        self->firstMouse_ = false;
+    }
+
+    float dx = float(xpos) - self->lastX_;
+    float dy = self->lastY_ - float(ypos);
     self->lastX_ = float(xpos);
     self->lastY_ = float(ypos);
-    self->firstMouse_ = false;
-  }
 
-  float dx = float(xpos) - self->lastX_;
-  float dy = self->lastY_ - float(ypos);
-  self->lastX_ = float(xpos);
-  self->lastY_ = float(ypos);
+    float yawDelta = dx * self->mouseSens_;
+    float pitchDelta = dy * self->mouseSens_;
 
-  float yawDelta = dx * self->mouseSens_;
-  float pitchDelta = dy * self->mouseSens_;
-
-  float newYaw = self->cam_.getYaw() + yawDelta;
-  float newPitch = self->cam_.getPitch() + pitchDelta;
-  self->cam_.setRotation(newYaw, newPitch);
+    float newYaw = self->cam_.getYaw() + yawDelta;
+    float newPitch = self->cam_.getPitch() + pitchDelta;
+    self->cam_.setRotation(newYaw, newPitch);
 }
 
 void InputManager::processInput(float dt) {
-  // WASD (and Space/Ctrl) always move, even if UI is open:
-  glm::vec3 forward = cam_.front();
-  glm::vec3 right = cam_.right();
-  glm::vec3 up = {0, 1, 0};
+    glm::vec3 forward = cam_.front();
+    glm::vec3 right = cam_.right();
+    glm::vec3 up = {0, 1, 0};
 
-  float speed =
-      moveSpeed_ * ((glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-                        ? sprintMul_
-                        : 1.f);
+    float speed =
+        moveSpeed_ * ((glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+                          ? sprintMul_
+                          : 1.f);
 
-  glm::vec3 delta{0};
-  if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS)
-    delta += forward;
-  if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS)
-    delta -= forward;
-  if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS)
-    delta -= right;
-  if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS)
-    delta += right;
-  if (glfwGetKey(window_, GLFW_KEY_SPACE) == GLFW_PRESS)
-    delta += up;
-  if (glfwGetKey(window_, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-    delta -= up;
+    glm::vec3 delta{0};
+    if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS)
+        delta += forward;
+    if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS)
+        delta -= forward;
+    if (glfwGetKey(window_, GLFW_KEY_A) == GLFW_PRESS)
+        delta -= right;
+    if (glfwGetKey(window_, GLFW_KEY_D) == GLFW_PRESS)
+        delta += right;
+    if (glfwGetKey(window_, GLFW_KEY_SPACE) == GLFW_PRESS)
+        delta += up;
+    if (glfwGetKey(window_, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        delta -= up;
 
-  if (glm::length(delta) > 0.001f) {
-    delta = glm::normalize(delta) * speed * dt;
-    cam_.setPosition(cam_.getPosition() + delta);
-  }
+    if (glm::length(delta) > 0.001f) {
+        delta = glm::normalize(delta) * speed * dt;
+        cam_.setPosition(cam_.getPosition() + delta);
+    }
 }

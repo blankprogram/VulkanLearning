@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "engine/render/Mesh.hpp"
@@ -9,11 +8,11 @@
 namespace engine::world {
 
 struct Chunk {
-  glm::ivec2 coord;
-  std::unique_ptr<engine::voxel::VoxelVolume> volume;
-  std::unique_ptr<Mesh> mesh;
-  bool dirty = true;
-  bool meshJobQueued = false;
+    glm::ivec2 coord;
+    std::unique_ptr<engine::voxel::VoxelVolume> volume;
+    std::unique_ptr<Mesh> mesh;
+    bool dirty = true;
+    bool meshJobQueued = false;
 };
 
 } // namespace engine::world

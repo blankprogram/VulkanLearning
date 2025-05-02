@@ -7,9 +7,8 @@
 namespace engine::voxel {
 
 class VoxelMesher {
-public:
-  // Generates a mesh from volume data: one quad per solid->air face
-  static std::unique_ptr<Mesh> GenerateMesh(const VoxelVolume &volume);
+  public:
+    static std::unique_ptr<Mesh> GenerateMesh(const VoxelVolume &volume);
 };
 
 } // namespace engine::voxel

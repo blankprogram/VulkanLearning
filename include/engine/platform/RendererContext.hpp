@@ -15,53 +15,53 @@
 #include <memory>
 
 class RendererContext {
-public:
-  explicit RendererContext(GLFWwindow *window);
-  ~RendererContext();
-  static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
-  void beginFrame();
-  void endFrame();
-  void recreateSwapchain();
-  void cleanup();
-  size_t getFrameIndex() const { return currentFrame_; }
-  engine::render::Camera &camera() { return cam_; }
+  public:
+    explicit RendererContext(GLFWwindow *window);
+    ~RendererContext();
+    static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
+    void beginFrame();
+    void endFrame();
+    void recreateSwapchain();
+    void cleanup();
+    size_t getFrameIndex() const { return currentFrame_; }
+    engine::render::Camera &camera() { return cam_; }
 
-  VkCommandBuffer &getCurrentCommandBuffer() {
-    return renderGraph_.getCurrentCommandBuffer();
-  }
-  uint32_t getCurrentImageIndex() const { return currentImageIndex_; }
+    VkCommandBuffer &getCurrentCommandBuffer() {
+        return renderGraph_.getCurrentCommandBuffer();
+    }
+    uint32_t getCurrentImageIndex() const { return currentImageIndex_; }
 
-  RenderResources &getRenderResources() { return renderResources_; }
-  VulkanDevice *getDevice() const { return device_.get(); }
-  Swapchain *getSwapchain() const { return swapchain_.get(); }
+    RenderResources &getRenderResources() { return renderResources_; }
+    VulkanDevice *getDevice() const { return device_.get(); }
+    Swapchain *getSwapchain() const { return swapchain_.get(); }
 
-  void initImGui(GLFWwindow *window);
-  void cleanupImGui();
+    void initImGui(GLFWwindow *window);
+    void cleanupImGui();
 
-  VkQueryPool pipelineStatsQueryPool_{VK_NULL_HANDLE};
-  VkQueryPool occlusionQueryPool_{VK_NULL_HANDLE};
-  std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsSubmitted_{};
-  std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsRasterized_{};
-  std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsSamples_{};
-  bool firstFrame_ = true;
+    VkQueryPool pipelineStatsQueryPool_{VK_NULL_HANDLE};
+    VkQueryPool occlusionQueryPool_{VK_NULL_HANDLE};
+    std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsSubmitted_{};
+    std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsRasterized_{};
+    std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsSamples_{};
+    bool firstFrame_ = true;
 
-private:
-  void init(GLFWwindow *window);
+  private:
+    void init(GLFWwindow *window);
 
-  size_t currentFrame_ = 0;
-  uint32_t currentImageIndex_ = 0;
+    size_t currentFrame_ = 0;
+    uint32_t currentImageIndex_ = 0;
 
-  std::unique_ptr<VulkanDevice> device_;
-  std::unique_ptr<Swapchain> swapchain_;
-  VmaAllocator allocator_{VK_NULL_HANDLE};
+    std::unique_ptr<VulkanDevice> device_;
+    std::unique_ptr<Swapchain> swapchain_;
+    VmaAllocator allocator_{VK_NULL_HANDLE};
 
-  engine::render::Camera cam_;
-  FrameSync frameSync_;
+    engine::render::Camera cam_;
+    FrameSync frameSync_;
 
-  RenderCommandManager commandManager_;
-  RenderGraph renderGraph_;
-  RenderResources renderResources_;
+    RenderCommandManager commandManager_;
+    RenderGraph renderGraph_;
+    RenderResources renderResources_;
 
-  VkDescriptorPool imguiDescriptorPool_{VK_NULL_HANDLE};
-  //
+    VkDescriptorPool imguiDescriptorPool_{VK_NULL_HANDLE};
+    //
 };

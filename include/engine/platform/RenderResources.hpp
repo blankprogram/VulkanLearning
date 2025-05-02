@@ -11,30 +11,30 @@
 #include "engine/render/Pipeline.hpp"
 
 class RenderResources {
-public:
-  void init(VulkanDevice *device, Swapchain *swapchain);
-  void recreate();
-  void cleanup();
+  public:
+    void init(VulkanDevice *device, Swapchain *swapchain);
+    void recreate();
+    void cleanup();
 
-  const engine::render::Pipeline &getPipeline() const;
-  VkRenderPass getRenderPass() const;
-  const std::vector<VkFramebuffer> &getFramebuffers() const;
-  const std::vector<VkDescriptorSet> &getDescriptorSets() const;
-  VkDescriptorSetLayout getDescriptorSetLayout() const;
+    const engine::render::Pipeline &getPipeline() const;
+    VkRenderPass getRenderPass() const;
+    const std::vector<VkFramebuffer> &getFramebuffers() const;
+    const std::vector<VkDescriptorSet> &getDescriptorSets() const;
+    VkDescriptorSetLayout getDescriptorSetLayout() const;
 
-  VmaAllocator getAllocator() const;
+    VmaAllocator getAllocator() const;
 
-  Swapchain *getSwapchain() const;
-  void updateUniforms(size_t frameIndex, const glm::mat4 &viewProj);
+    Swapchain *getSwapchain() const;
+    void updateUniforms(size_t frameIndex, const glm::mat4 &viewProj);
 
-private:
-  VulkanDevice *device_ = nullptr;
-  Swapchain *swapchain_ = nullptr;
-  VmaAllocator allocator_ = VK_NULL_HANDLE;
+  private:
+    VulkanDevice *device_ = nullptr;
+    Swapchain *swapchain_ = nullptr;
+    VmaAllocator allocator_ = VK_NULL_HANDLE;
 
-  DepthResources depth_;
-  RenderPassManager renderPass_;
-  UniformManager uniforms_;
-  FramebufferManager framebuffers_;
-  engine::render::Pipeline pipeline_;
+    DepthResources depth_;
+    RenderPassManager renderPass_;
+    UniformManager uniforms_;
+    FramebufferManager framebuffers_;
+    engine::render::Pipeline pipeline_;
 };
