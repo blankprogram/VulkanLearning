@@ -15,11 +15,12 @@ using namespace engine;
 using namespace engine::world;
 
 Application::Application()
+
     : windowManager_(1280, 720, "Vulkan Voxel World"),
-      threadPool_(std::thread::hardware_concurrency()), uploadPool_(1),
-      rendererContext_(windowManager_.getWindow()),
+      threadPool_(std::thread::hardware_concurrency()), chunkManager_(),
+      chunkRenderer_(), rendererContext_(windowManager_.getWindow()),
       inputManager_(windowManager_.getWindow(), rendererContext_.camera()),
-      chunkManager_(), chunkRenderer_() {
+      uploadPool_(1) {
   rendererContext_.initImGui(windowManager_.getWindow());
   chunkManager_.initChunks(threadPool_);
 

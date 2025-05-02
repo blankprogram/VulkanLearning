@@ -20,9 +20,10 @@ private:
   engine::utils::ThreadPool threadPool_;
   engine::world::ChunkManager chunkManager_;
   engine::world::ChunkRenderSystem chunkRenderer_;
+  RendererContext rendererContext_; // must come *before* InputManager
   InputManager inputManager_;
-  engine::utils::ThreadPool uploadPool_; // moved **after** the context
-  RendererContext rendererContext_;      // now destroyed last
-  bool uiMode_ = true;                   // start with UI open
-  bool tabPressed_ = false;              // for edge‐detecting Tab
+  engine::utils::ThreadPool uploadPool_; // now after the context  bool uiMode_
+                                         // = true; // start with UI open
+  bool tabPressed_ = false; // for edge‐detecting Tab
+  bool uiMode_ = true;
 };
