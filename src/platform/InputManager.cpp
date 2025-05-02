@@ -1,18 +1,23 @@
 
 #include "engine/platform/InputManager.hpp"
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <imgui.h>
 
 InputManager::InputManager(GLFWwindow *window, engine::render::Camera &cam)
     : window_(window), cam_(cam) {
-  // hide & lock the cursor
-  glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  // set our static callback
+  // Application toggles cursor mode; here we only install the callback
   glfwSetCursorPosCallback(window_, &InputManager::mouseCallback);
-  // associate this instance with the window so callback can find it
   glfwSetWindowUserPointer(window_, this);
 }
 
 void InputManager::mouseCallback(GLFWwindow *w, double xpos, double ypos) {
+  // if ImGui wants the mouse, or cursor is FREE, skip camera rotation
+  ImGuiIO &io = ImGui::GetIO();
+  if (io.WantCaptureMouse ||
+      glfwGetInputMode(w, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
+    return;
+
   auto *self = reinterpret_cast<InputManager *>(glfwGetWindowUserPointer(w));
   if (self->firstMouse_) {
     self->lastX_ = float(xpos);
@@ -25,19 +30,20 @@ void InputManager::mouseCallback(GLFWwindow *w, double xpos, double ypos) {
   self->lastX_ = float(xpos);
   self->lastY_ = float(ypos);
 
-  // scale by sensitivity
   float yawDelta = dx * self->mouseSens_;
   float pitchDelta = dy * self->mouseSens_;
 
-  // accumulate & let Camera::setRotation clamp for us
   float newYaw = self->cam_.getYaw() + yawDelta;
   float newPitch = self->cam_.getPitch() + pitchDelta;
   self->cam_.setRotation(newYaw, newPitch);
 }
 
 void InputManager::processInput(float dt) {
-  // WASD movement
-  glm::vec3 forward = cam_.front(); // you’ll need to expose these in Camera
+  // skip WASD if cursor is free (UI mode)
+  if (glfwGetInputMode(window_, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
+    return;
+
+  glm::vec3 forward = cam_.front();
   glm::vec3 right = cam_.right();
   glm::vec3 up = glm::vec3(0, 1, 0);
 

@@ -573,24 +573,10 @@ src/CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.s"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/src/utils/VulkanHelpers.cpp -o CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.s
 
-src/CMakeFiles/engine.dir/voxel/Octree.cpp.o: src/CMakeFiles/engine.dir/flags.make
-src/CMakeFiles/engine.dir/voxel/Octree.cpp.o: /home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp
-src/CMakeFiles/engine.dir/voxel/Octree.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building CXX object src/CMakeFiles/engine.dir/voxel/Octree.cpp.o"
-	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/voxel/Octree.cpp.o -MF CMakeFiles/engine.dir/voxel/Octree.cpp.o.d -o CMakeFiles/engine.dir/voxel/Octree.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp
-
-src/CMakeFiles/engine.dir/voxel/Octree.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/engine.dir/voxel/Octree.cpp.i"
-	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp > CMakeFiles/engine.dir/voxel/Octree.cpp.i
-
-src/CMakeFiles/engine.dir/voxel/Octree.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/engine.dir/voxel/Octree.cpp.s"
-	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp -o CMakeFiles/engine.dir/voxel/Octree.cpp.s
-
 src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o: /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp
 src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building CXX object src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Building CXX object src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o -MF CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o.d -o CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp
 
 src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.i: cmake_force
@@ -604,7 +590,7 @@ src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.s: cmake_force
 src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o: /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp
 src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building CXX object src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Building CXX object src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o -MF CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o.d -o CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp
 
 src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.i: cmake_force
@@ -618,7 +604,7 @@ src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.s: cmake_force
 src/CMakeFiles/engine.dir/world/Chunk.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/world/Chunk.cpp.o: /home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp
 src/CMakeFiles/engine.dir/world/Chunk.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building CXX object src/CMakeFiles/engine.dir/world/Chunk.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Building CXX object src/CMakeFiles/engine.dir/world/Chunk.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/world/Chunk.cpp.o -MF CMakeFiles/engine.dir/world/Chunk.cpp.o.d -o CMakeFiles/engine.dir/world/Chunk.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp
 
 src/CMakeFiles/engine.dir/world/Chunk.cpp.i: cmake_force
@@ -632,7 +618,7 @@ src/CMakeFiles/engine.dir/world/Chunk.cpp.s: cmake_force
 src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o: /home/jam/Documents/code/VulkanLearning/src/world/ChunkManager.cpp
 src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building CXX object src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Building CXX object src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/world/ChunkManager.cpp.o -MF CMakeFiles/engine.dir/world/ChunkManager.cpp.o.d -o CMakeFiles/engine.dir/world/ChunkManager.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/ChunkManager.cpp
 
 src/CMakeFiles/engine.dir/world/ChunkManager.cpp.i: cmake_force
@@ -646,7 +632,7 @@ src/CMakeFiles/engine.dir/world/ChunkManager.cpp.s: cmake_force
 src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: /home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp
 src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Building CXX object src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Building CXX object src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o -MF CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o.d -o CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/ChunkRenderSystem.cpp
 
 src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.i: cmake_force
@@ -660,7 +646,7 @@ src/CMakeFiles/engine.dir/world/ChunkRenderSystem.cpp.s: cmake_force
 src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code/VulkanLearning/src/world/TerrainGenerator.cpp
 src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Building CXX object src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Building CXX object src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o -MF CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o.d -o CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/world/TerrainGenerator.cpp
 
 src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.i: cmake_force
@@ -674,7 +660,7 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.s: cmake_force
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.cpp
 
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.i: cmake_force
@@ -688,7 +674,7 @@ src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui.cpp.s: cmake_force
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_draw.cpp
 
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.i: cmake_force
@@ -702,7 +688,7 @@ src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_draw.cpp.s: cmake_for
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_tables.cpp
 
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.i: cmake_force
@@ -716,7 +702,7 @@ src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_tables.cpp.s: cmake_f
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui_widgets.cpp
 
 src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.i: cmake_force
@@ -730,7 +716,7 @@ src/CMakeFiles/engine.dir/__/include/externals/imgui/imgui_widgets.cpp.s: cmake_
 src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp
 src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_glfw.cpp
 
 src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cpp.i: cmake_force
@@ -744,7 +730,7 @@ src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_glfw.cp
 src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o: src/CMakeFiles/engine.dir/flags.make
 src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o: /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp
 src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o: src/CMakeFiles/engine.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Building CXX object src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o -MF CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o.d -o CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o -c /home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends/imgui_impl_vulkan.cpp
 
 src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.i: cmake_force
@@ -793,7 +779,6 @@ engine_OBJECTS = \
 "CMakeFiles/engine.dir/scene/Scene.cpp.o" \
 "CMakeFiles/engine.dir/utils/ThreadPool.cpp.o" \
 "CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o" \
-"CMakeFiles/engine.dir/voxel/Octree.cpp.o" \
 "CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o" \
 "CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o" \
 "CMakeFiles/engine.dir/world/Chunk.cpp.o" \
@@ -846,7 +831,6 @@ src/libengine.a: src/CMakeFiles/engine.dir/scene/Entity.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/scene/Scene.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/utils/ThreadPool.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o
-src/libengine.a: src/CMakeFiles/engine.dir/voxel/Octree.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/world/Chunk.cpp.o
@@ -861,7 +845,7 @@ src/libengine.a: src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/i
 src/libengine.a: src/CMakeFiles/engine.dir/__/include/externals/imgui/backends/imgui_impl_vulkan.cpp.o
 src/libengine.a: src/CMakeFiles/engine.dir/build.make
 src/libengine.a: src/CMakeFiles/engine.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_50) "Linking CXX static library libengine.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/jam/Documents/code/VulkanLearning/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Linking CXX static library libengine.a"
 	cd /home/jam/Documents/code/VulkanLearning/build/src && $(CMAKE_COMMAND) -P CMakeFiles/engine.dir/cmake_clean_target.cmake
 	cd /home/jam/Documents/code/VulkanLearning/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/engine.dir/link.txt --verbose=$(VERBOSE)
 

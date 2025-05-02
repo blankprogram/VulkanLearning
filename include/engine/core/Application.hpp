@@ -23,4 +23,6 @@ private:
   InputManager inputManager_;
   engine::utils::ThreadPool uploadPool_; // moved **after** the context
   RendererContext rendererContext_;      // now destroyed last
+  bool uiMode_ = true;                   // start with UI open
+  bool tabPressed_ = false;              // for edge‐detecting Tab
 };

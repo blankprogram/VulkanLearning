@@ -83,8 +83,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/engine.dir/utils/ThreadPool.cpp.o.d"
   "CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o"
   "CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o.d"
-  "CMakeFiles/engine.dir/voxel/Octree.cpp.o"
-  "CMakeFiles/engine.dir/voxel/Octree.cpp.o.d"
   "CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o"
   "CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o.d"
   "CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o"

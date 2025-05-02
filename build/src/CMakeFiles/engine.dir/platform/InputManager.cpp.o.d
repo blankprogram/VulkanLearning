@@ -236,4 +236,8 @@ src/CMakeFiles/engine.dir/platform/InputManager.cpp.o: \
  /usr/include/glm/ext/matrix_transform.inl \
  /usr/include/glm/gtc/matrix_transform.inl /usr/include/GLFW/glfw3.h \
  /usr/include/GL/gl.h /usr/include/GL/glext.h \
- /usr/include/KHR/khrplatform.h
+ /usr/include/KHR/khrplatform.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.h \
+ /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imconfig.h \
+ /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h /usr/include/string.h \
+ /usr/include/strings.h

@@ -42,7 +42,6 @@ set(OLD_GLOB
   "/home/jam/Documents/code/VulkanLearning/src/scene/Scene.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/utils/VulkanHelpers.cpp"
-  "/home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp"

@@ -2881,6 +2881,8 @@ src/CMakeFiles/engine.dir/platform/FramebufferManager.cpp.o: /home/jam/Documents
 src/CMakeFiles/engine.dir/platform/InputManager.cpp.o: /home/jam/Documents/code/VulkanLearning/src/platform/InputManager.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/InputManager.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Camera.hpp \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imconfig.h \
+  /home/jam/Documents/code/VulkanLearning/include/externals/imgui/imgui.h \
   /usr/include/GL/gl.h \
   /usr/include/GL/glext.h \
   /usr/include/GLFW/glfw3.h \
@@ -3091,6 +3093,8 @@ src/CMakeFiles/engine.dir/platform/InputManager.cpp.o: /home/jam/Documents/code/
   /usr/include/stdc-predef.h \
   /usr/include/stdint.h \
   /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
   /usr/include/x86_64-linux-gnu/bits/byteswap.h \
   /usr/include/x86_64-linux-gnu/bits/endian.h \
@@ -3153,6 +3157,7 @@ src/CMakeFiles/engine.dir/platform/InputManager.cpp.o: /home/jam/Documents/code/
   /usr/include/x86_64-linux-gnu/sys/types.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/float.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/limits.h \
+  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/syslimits.h
@@ -7195,9 +7200,6 @@ src/CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o: /home/jam/Documents/code/Vu
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h
 
-src/CMakeFiles/engine.dir/voxel/Octree.cpp.o: /home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp \
-  /usr/include/stdc-predef.h
-
 src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o: /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/platform/VulkanDevice.hpp \
   /home/jam/Documents/code/VulkanLearning/include/engine/render/Mesh.hpp \
@@ -9036,8 +9038,6 @@ src/CMakeFiles/engine.dir/world/TerrainGenerator.cpp.o: /home/jam/Documents/code
 /home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp:
 
 /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp:
-
-/home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp:
 
 /home/jam/Documents/code/VulkanLearning/src/scene/Scene.cpp:
 

@@ -223,12 +223,6 @@
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
-  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/voxel/Octree.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp",
-  "file": "/home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp",
-  "output": "src/CMakeFiles/engine.dir/voxel/Octree.cpp.o"
-},
-{
-  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
   "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp",
   "output": "src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o"

@@ -50,7 +50,6 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/jam/Documents/code/VulkanLearning/src/scene/Scene.cpp" "src/CMakeFiles/engine.dir/scene/Scene.cpp.o" "gcc" "src/CMakeFiles/engine.dir/scene/Scene.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/utils/ThreadPool.cpp" "src/CMakeFiles/engine.dir/utils/ThreadPool.cpp.o" "gcc" "src/CMakeFiles/engine.dir/utils/ThreadPool.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/utils/VulkanHelpers.cpp" "src/CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o" "gcc" "src/CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.o.d"
-  "/home/jam/Documents/code/VulkanLearning/src/voxel/Octree.cpp" "src/CMakeFiles/engine.dir/voxel/Octree.cpp.o" "gcc" "src/CMakeFiles/engine.dir/voxel/Octree.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelMesher.cpp" "src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o" "gcc" "src/CMakeFiles/engine.dir/voxel/VoxelMesher.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/voxel/VoxelVolume.cpp" "src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o" "gcc" "src/CMakeFiles/engine.dir/voxel/VoxelVolume.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/world/Chunk.cpp" "src/CMakeFiles/engine.dir/world/Chunk.cpp.o" "gcc" "src/CMakeFiles/engine.dir/world/Chunk.cpp.o.d"

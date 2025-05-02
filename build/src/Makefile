@@ -1139,30 +1139,6 @@ utils/VulkanHelpers.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/utils/VulkanHelpers.cpp.s
 .PHONY : utils/VulkanHelpers.cpp.s
 
-voxel/Octree.o: voxel/Octree.cpp.o
-.PHONY : voxel/Octree.o
-
-# target to build an object file
-voxel/Octree.cpp.o:
-	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/voxel/Octree.cpp.o
-.PHONY : voxel/Octree.cpp.o
-
-voxel/Octree.i: voxel/Octree.cpp.i
-.PHONY : voxel/Octree.i
-
-# target to preprocess a source file
-voxel/Octree.cpp.i:
-	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/voxel/Octree.cpp.i
-.PHONY : voxel/Octree.cpp.i
-
-voxel/Octree.s: voxel/Octree.cpp.s
-.PHONY : voxel/Octree.s
-
-# target to generate assembly for a file
-voxel/Octree.cpp.s:
-	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/voxel/Octree.cpp.s
-.PHONY : voxel/Octree.cpp.s
-
 voxel/VoxelMesher.o: voxel/VoxelMesher.cpp.o
 .PHONY : voxel/VoxelMesher.o
 
@@ -1442,9 +1418,6 @@ help:
 	@echo "... utils/VulkanHelpers.o"
 	@echo "... utils/VulkanHelpers.i"
 	@echo "... utils/VulkanHelpers.s"
-	@echo "... voxel/Octree.o"
-	@echo "... voxel/Octree.i"
-	@echo "... voxel/Octree.s"
 	@echo "... voxel/VoxelMesher.o"
 	@echo "... voxel/VoxelMesher.i"
 	@echo "... voxel/VoxelMesher.s"
