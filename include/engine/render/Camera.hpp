@@ -31,13 +31,12 @@ public:
   }
 
   glm::mat4 projectionMatrix() const {
-    return glm::perspectiveRH_ZO(fovY, aspect, nearPlane, farPlane);
+    glm::mat4 proj = glm::perspective(fovY, aspect, nearPlane, farPlane);
+    proj[1][1] *= -1.0f;
+    return proj;
   }
 
-  glm::mat4 viewProjection() const {
-    // GLM's perspective flips Y by default, adjust if needed
-    return projectionMatrix() * viewMatrix();
-  }
+  glm::mat4 viewProjection() const { return projectionMatrix() * viewMatrix(); }
 
   float getYaw() const { return yaw; }
   float getPitch() const { return pitch; }
