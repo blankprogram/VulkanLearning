@@ -11,6 +11,7 @@ set(OLD_GLOB
   "/home/jam/Documents/code/VulkanLearning/src/core/Window.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/ecs/ECSManager.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/main.cpp"
+  "/home/jam/Documents/code/VulkanLearning/src/math/FrustumCulling.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/math/Math.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp"
   "/home/jam/Documents/code/VulkanLearning/src/platform/DepthResources.cpp"

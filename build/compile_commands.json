@@ -37,6 +37,12 @@
 },
 {
   "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
+  "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/math/FrustumCulling.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/math/FrustumCulling.cpp",
+  "file": "/home/jam/Documents/code/VulkanLearning/src/math/FrustumCulling.cpp",
+  "output": "src/CMakeFiles/engine.dir/math/FrustumCulling.cpp.o"
+},
+{
+  "directory": "/home/jam/Documents/code/VulkanLearning/build/src",
   "command": "/usr/bin/c++ -DSPIRV_OUT=\\\"/home/jam/Documents/code/VulkanLearning/build/shaders\\\" -DVK_USE_PLATFORM_WAYLAND_KHR -DVK_USE_PLATFORM_XLIB_KHR -I/home/jam/Documents/code/VulkanLearning/include -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui -I/home/jam/Documents/code/VulkanLearning/include/externals/imgui/backends -std=gnu++20 -o CMakeFiles/engine.dir/math/Math.cpp.o -c /home/jam/Documents/code/VulkanLearning/src/math/Math.cpp",
   "file": "/home/jam/Documents/code/VulkanLearning/src/math/Math.cpp",
   "output": "src/CMakeFiles/engine.dir/math/Math.cpp.o"

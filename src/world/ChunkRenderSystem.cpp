@@ -1,6 +1,5 @@
-
-// src/world/ChunkRenderSystem.cpp
 #include "engine/world/ChunkRenderSystem.hpp"
+#include "engine/math/FrustumCulling.hpp" // ← new
 #include <glm/gtc/matrix_transform.hpp>
 #include <vulkan/vulkan.h>
 
@@ -11,14 +10,22 @@ void ChunkRenderSystem::drawAll(RendererContext &ctx, const ChunkManager &mgr) {
   VkCommandBuffer cmdBuf = ctx.getCurrentCommandBuffer();
   VkPipelineLayout layout = ctx.getRenderResources().getPipeline().layout;
 
+  glm::mat4 vp = ctx.camera().viewProjection();
+  math::FrustumCuller culler;
+  culler.update(vp);
+
   for (const auto &[coord, chunk] : mgr.getChunks()) {
     if (!chunk.mesh || chunk.mesh->indexCount() == 0)
       continue;
 
-    glm::vec3 worldPos =
-        glm::vec3(coord.x * 16, 0.0f, coord.y * 16); // CHUNK_DIM = 16
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), worldPos);
+    glm::vec3 worldPos = glm::vec3(coord.x * 16, 0.0f, coord.y * 16);
+    glm::vec3 aabbMin = worldPos;
+    glm::vec3 aabbMax = worldPos + glm::vec3(chunk.volume->extent);
 
+    if (!culler.isBoxVisible(aabbMin, aabbMax))
+      continue;
+
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), worldPos);
     vkCmdPushConstants(cmdBuf, layout, VK_SHADER_STAGE_VERTEX_BIT, 0,
                        sizeof(glm::mat4), &model);
 

@@ -19,6 +19,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/jam/Documents/code/VulkanLearning/src/core/Window.cpp" "src/CMakeFiles/engine.dir/core/Window.cpp.o" "gcc" "src/CMakeFiles/engine.dir/core/Window.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/ecs/ECSManager.cpp" "src/CMakeFiles/engine.dir/ecs/ECSManager.cpp.o" "gcc" "src/CMakeFiles/engine.dir/ecs/ECSManager.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/main.cpp" "src/CMakeFiles/engine.dir/main.cpp.o" "gcc" "src/CMakeFiles/engine.dir/main.cpp.o.d"
+  "/home/jam/Documents/code/VulkanLearning/src/math/FrustumCulling.cpp" "src/CMakeFiles/engine.dir/math/FrustumCulling.cpp.o" "gcc" "src/CMakeFiles/engine.dir/math/FrustumCulling.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/math/Math.cpp" "src/CMakeFiles/engine.dir/math/Math.cpp.o" "gcc" "src/CMakeFiles/engine.dir/math/Math.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/platform/CommandManager.cpp" "src/CMakeFiles/engine.dir/platform/CommandManager.cpp.o" "gcc" "src/CMakeFiles/engine.dir/platform/CommandManager.cpp.o.d"
   "/home/jam/Documents/code/VulkanLearning/src/platform/DepthResources.cpp" "src/CMakeFiles/engine.dir/platform/DepthResources.cpp.o" "gcc" "src/CMakeFiles/engine.dir/platform/DepthResources.cpp.o.d"

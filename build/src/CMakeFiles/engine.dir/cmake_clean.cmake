@@ -21,6 +21,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/engine.dir/ecs/ECSManager.cpp.o.d"
   "CMakeFiles/engine.dir/main.cpp.o"
   "CMakeFiles/engine.dir/main.cpp.o.d"
+  "CMakeFiles/engine.dir/math/FrustumCulling.cpp.o"
+  "CMakeFiles/engine.dir/math/FrustumCulling.cpp.o.d"
   "CMakeFiles/engine.dir/math/Math.cpp.o"
   "CMakeFiles/engine.dir/math/Math.cpp.o.d"
   "CMakeFiles/engine.dir/platform/CommandManager.cpp.o"

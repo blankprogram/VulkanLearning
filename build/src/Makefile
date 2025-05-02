@@ -395,6 +395,30 @@ main.cpp.s:
 	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+math/FrustumCulling.o: math/FrustumCulling.cpp.o
+.PHONY : math/FrustumCulling.o
+
+# target to build an object file
+math/FrustumCulling.cpp.o:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/math/FrustumCulling.cpp.o
+.PHONY : math/FrustumCulling.cpp.o
+
+math/FrustumCulling.i: math/FrustumCulling.cpp.i
+.PHONY : math/FrustumCulling.i
+
+# target to preprocess a source file
+math/FrustumCulling.cpp.i:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/math/FrustumCulling.cpp.i
+.PHONY : math/FrustumCulling.cpp.i
+
+math/FrustumCulling.s: math/FrustumCulling.cpp.s
+.PHONY : math/FrustumCulling.s
+
+# target to generate assembly for a file
+math/FrustumCulling.cpp.s:
+	cd /home/jam/Documents/code/VulkanLearning/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/engine.dir/build.make src/CMakeFiles/engine.dir/math/FrustumCulling.cpp.s
+.PHONY : math/FrustumCulling.cpp.s
+
 math/Math.o: math/Math.cpp.o
 .PHONY : math/Math.o
 
@@ -1325,6 +1349,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... math/FrustumCulling.o"
+	@echo "... math/FrustumCulling.i"
+	@echo "... math/FrustumCulling.s"
 	@echo "... math/Math.o"
 	@echo "... math/Math.i"
 	@echo "... math/Math.s"
