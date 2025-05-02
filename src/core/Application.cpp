@@ -1,5 +1,6 @@
 #include "engine/core/Application.hpp"
 #include "engine/world/Chunk.hpp"
+#include "engine/world/Config.hpp"
 #include <engine/render/Camera.hpp>
 
 #include <backends/imgui_impl_glfw.h>
@@ -18,7 +19,14 @@ Application::Application()
       chunkRenderer_(), rendererContext_(windowManager_.getWindow()),
       inputManager_(windowManager_.getWindow(), rendererContext_.camera()),
       uploadPool_(1) {
-    rendererContext_.initImGui(windowManager_.getWindow());
+
+    glfwSetInputMode(windowManager_.getWindow(), GLFW_CURSOR,
+                     GLFW_CURSOR_DISABLED);
+
+    if (DEBUG) {
+        rendererContext_.initImGui(windowManager_.getWindow());
+    }
+
     chunkManager_.initChunks(threadPool_);
 }
 
@@ -26,6 +34,10 @@ Application::~Application() {
     threadPool_.waitIdle();
     uploadPool_.waitIdle();
     vkDeviceWaitIdle(rendererContext_.getDevice()->getDevice());
+
+    if (DEBUG) {
+        rendererContext_.cleanupImGui();
+    }
 }
 
 void Application::Run() {
@@ -87,29 +99,33 @@ void Application::mainLoop() {
             chunk.meshJobQueued = false;
         });
     }
+    if (DEBUG) {
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-    ImGui_ImplVulkan_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
+        ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_FirstUseEver);
+        ImGui::Begin("Debug Info");
+        ImGui::Text("FPS: %.1f", 1.0f / dt);
+        ImGui::Text("Camera Pos: (%.2f, %.2f, %.2f)", camPos.x, camPos.y,
+                    camPos.z);
 
-    ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_FirstUseEver);
-    ImGui::Begin("Debug Info");
-    ImGui::Text("FPS: %.1f", 1.0f / dt);
-    ImGui::Text("Camera Pos: (%.2f, %.2f, %.2f)", camPos.x, camPos.y, camPos.z);
+        size_t lastSlot = (frame + RendererContext::MAX_FRAMES_IN_FLIGHT - 1) %
+                          RendererContext::MAX_FRAMES_IN_FLIGHT;
+        ImGui::Text(
+            "Submitted tris:  %llu",
+            (unsigned long long)rendererContext_.statsSubmitted_[lastSlot]);
+        ImGui::Text(
+            "Rasterized tris: %llu",
+            (unsigned long long)rendererContext_.statsRasterized_[lastSlot]);
+        ImGui::Text(
+            "Fragments drawn:  %llu",
+            (unsigned long long)rendererContext_.statsSamples_[lastSlot]);
+        ImGui::End();
 
-    size_t lastSlot = (frame + RendererContext::MAX_FRAMES_IN_FLIGHT - 1) %
-                      RendererContext::MAX_FRAMES_IN_FLIGHT;
-    ImGui::Text("Submitted tris:  %llu",
-                (unsigned long long)rendererContext_.statsSubmitted_[lastSlot]);
-    ImGui::Text(
-        "Rasterized tris: %llu",
-        (unsigned long long)rendererContext_.statsRasterized_[lastSlot]);
-    ImGui::Text("Fragments drawn:  %llu",
-                (unsigned long long)rendererContext_.statsSamples_[lastSlot]);
-    ImGui::End();
-
-    ImGui::Render();
-    ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
+        ImGui::Render();
+        ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmd);
+    }
 
     rendererContext_.endFrame();
 }

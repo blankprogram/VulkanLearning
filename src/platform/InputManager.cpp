@@ -2,7 +2,6 @@
 #include "engine/platform/InputManager.hpp"
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
-#include <imgui.h>
 
 InputManager::InputManager(GLFWwindow *window, engine::render::Camera &cam)
     : window_(window), cam_(cam) {
@@ -12,9 +11,6 @@ InputManager::InputManager(GLFWwindow *window, engine::render::Camera &cam)
 }
 
 void InputManager::mouseCallback(GLFWwindow *w, double xpos, double ypos) {
-    ImGuiIO &io = ImGui::GetIO();
-    if (io.WantCaptureMouse)
-        return;
 
     auto *self = reinterpret_cast<InputManager *>(glfwGetWindowUserPointer(w));
     if (self->firstMouse_) {

@@ -1,4 +1,5 @@
 #include "engine/platform/RendererContext.hpp"
+#include "engine/world/Config.hpp"
 #include <cstring>
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
@@ -6,6 +7,7 @@
 #include "externals/vk_mem_alloc.h"
 #define IMGUI_IMPL_VULKAN_NO_PROTOTYPES
 
+using engine::world::DEBUG;
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_vulkan.h>
 #include <imgui.h>
@@ -145,8 +147,9 @@ void RendererContext::recreateSwapchain() {
 
 void RendererContext::cleanup() {
     vkDeviceWaitIdle(device_->getDevice());
-
-    cleanupImGui();
+    if (DEBUG) {
+        cleanupImGui();
+    }
     renderResources_.cleanup();
     commandManager_.cleanup(device_->getDevice());
     frameSync_.cleanup(device_->getDevice());
