@@ -5,8 +5,6 @@ namespace engine {
 
 Window::Window(int width, int height, const char *title)
     : width_(width), height_(height) {
-    if (!glfwInit())
-        throw std::runtime_error("Failed to initialize GLFW");
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
@@ -19,7 +17,6 @@ Window::Window(int width, int height, const char *title)
 Window::~Window() {
     if (window_)
         glfwDestroyWindow(window_);
-    glfwTerminate();
 }
 
 GLFWwindow *Window::get() const { return window_; }
