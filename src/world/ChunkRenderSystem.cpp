@@ -22,8 +22,8 @@ void ChunkRenderSystem::drawAll(RendererContext &ctx, const ChunkManager &mgr) {
     glm::vec3 aabbMin = worldPos;
     glm::vec3 aabbMax = worldPos + glm::vec3(chunk.volume->extent);
 
-    // if (!culler.isBoxVisible(aabbMin, aabbMax))
-    //   continue;
+    if (!culler.isBoxVisible(aabbMin, aabbMax))
+      continue;
 
     glm::mat4 model = glm::translate(glm::mat4(1.0f), worldPos);
     vkCmdPushConstants(cmdBuf, layout, VK_SHADER_STAGE_VERTEX_BIT, 0,
