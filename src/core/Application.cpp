@@ -65,7 +65,8 @@ void Application::mainLoop() {
   double now = glfwGetTime();
   float dt = float(now - lastTime);
   lastTime = now;
-
+  inputManager_.processInput(dt);
+  rendererContext_.beginFrame();
   VkCommandBuffer cmd = rendererContext_.getCurrentCommandBuffer();
   size_t frame = rendererContext_.getFrameIndex();
 
@@ -75,10 +76,6 @@ void Application::mainLoop() {
 
   vkCmdResetQueryPool(cmd, rendererContext_.occlusionQueryPool_, frame, 1);
   vkCmdBeginQuery(cmd, rendererContext_.occlusionQueryPool_, frame, 0);
-
-  // 3) Movement & begin frame
-  inputManager_.processInput(dt);
-  rendererContext_.beginFrame();
 
   // 4) Draw world once to gather stats
   chunkRenderer_.drawAll(rendererContext_, chunkManager_);
