@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/VulkanEngine.dir/src/main.cpp.o -o VulkanEngine  src/libengine.a /usr/lib/x86_64-linux-gnu/libvulkan.so -lglfw
