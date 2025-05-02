@@ -18,12 +18,12 @@ class RendererContext {
 public:
   explicit RendererContext(GLFWwindow *window);
   ~RendererContext();
-
+  static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
   void beginFrame();
   void endFrame();
   void recreateSwapchain();
   void cleanup();
-
+  size_t getFrameIndex() const { return currentFrame_; }
   engine::render::Camera &camera() { return cam_; }
 
   VkCommandBuffer &getCurrentCommandBuffer() {
@@ -38,9 +38,13 @@ public:
   void initImGui(GLFWwindow *window);
   void cleanupImGui();
 
-private:
-  static constexpr size_t MAX_FRAMES_IN_FLIGHT = 2;
+  VkQueryPool pipelineStatsQueryPool_{VK_NULL_HANDLE};
+  VkQueryPool occlusionQueryPool_{VK_NULL_HANDLE};
+  std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsSubmitted_{};
+  std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsRasterized_{};
+  std::array<uint64_t, MAX_FRAMES_IN_FLIGHT> statsSamples_{};
 
+private:
   void init(GLFWwindow *window);
 
   size_t currentFrame_ = 0;
@@ -57,5 +61,6 @@ private:
   RenderGraph renderGraph_;
   RenderResources renderResources_;
 
-  VkDescriptorPool imguiDescriptorPool_{VK_NULL_HANDLE}; // ✅ Added
+  VkDescriptorPool imguiDescriptorPool_{VK_NULL_HANDLE};
+  //
 };

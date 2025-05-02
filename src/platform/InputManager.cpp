@@ -6,14 +6,14 @@
 
 InputManager::InputManager(GLFWwindow *window, engine::render::Camera &cam)
     : window_(window), cam_(cam) {
-  // Application toggles cursor mode; here we only install the callback
+  // we only install the cursor-pos callback; Application flips GLFW_CURSOR mode
   glfwSetCursorPosCallback(window_, &InputManager::mouseCallback);
   glfwSetWindowUserPointer(window_, this);
 }
 
 void InputManager::mouseCallback(GLFWwindow *w, double xpos, double ypos) {
-  // if ImGui wants the mouse, or cursor is FREE, skip camera rotation
   ImGuiIO &io = ImGui::GetIO();
+  // if ImGui is capturing, or if cursor is free/visible, skip mouselook:
   if (io.WantCaptureMouse ||
       glfwGetInputMode(w, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
     return;
@@ -39,16 +39,13 @@ void InputManager::mouseCallback(GLFWwindow *w, double xpos, double ypos) {
 }
 
 void InputManager::processInput(float dt) {
-  // skip WASD if cursor is free (UI mode)
-  if (glfwGetInputMode(window_, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
-    return;
-
+  // WASD (and Space/Ctrl) always move, even if UI is open:
   glm::vec3 forward = cam_.front();
   glm::vec3 right = cam_.right();
-  glm::vec3 up = glm::vec3(0, 1, 0);
+  glm::vec3 up = {0, 1, 0};
 
   float speed =
-      moveSpeed_ * (glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS
+      moveSpeed_ * ((glfwGetKey(window_, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
                         ? sprintMul_
                         : 1.f);
 

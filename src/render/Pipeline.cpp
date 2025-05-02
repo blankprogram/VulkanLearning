@@ -6,6 +6,7 @@
 #include <glm/mat4x4.hpp>
 #include <stdexcept>
 #include <vector>
+#include <vulkan/vulkan_core.h>
 namespace engine::render {
 
 static std::vector<char> loadSPV(const std::string &path) {
@@ -77,7 +78,7 @@ void Pipeline::init(VkDevice dev, VkRenderPass rp, VkDescriptorSetLayout dsl,
       VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO};
   ras.polygonMode = VK_POLYGON_MODE_FILL;
   ras.lineWidth = 1.0f;
-  ras.cullMode = VK_CULL_MODE_NONE;
+  ras.cullMode = VK_CULL_MODE_BACK_BIT;
   ras.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 
   VkPipelineMultisampleStateCreateInfo ms{
