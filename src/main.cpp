@@ -1,4 +1,3 @@
-
 #include "engine/app/Window.hpp"
 #include "engine/configs/WindowConfig.hpp"
 #include "engine/core/Context.hpp"
