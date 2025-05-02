@@ -1,4 +1,3 @@
-
 #include "engine/core/DebugUtilsMessenger.hpp"
 #include <iostream>
 
@@ -13,21 +12,24 @@ debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     return VK_FALSE;
 }
 
+vk::DebugUtilsMessengerCreateInfoEXT createDebugUtilsMessengerCreateInfo() {
+    return vk::DebugUtilsMessengerCreateInfoEXT{}
+        .setMessageSeverity(
+            vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
+            vk::DebugUtilsMessageSeverityFlagBitsEXT::eError)
+        .setMessageType(
+            vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+            vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
+            vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance)
+        .setPfnUserCallback(debugCallback)
+        .setPUserData(nullptr);
+}
+
 } // namespace
 
 namespace engine {
 
 DebugUtilsMessenger::DebugUtilsMessenger(const vk::raii::Instance &instance)
-    : messenger_{instance,
-                 vk::DebugUtilsMessengerCreateInfoEXT{}
-                     .setMessageSeverity(
-                         vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
-                         vk::DebugUtilsMessageSeverityFlagBitsEXT::eError)
-                     .setMessageType(
-                         vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
-                         vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation |
-                         vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance)
-                     .setPfnUserCallback(debugCallback)
-                     .setPUserData(nullptr)} {}
+    : messenger_(instance, createDebugUtilsMessengerCreateInfo()) {}
 
 } // namespace engine

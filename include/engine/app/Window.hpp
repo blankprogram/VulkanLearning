@@ -10,8 +10,9 @@ class Window {
     Window(int width, int height, const char *title);
     ~Window();
 
-    GLFWwindow *getWindow() const;
+    GLFWwindow *get() const;
     vk::Extent2D getExtent() const;
+    bool shouldClose() const;
 
   private:
     GLFWwindow *window_ = nullptr;

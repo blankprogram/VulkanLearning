@@ -22,10 +22,14 @@ Window::~Window() {
     glfwTerminate();
 }
 
-GLFWwindow *Window::getWindow() const { return window_; }
+GLFWwindow *Window::get() const { return window_; }
 
 vk::Extent2D Window::getExtent() const {
     return {static_cast<uint32_t>(width_), static_cast<uint32_t>(height_)};
+}
+
+bool Window::shouldClose() const {
+    return glfwWindowShouldClose(window_);
 }
 
 } // namespace engine
