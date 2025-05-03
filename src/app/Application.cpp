@@ -6,11 +6,11 @@
 namespace engine {
 
 Application::Application()
-    : instance_(context_),
+    : context_(), instance_(context_.get()),
       window_(windowConfig.width, windowConfig.height, windowConfig.name),
       surface_(instance_.get(), window_.get()) {
   if (!glfwInit()) {
-    throw std::runtime_error("Failed to initalise");
+    throw std::runtime_error("Failed to initialize GLFW");
   }
 }
 

@@ -1,5 +1,4 @@
 #include "engine/app/Application.hpp"
-#include "engine/core/Context.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vulkan/vulkan_raii.hpp>

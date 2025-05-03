@@ -15,7 +15,7 @@ public:
   void run();
 
 private:
-  vk::raii::Context context_;
+  Context context_;
   Instance instance_;
   Window window_;
   Surface surface_;
