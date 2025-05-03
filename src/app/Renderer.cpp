@@ -1,5 +1,5 @@
 #include "engine/app/Renderer.hpp"
-
+#include "engine/configs/PipelineConfig.hpp"
 namespace engine {
 
 Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
@@ -21,6 +21,10 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
                 vk::PipelineDynamicStateCreateInfo{},
                 GraphicsPipeline::Config{windowExtent}),
       _cmdPool(device.get(), queues.graphics.value()) {
+  createSwapchain();
+  createDepthBuffer();
+  createRenderPass();
+  createGraphicsPipeline();
   createFramebuffers();
   createCommandPoolAndBuffers();
   createSyncObjects();
@@ -67,6 +71,37 @@ void Renderer::createSyncObjects() {
     _renderFinished.emplace_back(_device.get());
     _inFlightFences.emplace_back(_device.get(), true);
   }
+}
+
+void Renderer::createSwapchain() {
+  _swapchain = Swapchain(_physical.get(), _device.get(), _surface.get(),
+                         _extent, _queues);
+}
+
+void Renderer::createDepthBuffer() {
+  _depth = DepthBuffer(_physical.get(), _device.get(), _extent);
+}
+
+void Renderer::createRenderPass() {
+  _renderPass = RenderPass(_device.get(), _swapchain.imageFormat());
+}
+
+void Renderer::createGraphicsPipeline() {
+  auto cfg = defaultPipelineConfig(_extent);
+
+  cfg.shaderStages = {
+      /* vertShaderStageInfo, fragShaderStageInfo, … */
+  };
+
+  PipelineLayout layout{_device.get(), cfg.setLayouts, cfg.pushConstants};
+
+  _pipeline = GraphicsPipeline(
+      _device.get(), layout, _renderPass.get(), cfg.vertexInput,
+      cfg.inputAssembly, cfg.rasterizer, cfg.multisampling, cfg.depthStencil,
+      cfg.colorBlend, cfg.shaderStages,
+      std::vector<vk::PipelineViewportStateCreateInfo>{cfg.viewportState},
+      cfg.dynamicState,
+      GraphicsPipeline::Config{cfg.viewportExtent, cfg.msaaSamples});
 }
 
 } // namespace engine
