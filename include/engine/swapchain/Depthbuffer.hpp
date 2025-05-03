@@ -4,7 +4,7 @@
 #include "engine/swapchain/ImageView.hpp"
 #include <vulkan/vulkan_raii.hpp>
 
-namespace engine::swapchain {
+namespace engine {
 
 class DepthBuffer {
 public:
@@ -31,4 +31,4 @@ private:
   ImageView view_;
 };
 
-} // namespace engine::swapchain
+} // namespace engine

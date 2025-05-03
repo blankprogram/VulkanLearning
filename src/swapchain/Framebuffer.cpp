@@ -1,6 +1,6 @@
 #include "engine/swapchain/Framebuffer.hpp"
 
-namespace engine::swapchain {
+namespace engine {
 
 static vk::FramebufferCreateInfo
 makeFramebufferInfo(const vk::raii::RenderPass &renderPass, vk::Extent2D extent,
@@ -22,4 +22,4 @@ Framebuffer::Framebuffer(const vk::raii::Device &device,
     : framebuffer_{device,
                    makeFramebufferInfo(renderPass, extent, attachments)} {}
 
-} // namespace engine::swapchain
+} // namespace engine

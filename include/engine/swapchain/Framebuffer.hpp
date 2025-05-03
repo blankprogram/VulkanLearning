@@ -3,7 +3,7 @@
 #include <vector>
 #include <vulkan/vulkan_raii.hpp>
 
-namespace engine::swapchain {
+namespace engine {
 
 class Framebuffer {
 public:
@@ -23,4 +23,4 @@ private:
   vk::raii::Framebuffer framebuffer_;
 };
 
-} // namespace engine::swapchain
+} // namespace engine

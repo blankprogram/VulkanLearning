@@ -1,7 +1,7 @@
 #include "engine/swapchain/Depthbuffer.hpp"
 #include <stdexcept>
 
-namespace engine::swapchain {
+namespace engine {
 
 vk::Format DepthBuffer::findSupportedDepthFormat(
     const vk::raii::PhysicalDevice &physical) {
@@ -30,4 +30,4 @@ DepthBuffer::DepthBuffer(const vk::raii::PhysicalDevice &physical,
       view_{device, image_.get(), format_, vk::ImageAspectFlagBits::eDepth, 1,
             1} {}
 
-} // namespace engine::swapchain
+} // namespace engine
