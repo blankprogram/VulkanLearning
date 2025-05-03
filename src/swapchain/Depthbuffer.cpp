@@ -1,5 +1,3 @@
-
-// src/swapchain/DepthBuffer.cpp
 #include "engine/swapchain/Depthbuffer.hpp"
 #include <stdexcept>
 
