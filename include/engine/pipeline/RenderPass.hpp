@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan_raii.hpp>
+
 namespace engine {
 
 class RenderPass {
@@ -17,6 +18,10 @@ public:
   const vk::raii::RenderPass &get() const { return renderPass_; }
 
 private:
+  // helper to build the CreateInfo
+  static vk::RenderPassCreateInfo makeInfo(vk::Format colorFormat,
+                                           vk::Format depthFormat);
+
   vk::raii::RenderPass renderPass_;
 };
 

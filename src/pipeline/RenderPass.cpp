@@ -1,13 +1,13 @@
-
-// src/pipeline/RenderPass.cpp
 #include "engine/pipeline/RenderPass.hpp"
 #include <array>
 
 namespace engine {
 
-// Build a RenderPassCreateInfo with both a color and a depth attachment.
-static vk::RenderPassCreateInfo makeRenderPassInfo(vk::Format colorFormat,
-                                                   vk::Format depthFormat) {
+// build-and-create helper: attachments, subpass & dependency live
+// through the vk::raii::RenderPass constructor call
+static vk::raii::RenderPass makeRenderPass(const vk::raii::Device &device,
+                                           vk::Format colorFormat,
+                                           vk::Format depthFormat) {
   // 0 = color, 1 = depth
   std::array<vk::AttachmentDescription, 2> atts = {
       // color
@@ -33,19 +33,19 @@ static vk::RenderPassCreateInfo makeRenderPassInfo(vk::Format colorFormat,
           .setFinalLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal),
   };
 
-  // References to those two attachments
+  // references into those attachments
   vk::AttachmentReference colorRef{0, vk::ImageLayout::eColorAttachmentOptimal};
   vk::AttachmentReference depthRef{
       1, vk::ImageLayout::eDepthStencilAttachmentOptimal};
 
-  // Single subpass that uses both
+  // single subpass uses both
   vk::SubpassDescription subpass{};
   subpass.setPipelineBindPoint(vk::PipelineBindPoint::eGraphics)
       .setColorAttachmentCount(1)
       .setPColorAttachments(&colorRef)
       .setPDepthStencilAttachment(&depthRef);
 
-  // A dependency to handle layout transitions properly
+  // ensure proper transitions
   vk::SubpassDependency dep{};
   dep.setSrcSubpass(VK_SUBPASS_EXTERNAL)
       .setDstSubpass(0)
@@ -57,6 +57,7 @@ static vk::RenderPassCreateInfo makeRenderPassInfo(vk::Format colorFormat,
       .setDstAccessMask(vk::AccessFlagBits::eColorAttachmentWrite |
                         vk::AccessFlagBits::eDepthStencilAttachmentWrite);
 
+  // assemble the create info
   vk::RenderPassCreateInfo info{};
   info.setAttachmentCount(static_cast<uint32_t>(atts.size()))
       .setPAttachments(atts.data())
@@ -65,12 +66,12 @@ static vk::RenderPassCreateInfo makeRenderPassInfo(vk::Format colorFormat,
       .setDependencyCount(1)
       .setPDependencies(&dep);
 
-  return info;
+  // call into RAII while all locals are alive
+  return vk::raii::RenderPass{device, info};
 }
 
-// Now the constructor simply delegates into our helper
 RenderPass::RenderPass(const vk::raii::Device &device, vk::Format colorFormat,
                        vk::Format depthFormat)
-    : renderPass_(device, makeRenderPassInfo(colorFormat, depthFormat)) {}
+    : renderPass_{makeRenderPass(device, colorFormat, depthFormat)} {}
 
 } // namespace engine
