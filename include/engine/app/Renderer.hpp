@@ -59,7 +59,7 @@ private:
   struct Vertex {
     glm::vec3 pos, color;
   };
-
+  std::unique_ptr<vk::raii::DescriptorPool> _imguiDescriptorPool;
   Device &_device;
   PhysicalDevice &_physical;
   Surface &_surface;
