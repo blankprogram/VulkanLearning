@@ -22,8 +22,9 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
       _depth(physical.get(), device.get(), windowExtent),
       _renderPass(device.get(), _swapchain.imageFormat(), _depth.getFormat()),
       _cmdPool(device.get(), queues.graphics.value()) {
-  // … your existing setup calls …
-
+  //
+  // — ImGui descriptor‐pool & layer setup (unchanged) —
+  //
   std::vector<vk::DescriptorPoolSize> poolSizes = {
       {vk::DescriptorType::eSampler, 1000u},
       {vk::DescriptorType::eCombinedImageSampler, 1000u},
@@ -38,25 +39,32 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
       {vk::DescriptorType::eInputAttachment, 1000u}};
 
   vk::DescriptorPoolCreateInfo imguiPoolInfo;
-  imguiPoolInfo
-      .setFlags(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet) // ← allow
-                                                                      // free()
+  imguiPoolInfo.setFlags(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet)
       .setMaxSets(1000)
       .setPoolSizeCount(static_cast<uint32_t>(poolSizes.size()))
       .setPPoolSizes(poolSizes.data());
 
   _imguiDescriptorPool =
       std::make_unique<vk::raii::DescriptorPool>(_device.get(), imguiPoolInfo);
-  // create ImGuiLayer — note the correct casts and member names:
+
   uint32_t imgCount = static_cast<uint32_t>(_swapchain.images().size());
 
   imguiLayer_ = std::make_unique<ImGuiLayer>(
       _window, _rawInstance, static_cast<VkDevice>(*_device.get()),
       static_cast<VkPhysicalDevice>(*_physical.get()), _queues.graphics.value(),
-      static_cast<VkQueue>(*_device.graphicsQueue()),
-      *_imguiDescriptorPool, // ← now the correct, full‑featured pool
+      static_cast<VkQueue>(*_device.graphicsQueue()), *_imguiDescriptorPool,
       static_cast<VkRenderPass>(*_renderPass.get()), imgCount);
 
+  //
+  // — NEW: build everything else before first draw —
+  //
+  createGraphicsPipeline();
+  createFramebuffers();
+  createCommandPoolAndBuffers();
+  createSyncObjects();
+
+  // now it’s safe to record, since _framebuffers, _cmdBuffers and
+  // _inFlightFences are all populated
   recordCommandBuffers();
 }
 void Renderer::recreateSwapchain() {
