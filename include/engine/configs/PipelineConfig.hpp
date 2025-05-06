@@ -67,7 +67,7 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
       .setRasterizerDiscardEnable(VK_FALSE)
       .setPolygonMode(vk::PolygonMode::eFill)
       .setLineWidth(1.f)
-      .setCullMode(vk::CullModeFlagBits::eBack)
+      .setCullMode(vk::CullModeFlagBits::eNone)
       .setFrontFace(vk::FrontFace::eClockwise)
       .setDepthBiasEnable(VK_FALSE);
 
