@@ -412,17 +412,21 @@ void Renderer::createGraphicsPipeline() {
       cfg.dynamicState,
       GraphicsPipeline::Config{cfg.viewportExtent, cfg.msaaSamples});
 }
+
 void Renderer::recordCommandBuffers() {
   for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
-    auto cmd = _cmdBuffers[i].get();
+    // grab the wrapper
+    CommandBuffer &cmdWrapper = _cmdBuffers[i];
+    // get the raw handle for recording draws, binding, etc.
+    vk::CommandBuffer cmd = cmdWrapper.get();
 
-    // — ImGui needs NewFrame before you render —
+    // ImGui wants NewFrame before you record any UI draw calls
     imguiLayer_->newFrame();
 
-    // begin recording
-    cmd.begin({});
+    // --- begin the command buffer properly via the wrapper ---
+    cmdWrapper.begin(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
 
-    // begin render‑pass
+    // --- begin render‑pass ---
     vk::RenderPassBeginInfo rp{};
     rp.setRenderPass(*_renderPass.get())
         .setFramebuffer(*_framebuffers[i].get())
@@ -432,12 +436,12 @@ void Renderer::recordCommandBuffers() {
     clears[1].depthStencil = vk::ClearDepthStencilValue{1.0f, 0};
     rp.setClearValueCount((uint32_t)clears.size())
         .setPClearValues(clears.data());
+
     cmd.beginRenderPass(rp, vk::SubpassContents::eInline);
 
-    // bind the pipeline
+    // --- bind pipeline, dynamic state, buffers, descriptors, draw ---
     cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
 
-    // — because viewport & scissor are dynamic, we must set them now —
     vk::Viewport vp{0.0f, 0.0f, float(_extent.width), float(_extent.height),
                     0.0f, 1.0f};
     cmd.setViewport(0, 1, &vp);
@@ -445,15 +449,11 @@ void Renderer::recordCommandBuffers() {
     vk::Rect2D sc{{0, 0}, _extent};
     cmd.setScissor(0, 1, &sc);
 
-    // bind vertex + instance buffers
     vk::Buffer vbs[] = {_vertexBuffer->get(), _terrain.instanceBuffer->get()};
     vk::DeviceSize offs[] = {0, 0};
     cmd.bindVertexBuffers(0, 2, vbs, offs);
-
-    // bind index buffer
     cmd.bindIndexBuffer(_indexBuffer->get(), 0, vk::IndexType::eUint16);
 
-    // bind descriptor sets
     std::array<VkDescriptorSet, 2> sets = {
         _descriptorSets[i], _terrain.voxelResources.descriptorSet};
     vkCmdBindDescriptorSets(
@@ -461,15 +461,14 @@ void Renderer::recordCommandBuffers() {
         static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0,
         (uint32_t)sets.size(), sets.data(), 0, nullptr);
 
-    // draw instanced
     cmd.drawIndexed((uint32_t)_indices.size(), _terrain.instanceCount, 0, 0, 0);
 
-    // render ImGui on top
+    // --- draw ImGui on top ---
     imguiLayer_->render(cmd);
 
-    // end
+    // --- end pass and buffer via wrapper ---
     cmd.endRenderPass();
-    cmd.end();
+    cmdWrapper.end();
   }
 }
 void Renderer::createCommandPoolAndBuffers() {
