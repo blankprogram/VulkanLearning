@@ -14,6 +14,7 @@
 #include "engine/swapchain/Framebuffer.hpp"
 #include "engine/swapchain/Swapchain.hpp"
 
+#include <memory>
 namespace engine {
 
 class Renderer {
@@ -44,7 +45,7 @@ private:
   Swapchain _swapchain;
   DepthBuffer _depth;
   RenderPass _renderPass;
-  GraphicsPipeline _pipeline;
+  std::unique_ptr<GraphicsPipeline> _pipeline;
   std::vector<Framebuffer> _framebuffers;
 
   CommandPool _cmdPool;
