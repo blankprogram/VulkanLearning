@@ -15,7 +15,7 @@ struct PipelineConfig {
   std::vector<vk::PipelineColorBlendAttachmentState> blendAttachments;
 
   // —— NEW: store these so their pointers stay valid ——
-  vk::VertexInputBindingDescription bindingDescription;
+  std::array<vk::VertexInputBindingDescription, 2> bindingDescriptions;
   std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
 
   vk::PipelineVertexInputStateCreateInfo vertexInput{};
@@ -48,12 +48,12 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
 
   // — vertex input —
   // pull binding/attribute descriptions *into* the struct
-  c.bindingDescription = Vertex::getBindingDescription();
+  c.bindingDescriptions[0] = Vertex::getBindingDescription();
   auto attrs = Vertex::getAttributeDescriptions();
   c.attributeDescriptions.assign(attrs.begin(), attrs.end());
 
   c.vertexInput.setVertexBindingDescriptionCount(1)
-      .setPVertexBindingDescriptions(&c.bindingDescription)
+      .setPVertexBindingDescriptions(c.bindingDescriptions.data())
       .setVertexAttributeDescriptionCount(
           static_cast<uint32_t>(c.attributeDescriptions.size()))
       .setPVertexAttributeDescriptions(c.attributeDescriptions.data());

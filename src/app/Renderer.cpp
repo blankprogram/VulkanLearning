@@ -368,50 +368,56 @@ void Renderer::createGraphicsPipeline() {
   cfg.setLayouts = {static_cast<vk::DescriptorSetLayout>(**_uboSetLayout),
                     static_cast<vk::DescriptorSetLayout>(**_voxelSetLayout)};
 
-  // — new: add binding 1 for per‑instance mat4 —
+  //
+  // — vertex‑input binding descriptions —
+  //
+  // binding 0 already populated by defaultPipelineConfig:
+  //   cfg.bindingDescriptions[0] = Vertex::getBindingDescription();
+  // now set up binding 1 for per‑instance mat4:
   vk::VertexInputBindingDescription instBind{};
   instBind.binding = 1;
   instBind.stride = sizeof(glm::mat4);
   instBind.inputRate = vk::VertexInputRate::eInstance;
+  cfg.bindingDescriptions[1] = instBind;
 
-  // four vec4 attributes to feed the mat4
-  std::array<vk::VertexInputAttributeDescription, 4> instAttrs = {
-      {// location 2,3,4,5
-       {/*location*/ 2, /*binding*/ 1, vk::Format::eR32G32B32A32Sfloat, 0},
-       {3, 1, vk::Format::eR32G32B32A32Sfloat, sizeof(glm::vec4)},
-       {4, 1, vk::Format::eR32G32B32A32Sfloat, sizeof(glm::vec4) * 2},
-       {5, 1, vk::Format::eR32G32B32A32Sfloat, sizeof(glm::vec4) * 3}}};
+  // now update the vertexInput create‑info to use both bindings:
+  cfg.vertexInput.setVertexBindingDescriptionCount(2)
+      .setPVertexBindingDescriptions(cfg.bindingDescriptions.data());
 
-  // merge with the existing vertex attributes
+  //
+  // — vertex‑input attribute descriptions —
+  //
+  // original per‑vertex attributes in cfg.attributeDescriptions
   auto &origAttrs = cfg.attributeDescriptions;
+
+  // per‑instance mat4 → 4 × vec4 at locations 2,3,4,5
+  std::array<vk::VertexInputAttributeDescription, 4> instAttrs = {
+      {{/*location*/ 2, /*binding*/ 1, vk::Format::eR32G32B32A32Sfloat,
+        /*offset*/ 0},
+       {3, 1, vk::Format::eR32G32B32A32Sfloat, sizeof(glm::vec4)},
+       {4, 1, vk::Format::eR32G32B32A32Sfloat, 2 * sizeof(glm::vec4)},
+       {5, 1, vk::Format::eR32G32B32A32Sfloat, 3 * sizeof(glm::vec4)}}};
+
+  // merge them
   std::vector<vk::VertexInputAttributeDescription> allAttrs;
   allAttrs.reserve(origAttrs.size() + instAttrs.size());
   allAttrs.insert(allAttrs.end(), origAttrs.begin(), origAttrs.end());
   allAttrs.insert(allAttrs.end(), instAttrs.begin(), instAttrs.end());
 
-  // now patch the pipeline config
-  cfg.vertexInput.setVertexBindingDescriptionCount(2)
-      .setPVertexBindingDescriptions(
-          reinterpret_cast<vk::VertexInputBindingDescription *>(
-              &cfg.bindingDescription)) // first bindingDescription, then
-                                        // instBind in memory
-      .setVertexAttributeDescriptionCount(
-          static_cast<uint32_t>(allAttrs.size()))
+  // patch the create‑info
+  cfg.vertexInput.setVertexAttributeDescriptionCount((uint32_t)allAttrs.size())
       .setPVertexAttributeDescriptions(allAttrs.data());
 
-  // we must also ensure the two bindings are laid out in memory:
-  // cfg.bindingDescription is already binding 0; we pass instBind alongside.
-  // (the reinterpret_cast above assumes they are laid out back‑to‑back)
-
+  // — shaders —
   ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
   ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
   std::array<vk::PipelineShaderStageCreateInfo, 2> stages = {
       vert.stageInfo(vk::ShaderStageFlagBits::eVertex),
       frag.stageInfo(vk::ShaderStageFlagBits::eFragment)};
 
+  // — layout & pipeline creation —
   _pipelineLayout = std::make_unique<PipelineLayout>(
       _device.get(), cfg.setLayouts, cfg.pushConstants);
-
   _pipeline = std::make_unique<GraphicsPipeline>(
       _device.get(), *_pipelineLayout, _renderPass.get(), cfg.vertexInput,
       cfg.inputAssembly, cfg.rasterizer, cfg.multisampling, cfg.depthStencil,
@@ -422,36 +428,52 @@ void Renderer::createGraphicsPipeline() {
       cfg.dynamicState,
       GraphicsPipeline::Config{cfg.viewportExtent, cfg.msaaSamples});
 }
-
 void Renderer::recordCommandBuffers() {
   for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
     auto cmd = _cmdBuffers[i].get();
-    // … begin render pass, bind pipeline, viewport, scissor …
 
-    // bind both the cube‑mesh VB (binding 0) and the instance‑buffer (binding
-    // 1)
+    // 1) begin command‐buffer
+    vk::CommandBufferBeginInfo beginInfo{};
+    cmd.begin(beginInfo);
+
+    // 2) begin render‐pass
+    vk::RenderPassBeginInfo rpInfo{};
+    rpInfo.setRenderPass(*_renderPass.get())
+        .setFramebuffer(*_framebuffers[i].get())
+        .setRenderArea(vk::Rect2D{{0, 0}, _extent});
+    std::array<vk::ClearValue, 2> clears{};
+    clears[0].color = vk::ClearColorValue(std::array<float, 4>{0, 0, 0, 1});
+    clears[1].depthStencil = vk::ClearDepthStencilValue{1.0f, 0};
+    rpInfo.setClearValueCount((uint32_t)clears.size())
+        .setPClearValues(clears.data());
+    cmd.beginRenderPass(rpInfo, vk::SubpassContents::eInline);
+
+    // 3) bind pipeline
+    cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
+
+    // 4) bind vertex + instance buffers
     vk::Buffer vbs[] = {_vertexBuffer->get(), _terrain.instanceBuffer->get()};
     vk::DeviceSize offs[] = {0, 0};
     cmd.bindVertexBuffers(0, 2, vbs, offs);
 
+    // 5) bind index buffer
     cmd.bindIndexBuffer(_indexBuffer->get(), 0, vk::IndexType::eUint16);
 
-    // bind UBO and voxel SSBO descriptor sets
-    VkCommandBuffer raw = static_cast<VkCommandBuffer>(cmd);
+    // 6) bind descriptor sets (UBO = set 0, SSBO = set 1)
     std::array<VkDescriptorSet, 2> sets = {
-        _descriptorSets[i],                   // set 0 = UBO
-        _terrain.voxelResources.descriptorSet // set 1 = voxel SSBO
-    };
+        _descriptorSets[i], _terrain.voxelResources.descriptorSet};
     vkCmdBindDescriptorSets(
-        raw, VK_PIPELINE_BIND_POINT_GRAPHICS,
+        static_cast<VkCommandBuffer>(cmd), VK_PIPELINE_BIND_POINT_GRAPHICS,
         static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0,
         (uint32_t)sets.size(), sets.data(), 0, nullptr);
 
-    // instanced draw: indexCount, instanceCount, firstIndex, vertexOffset,
-    // firstInstance
-    cmd.drawIndexed(static_cast<uint32_t>(_indices.size()),
-                    _terrain.instanceCount, 0, 0, 0);
+    // 7) draw instanced
+    cmd.drawIndexed((uint32_t)_indices.size(), _terrain.instanceCount, 0, 0, 0);
+
+    // 8) render ImGui on top
     imguiLayer_->render(cmd);
+
+    // 9) end render‐pass + finish
     cmd.endRenderPass();
     cmd.end();
   }
