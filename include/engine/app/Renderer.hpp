@@ -80,7 +80,7 @@ private:
   std::vector<uint16_t> _indices;
   std::unique_ptr<Buffer> _vertexBuffer;
   std::unique_ptr<Buffer> _indexBuffer;
-  std::array<std::unique_ptr<Buffer>, MAX_FRAMES_IN_FLIGHT> _uniformBuffers;
+  std::vector<std::unique_ptr<Buffer>> _uniformBuffers;
 
   std::unique_ptr<vk::raii::DescriptorSetLayout> _uboSetLayout;
   std::unique_ptr<vk::raii::DescriptorPool> _descriptorPool;

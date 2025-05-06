@@ -112,7 +112,6 @@ void Renderer::drawFrame() {
 
 void Renderer::createCubeResources() {
   // ——— 1) FILL YOUR GEOMETRY ———
-  // For testing, here’s a single colored triangle:
   _vertices = {
       {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
       {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
@@ -163,15 +162,21 @@ void Renderer::createCubeResources() {
   }
   endSingleTimeCommands(copyCmd);
 
-  // ——— 5) UNIFORM BUFFERS & DESCRIPTORS (unchanged) ———
-  for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
+  // ——— 5) UNIFORM BUFFERS & DESCRIPTORS ———
+  size_t imageCount = _swapchain.images().size();
+
+  // a) one UBO per swapchain image
+  _uniformBuffers.clear();
+  _uniformBuffers.resize(imageCount);
+  for (size_t i = 0; i < imageCount; ++i) {
     _uniformBuffers[i] =
         std::make_unique<Buffer>(_physical.get(), _device.get(), uboSize,
                                  vk::BufferUsageFlagBits::eUniformBuffer,
                                  vk::MemoryPropertyFlagBits::eHostVisible |
                                      vk::MemoryPropertyFlagBits::eHostCoherent);
   }
-  // descriptor set layout
+
+  // b) descriptor‐set layout (unchanged)
   vk::DescriptorSetLayoutBinding uboB{};
   uboB.binding = 0;
   uboB.descriptorType = vk::DescriptorType::eUniformBuffer;
@@ -183,42 +188,37 @@ void Renderer::createCubeResources() {
       vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(1).setPBindings(
           &uboB));
 
-  // descriptor pool
+  // c) descriptor pool big enough for imageCount sets
   vk::DescriptorPoolSize poolSize{};
   poolSize.type = vk::DescriptorType::eUniformBuffer;
-  poolSize.descriptorCount = MAX_FRAMES_IN_FLIGHT;
+  poolSize.descriptorCount = static_cast<uint32_t>(imageCount);
 
   _descriptorPool = std::make_unique<vk::raii::DescriptorPool>(
       _device.get(), vk::DescriptorPoolCreateInfo{}
-                         .setMaxSets(MAX_FRAMES_IN_FLIGHT)
+                         .setMaxSets(static_cast<uint32_t>(imageCount))
                          .setPoolSizeCount(1)
                          .setPPoolSizes(&poolSize));
 
-  // allocate
-  _descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-  {
-    std::vector<VkDescriptorSetLayout> layouts(
-        MAX_FRAMES_IN_FLIGHT,
-        static_cast<VkDescriptorSetLayout>(**_uboSetLayout));
-    VkDescriptorSetAllocateInfo allocInfo{};
-    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-    allocInfo.descriptorPool = static_cast<VkDescriptorPool>(**_descriptorPool);
-    allocInfo.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
-    allocInfo.pSetLayouts = layouts.data();
+  // d) allocate & write descriptor‐sets
+  _descriptorSets.resize(imageCount);
+  std::vector<VkDescriptorSetLayout> layouts(
+      imageCount, static_cast<VkDescriptorSetLayout>(**_uboSetLayout));
+  VkDescriptorSetAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+  allocInfo.descriptorPool = static_cast<VkDescriptorPool>(**_descriptorPool);
+  allocInfo.descriptorSetCount = static_cast<uint32_t>(imageCount);
+  allocInfo.pSetLayouts = layouts.data();
 
-    VkDevice vkDev = static_cast<VkDevice>(*_device.get());
-    if (vkAllocateDescriptorSets(vkDev, &allocInfo, _descriptorSets.data()) !=
-        VK_SUCCESS) {
-      throw std::runtime_error("Failed to allocate descriptor sets");
-    }
-  }
+  if (vkAllocateDescriptorSets(static_cast<VkDevice>(*_device.get()),
+                               &allocInfo,
+                               _descriptorSets.data()) != VK_SUCCESS)
+    throw std::runtime_error("Failed to allocate descriptor sets");
 
-  // write
-  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
-    VkDescriptorBufferInfo bufferInfo{};
-    bufferInfo.buffer = static_cast<VkBuffer>(_uniformBuffers[i]->get());
-    bufferInfo.offset = 0;
-    bufferInfo.range = sizeof(UniformBufferObject);
+  for (size_t i = 0; i < imageCount; ++i) {
+    VkDescriptorBufferInfo bufInfo{};
+    bufInfo.buffer = static_cast<VkBuffer>(_uniformBuffers[i]->get());
+    bufInfo.offset = 0;
+    bufInfo.range = sizeof(UniformBufferObject);
 
     VkWriteDescriptorSet w{};
     w.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -227,13 +227,12 @@ void Renderer::createCubeResources() {
     w.dstArrayElement = 0;
     w.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     w.descriptorCount = 1;
-    w.pBufferInfo = &bufferInfo;
+    w.pBufferInfo = &bufInfo;
 
-    VkDevice vkDev = static_cast<VkDevice>(*_device.get());
-    vkUpdateDescriptorSets(vkDev, 1, &w, 0, nullptr);
+    vkUpdateDescriptorSets(static_cast<VkDevice>(*_device.get()), 1, &w, 0,
+                           nullptr);
   }
 }
-
 void Renderer::createFramebuffers() {
   _colorImageViews.clear();
   auto const &images = _swapchain.images();
@@ -309,61 +308,62 @@ void Renderer::createGraphicsPipeline() {
 }
 
 void Renderer::recordCommandBuffers() {
-  // make sure we have one command buffer per framebuffer
   for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
     auto cmd = _cmdBuffers[i].get();
 
-    // 1) begin recording
-    vk::CommandBufferBeginInfo beginInfo{};
-    beginInfo.setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
-    cmd.begin(beginInfo);
+    // 1) begin
+    vk::CommandBufferBeginInfo bi{};
+    bi.setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
+    cmd.begin(bi);
 
-    // 2) begin the render pass
-    std::array<vk::ClearValue, 2> clearValues{};
-    clearValues[0].color =
+    // 2) render pass begin
+    std::array<vk::ClearValue, 2> clears{};
+    clears[0].color =
         vk::ClearColorValue(std::array<float, 4>{0.f, 0.f, 0.f, 1.f});
-    clearValues[1].depthStencil = vk::ClearDepthStencilValue{1.f, 0};
+    clears[1].depthStencil = vk::ClearDepthStencilValue{1.f, 0};
 
-    vk::RenderPassBeginInfo rpInfo{};
-    rpInfo.setRenderPass(*_renderPass.get())
+    vk::RenderPassBeginInfo rpbi{};
+    rpbi.setRenderPass(*_renderPass.get())
         .setFramebuffer(*_framebuffers[i].get())
         .setRenderArea({{0, 0}, _extent})
-        .setClearValueCount(static_cast<uint32_t>(clearValues.size()))
-        .setPClearValues(clearValues.data());
+        .setClearValueCount(static_cast<uint32_t>(clears.size()))
+        .setPClearValues(clears.data());
+    cmd.beginRenderPass(rpbi, vk::SubpassContents::eInline);
 
-    cmd.beginRenderPass(rpInfo, vk::SubpassContents::eInline);
-
-    // 3) bind pipeline, vertex/index buffers
+    // 3) bind pipeline + dynamic viewport/scissor
     cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
 
+    vk::Viewport vp{0.f, 0.f, float(_extent.width), float(_extent.height),
+                    0.f, 1.f};
+    cmd.setViewport(0, 1, &vp);
+
+    vk::Rect2D sc{{0, 0}, _extent};
+    cmd.setScissor(0, 1, &sc);
+
+    // 4) bind vertex/index
     vk::Buffer vbs[] = {_vertexBuffer->get()};
-    vk::DeviceSize offsets[] = {0};
-    cmd.bindVertexBuffers(0, 1, vbs, offsets);
+    vk::DeviceSize offs[] = {0};
+    cmd.bindVertexBuffers(0, 1, vbs, offs);
     cmd.bindIndexBuffer(_indexBuffer->get(), 0, vk::IndexType::eUint16);
 
-    // 4) bind **one** descriptor set for this frame
+    // 5) bind descriptor-set for this image
     {
       VkCommandBuffer raw = static_cast<VkCommandBuffer>(cmd);
-      VkDescriptorSet set = _descriptorSets[i];
+      VkDescriptorSet ds = _descriptorSets[i];
       vkCmdBindDescriptorSets(
           raw, VK_PIPELINE_BIND_POINT_GRAPHICS,
-          static_cast<VkPipelineLayout>(*_pipelineLayout->get()),
-          0,         // firstSet
-          1,         // descriptorCount
-          &set,      // pDescriptorSets
-          0, nullptr // dynamic offsets
-      );
+          static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0, 1, &ds, 0,
+          nullptr);
     }
 
-    // 5) draw
-    cmd.drawIndexed(static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
+    // 6) draw
+    cmd.drawIndexed(uint32_t(_indices.size()), 1, 0, 0, 0);
 
-    // 6) end render pass + finish recording
+    // 7) end
     cmd.endRenderPass();
     cmd.end();
   }
 }
-
 void Renderer::createCommandPoolAndBuffers() {
   _cmdBuffers.clear();
   _cmdBuffers.reserve(_framebuffers.size());
