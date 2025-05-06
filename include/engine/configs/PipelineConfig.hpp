@@ -49,24 +49,13 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
       .setScissorCount(1)
       .setPScissors(&c.scissor);
 
-  // Vertex input binding
-  vk::VertexInputBindingDescription binding{};
-  binding.setBinding(0)
-      .setStride(sizeof(Vertex))
-      .setInputRate(vk::VertexInputRate::eVertex);
-  c.bindingDescriptions = {binding};
-
-  // Vertex input attributes (position + uv)
-  auto attrs = Vertex::getAttributeDescriptions();
-  c.attributeDescriptions = {attrs[0], attrs[2]};
-
-  c.vertexInput
-      .setVertexBindingDescriptionCount(
-          static_cast<uint32_t>(c.bindingDescriptions.size()))
-      .setPVertexBindingDescriptions(c.bindingDescriptions.data())
-      .setVertexAttributeDescriptionCount(
-          static_cast<uint32_t>(c.attributeDescriptions.size()))
-      .setPVertexAttributeDescriptions(c.attributeDescriptions.data());
+  // **No vertex‐buffers** (we use gl_VertexIndex in the shader)
+  c.bindingDescriptions.clear();
+  c.attributeDescriptions.clear();
+  c.vertexInput.setVertexBindingDescriptionCount(0)
+      .setPVertexBindingDescriptions(nullptr)
+      .setVertexAttributeDescriptionCount(0)
+      .setPVertexAttributeDescriptions(nullptr);
 
   // Input assembly
   c.inputAssembly.setTopology(vk::PrimitiveTopology::eTriangleList)

@@ -1,14 +1,13 @@
 #include "engine/app/Renderer.hpp"
 #include "engine/configs/PipelineConfig.hpp"
 #include "engine/pipeline/ShaderModule.hpp"
+
 namespace engine {
 
 Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
                    vk::Extent2D windowExtent, Queue::FamilyIndices queues)
     : _device(device), _physical(physical), _surface(surface),
-      _extent(windowExtent), _queues(queues)
-      // this builds your one-and-only swapchain
-      ,
+      _extent(windowExtent), _queues(queues),
       _swapchain(physical.get(), device.get(), surface.get(), windowExtent,
                  queues),
       _depth(physical.get(), device.get(), windowExtent),
@@ -22,6 +21,7 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
   createSyncObjects();
   recordCommandBuffers();
 }
+
 void Renderer::recreateSwapchain() {
   _device.get().waitIdle();
 
@@ -41,11 +41,8 @@ void Renderer::drawFrame() {
 
   uint32_t imageIndex;
   VkResult r = vkAcquireNextImageKHR(
-      *_device.get(),    // unwrap vk::raii::Device -> VkDevice
-      *_swapchain.get(), // unwrap vk::raii::SwapchainKHR -> VkSwapchainKHR
-      UINT64_MAX,
-      _imageAvailable[_currentFrame].get(), // VkSemaphore
-      VK_NULL_HANDLE, &imageIndex);
+      *_device.get(), *_swapchain.get(), UINT64_MAX,
+      _imageAvailable[_currentFrame].get(), VK_NULL_HANDLE, &imageIndex);
 
   if (r == VK_ERROR_OUT_OF_DATE_KHR) {
     recreateSwapchain();
@@ -54,7 +51,6 @@ void Renderer::drawFrame() {
     throw std::runtime_error("Failed to acquire swapchain image");
   }
 
-  // 3) Submit our pre-recorded command buffer
   VkSemaphore waitSemaphores[] = {_imageAvailable[_currentFrame].get()};
   VkSemaphore signalSemaphores[] = {_renderFinished[_currentFrame].get()};
   VkPipelineStageFlags waitStages[] = {
@@ -74,7 +70,6 @@ void Renderer::drawFrame() {
   VkQueue graphicsQueue = *_device.graphicsQueue();
   vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);
 
-  // 4) Present
   VkPresentInfoKHR presentInfo{};
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   presentInfo.waitSemaphoreCount = 1;
@@ -92,7 +87,6 @@ void Renderer::drawFrame() {
     throw std::runtime_error("Failed to present swapchain image");
   }
 
-  // 5) Advance frame
   _currentFrame = (_currentFrame + 1) % _framebuffers.size();
 }
 
@@ -152,18 +146,14 @@ void Renderer::createRenderPass() {
 }
 
 void Renderer::createGraphicsPipeline() {
-  // 1) pull in all of our default pipeline-state (vertex input, assembly, etc)
   auto cfg = defaultPipelineConfig(_extent);
 
-  // 2) load both shaders
   ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
   ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
   std::array<vk::PipelineShaderStageCreateInfo, 2> stages = {
       vert.stageInfo(vk::ShaderStageFlagBits::eVertex),
       frag.stageInfo(vk::ShaderStageFlagBits::eFragment)};
 
-  // 3) finally build the real pipeline with stageCount>0, viewportState, blend,
-  // etc
   _pipeline = std::make_unique<GraphicsPipeline>(
       _device.get(),
       PipelineLayout{_device.get(), cfg.setLayouts, cfg.pushConstants},
@@ -175,20 +165,23 @@ void Renderer::createGraphicsPipeline() {
       cfg.dynamicState,
       GraphicsPipeline::Config{cfg.viewportExtent, cfg.msaaSamples});
 }
+
 void Renderer::recordCommandBuffers() {
   for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
     auto cmd = _cmdBuffers[i].get();
     vk::CommandBufferBeginInfo bi{};
     cmd.begin(bi);
 
+    // **Two** clear values: color + depth
+    std::array<vk::ClearValue, 2> clearValues = {
+        vk::ClearColorValue{std::array<float, 4>{0.1f, 0.2f, 0.3f, 1.0f}},
+        vk::ClearDepthStencilValue{1.0f, 0}};
     vk::RenderPassBeginInfo rpbi{};
     rpbi.setRenderPass(*_renderPass.get())
         .setFramebuffer(*_framebuffers[i].get())
         .setRenderArea({{0, 0}, _extent})
-        .setClearValueCount(1)
-        .setPClearValues(std::array<vk::ClearValue, 1>{
-            {vk::ClearColorValue{std::array<float, 4>{0.1f, 0.2f, 0.3f, 1.0f}}}}
-                             .data());
+        .setClearValueCount(static_cast<uint32_t>(clearValues.size()))
+        .setPClearValues(clearValues.data());
 
     cmd.beginRenderPass(rpbi, vk::SubpassContents::eInline);
     // no draw calls yet
@@ -201,8 +194,8 @@ void Renderer::createCommandPoolAndBuffers() {
   _cmdBuffers.clear();
   _cmdBuffers.reserve(_framebuffers.size());
   for (size_t i = 0; i < _framebuffers.size(); ++i) {
-    // this constructor will internally allocate one vk::CommandBuffer
     _cmdBuffers.emplace_back(_device.get(), _cmdPool.get());
   }
 }
+
 } // namespace engine
