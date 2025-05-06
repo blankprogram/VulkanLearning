@@ -1,6 +1,8 @@
+
 #include "engine/app/Renderer.hpp"
 #include "engine/configs/PipelineConfig.hpp"
 #include "engine/pipeline/ShaderModule.hpp"
+#include "engine/swapchain/ImageView.hpp" // <–– add this
 
 namespace engine {
 
@@ -67,8 +69,7 @@ void Renderer::drawFrame() {
   submitInfo.signalSemaphoreCount = 1;
   submitInfo.pSignalSemaphores = signalSemaphores;
 
-  VkQueue graphicsQueue = *_device.graphicsQueue();
-  vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);
+  vkQueueSubmit(*_device.graphicsQueue(), 1, &submitInfo, fence);
 
   VkPresentInfoKHR presentInfo{};
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -79,8 +80,7 @@ void Renderer::drawFrame() {
   presentInfo.pSwapchains = &sc;
   presentInfo.pImageIndices = &imageIndex;
 
-  VkQueue presentQueue = *_device.presentQueue();
-  VkResult presRes = vkQueuePresentKHR(presentQueue, &presentInfo);
+  VkResult presRes = vkQueuePresentKHR(*_device.presentQueue(), &presentInfo);
   if (presRes == VK_ERROR_OUT_OF_DATE_KHR || presRes == VK_SUBOPTIMAL_KHR) {
     recreateSwapchain();
   } else if (presRes != VK_SUCCESS) {
@@ -91,21 +91,23 @@ void Renderer::drawFrame() {
 }
 
 void Renderer::createFramebuffers() {
-  std::vector<ImageView> colorViews;
+  // 1) build + keep alive our color‐attachment views
+  _colorImageViews.clear();
   auto const &images = _swapchain.images();
-  colorViews.reserve(images.size());
+  _colorImageViews.reserve(images.size());
   for (auto img : images) {
-    colorViews.emplace_back(_device.get(), img, _swapchain.imageFormat(),
-                            vk::ImageAspectFlagBits::eColor, 1, 1);
+    _colorImageViews.emplace_back(_device.get(), img, _swapchain.imageFormat(),
+                                  vk::ImageAspectFlagBits::eColor, 1, 1);
   }
 
+  // 2) now assemble framebuffers using those live wrappers + depth view
   _framebuffers.clear();
   _framebuffers.reserve(images.size());
-
   for (size_t i = 0; i < images.size(); ++i) {
     std::array<vk::ImageView, 2> attachments = {
-        static_cast<vk::ImageView>(colorViews[i].get()),
-        static_cast<vk::ImageView>(_depth.getView())};
+        *(_colorImageViews[i].get()), // raw VkImageView handle
+        *(_depth.getView())           // raw VkImageView handle
+    };
 
     _framebuffers.emplace_back(
         _device.get(), _renderPass.get(), _extent,
@@ -115,11 +117,9 @@ void Renderer::createFramebuffers() {
 
 void Renderer::createSyncObjects() {
   size_t n = _framebuffers.size();
-
   _imageAvailable.clear();
   _renderFinished.clear();
   _inFlightFences.clear();
-
   _imageAvailable.reserve(n);
   _renderFinished.reserve(n);
   _inFlightFences.reserve(n);
@@ -147,7 +147,6 @@ void Renderer::createRenderPass() {
 
 void Renderer::createGraphicsPipeline() {
   auto cfg = defaultPipelineConfig(_extent);
-
   ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
   ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
   std::array<vk::PipelineShaderStageCreateInfo, 2> stages = {
@@ -172,10 +171,11 @@ void Renderer::recordCommandBuffers() {
     vk::CommandBufferBeginInfo bi{};
     cmd.begin(bi);
 
-    // **Two** clear values: color + depth
+    // two clear‐values: 0=color, 1=depth
     std::array<vk::ClearValue, 2> clearValues = {
         vk::ClearColorValue{std::array<float, 4>{0.1f, 0.2f, 0.3f, 1.0f}},
         vk::ClearDepthStencilValue{1.0f, 0}};
+
     vk::RenderPassBeginInfo rpbi{};
     rpbi.setRenderPass(*_renderPass.get())
         .setFramebuffer(*_framebuffers[i].get())
@@ -184,7 +184,7 @@ void Renderer::recordCommandBuffers() {
         .setPClearValues(clearValues.data());
 
     cmd.beginRenderPass(rpbi, vk::SubpassContents::eInline);
-    // no draw calls yet
+    // (no draws yet)
     cmd.endRenderPass();
     cmd.end();
   }

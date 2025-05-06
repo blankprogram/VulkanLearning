@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "engine/core/Device.hpp"
@@ -12,9 +13,12 @@
 #include "engine/rendering/Semaphore.hpp"
 #include "engine/swapchain/Depthbuffer.hpp"
 #include "engine/swapchain/Framebuffer.hpp"
+#include "engine/swapchain/ImageView.hpp"
 #include "engine/swapchain/Swapchain.hpp"
 
 #include <memory>
+#include <vector>
+
 namespace engine {
 
 class Renderer {
@@ -23,7 +27,6 @@ public:
            vk::Extent2D windowExtent, Queue::FamilyIndices queues);
 
   ~Renderer() = default;
-
   void drawFrame();
 
 private:
@@ -36,6 +39,7 @@ private:
   void createSyncObjects();
   void recordCommandBuffers();
   void recreateSwapchain();
+
   Device &_device;
   PhysicalDevice &_physical;
   Surface &_surface;
@@ -47,6 +51,8 @@ private:
   RenderPass _renderPass;
   std::unique_ptr<GraphicsPipeline> _pipeline;
   std::vector<Framebuffer> _framebuffers;
+
+  std::vector<ImageView> _colorImageViews;
 
   CommandPool _cmdPool;
   std::vector<CommandBuffer> _cmdBuffers;
