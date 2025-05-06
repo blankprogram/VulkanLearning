@@ -7,7 +7,8 @@
 namespace engine {
 
 struct PipelineConfig {
-  // Owning containers for vertex input
+  std::vector<vk::DescriptorSetLayout> setLayouts;
+  std::vector<vk::PushConstantRange> pushConstants;
   std::vector<vk::VertexInputBindingDescription> bindingDescriptions;
   std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
 
@@ -37,7 +38,8 @@ struct PipelineConfig {
 inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
   PipelineConfig c;
 
-  // Viewport / scissor setup
+  c.setLayouts = {};
+  c.pushConstants = {};
   c.viewportExtent = extent;
   c.viewport = vk::Viewport{
       0.0f, 0.0f, float(extent.width), float(extent.height), 0.0f, 1.0f};
