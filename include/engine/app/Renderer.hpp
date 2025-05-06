@@ -55,7 +55,7 @@ private:
 
   void cleanupSwapchain();
   void createSwapchainResources();
-
+  void buildFrameResources();
   struct Vertex {
     glm::vec3 pos, color;
   };

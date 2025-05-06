@@ -60,19 +60,27 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
   //
   createCubeResources();
 
-  // — now we have a valid _uboSetLayout, build the pipeline and friends —
-  createGraphicsPipeline();
-  createFramebuffers();
-  createCommandPoolAndBuffers();
-  createSyncObjects();
+  buildFrameResources();
 
   // finally record your command‑buffers
   recordCommandBuffers();
 }
+
 void Renderer::recreateSwapchain() {
   cleanupSwapchain();
   createSwapchainResources();
+
+  // ← same here
+  buildFrameResources();
+
   recordCommandBuffers();
+}
+
+void Renderer::buildFrameResources() {
+  createGraphicsPipeline();
+  createFramebuffers();
+  createCommandPoolAndBuffers();
+  createSyncObjects();
 }
 
 void Renderer::createSwapchainResources() {
