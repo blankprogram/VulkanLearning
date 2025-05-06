@@ -98,27 +98,22 @@ void ImGuiLayer::newFrame() {
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  // simple FPS counter
-  double now = glfwGetTime();
-  _frameCount++;
-  if (now - _lastTime >= 1.0) {
-    ImGui::Begin("Stats");
-    ImGui::Text("FPS: %.1f", double(_frameCount) / (now - _lastTime));
-    ImGui::End();
-    _frameCount = 0;
-    _lastTime = now;
-  }
+  // one‑time default size
+  ImGui::SetNextWindowSize(ImVec2(300, 100), ImGuiCond_FirstUseEver);
+
+  ImGui::Begin("Stats");
+  ImGuiIO &io = ImGui::GetIO();
+  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
+              1000.0f / io.Framerate, io.Framerate);
+  ImGui::End();
 }
 
 void ImGuiLayer::recreate(uint32_t imageCount, VkRenderPass renderPass) {
-  // update stored values
   _imageCount = imageCount;
   _renderPass = renderPass;
 
-  // shut down only the Vulkan backend
   ImGui_ImplVulkan_Shutdown();
 
-  // re‑init Vulkan backend with the new swapchain parameters
   ImGui_ImplVulkan_InitInfo init_info{};
   init_info.Instance = _instance;
   init_info.PhysicalDevice = _physical;
@@ -137,9 +132,7 @@ void ImGuiLayer::recreate(uint32_t imageCount, VkRenderPass renderPass) {
     throw std::runtime_error("Failed to re‑initialize ImGui Vulkan backend");
   }
 
-  // recreate font textures (same as in init)
   {
-    // one‑time command pool
     VkCommandPoolCreateInfo pool_info{
         VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
     pool_info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
