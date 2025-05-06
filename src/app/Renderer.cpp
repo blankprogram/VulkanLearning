@@ -286,6 +286,8 @@ void Renderer::createRenderPass() {
 void Renderer::createGraphicsPipeline() {
   auto cfg = defaultPipelineConfig(_extent);
 
+  cfg.setLayouts = {static_cast<vk::DescriptorSetLayout>(**_uboSetLayout)};
+
   ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
   ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
   std::array<vk::PipelineShaderStageCreateInfo, 2> stages = {
