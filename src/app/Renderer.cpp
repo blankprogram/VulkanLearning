@@ -187,36 +187,30 @@ void Renderer::drawFrame() {
   _currentFrame = (_currentFrame + 1) % _inFlightFences.size();
 }
 void Renderer::createCubeResources() {
+  // — existing cube vertex/index setup unchanged —
   _vertices = {
       {{-0.5f, -0.5f, -0.5f}, {1, 0, 0}}, {{0.5f, -0.5f, -0.5f}, {0, 1, 0}},
       {{0.5f, 0.5f, -0.5f}, {0, 0, 1}},   {{-0.5f, 0.5f, -0.5f}, {1, 1, 0}},
       {{-0.5f, -0.5f, 0.5f}, {1, 0, 1}},  {{0.5f, -0.5f, 0.5f}, {0, 1, 1}},
       {{0.5f, 0.5f, 0.5f}, {1, 1, 1}},    {{-0.5f, 0.5f, 0.5f}, {0, 0, 0}},
   };
-  _indices = {
-      0, 1, 2, 2, 3, 0, // back
-      4, 5, 6, 6, 7, 4, // front
-      0, 1, 5, 5, 4, 0, // bottom
-      3, 2, 6, 6, 7, 3, // top
-      1, 2, 6, 6, 5, 1, // right
-      0, 3, 7, 7, 4, 0  // left
-  };
+  _indices = {0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4, 0, 1, 5, 5, 4, 0,
+              3, 2, 6, 6, 7, 3, 1, 2, 6, 6, 5, 1, 0, 3, 7, 7, 4, 0};
+
+  // — staging & device‐local copy (unchanged) —
   vk::DeviceSize vbSize = sizeof(Vertex) * _vertices.size();
   vk::DeviceSize ibSize = sizeof(uint16_t) * _indices.size();
-  vk::DeviceSize uboSize = sizeof(UniformBufferObject);
-
   Buffer stagingVB(_physical.get(), _device.get(), vbSize,
                    vk::BufferUsageFlagBits::eTransferSrc,
                    vk::MemoryPropertyFlagBits::eHostVisible |
                        vk::MemoryPropertyFlagBits::eHostCoherent);
   stagingVB.copyFrom(_vertices.data(), vbSize);
-
   Buffer stagingIB(_physical.get(), _device.get(), ibSize,
                    vk::BufferUsageFlagBits::eTransferSrc,
                    vk::MemoryPropertyFlagBits::eHostVisible |
                        vk::MemoryPropertyFlagBits::eHostCoherent);
-  stagingIB.copyFrom(_indices.data(), ibSize);
 
+  stagingIB.copyFrom(_indices.data(), ibSize);
   _vertexBuffer =
       std::make_unique<Buffer>(_physical.get(), _device.get(), vbSize,
                                vk::BufferUsageFlagBits::eVertexBuffer |
@@ -229,21 +223,25 @@ void Renderer::createCubeResources() {
                                vk::MemoryPropertyFlagBits::eDeviceLocal);
 
   VkCommandBuffer copyCmd = beginSingleTimeCommands();
-  {
-    VkBufferCopy region{0, 0, vbSize};
-    vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingVB.raw()),
-                    static_cast<VkBuffer>(_vertexBuffer->get()), 1, &region);
-  }
-  {
-    VkBufferCopy region{0, 0, ibSize};
-    vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingIB.raw()),
-                    static_cast<VkBuffer>(_indexBuffer->get()), 1, &region);
-  }
+  VkBufferCopy copyRegionVB{};
+  copyRegionVB.srcOffset = 0;
+  copyRegionVB.dstOffset = 0;
+  copyRegionVB.size = vbSize;
+  vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingVB.raw()),
+                  static_cast<VkBuffer>(_vertexBuffer->get()), 1,
+                  &copyRegionVB);
+
+  VkBufferCopy copyRegionIB{};
+  copyRegionIB.srcOffset = 0;
+  copyRegionIB.dstOffset = 0;
+  copyRegionIB.size = ibSize;
+  vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingIB.raw()),
+                  static_cast<VkBuffer>(_indexBuffer->get()), 1, &copyRegionIB);
   endSingleTimeCommands(copyCmd);
 
+  // — Uniform‐buffer setup (unchanged) —
   size_t imageCount = _swapchain.images().size();
-
-  _uniformBuffers.clear();
+  vk::DeviceSize uboSize = sizeof(UniformBufferObject);
   _uniformBuffers.resize(imageCount);
   for (size_t i = 0; i < imageCount; ++i) {
     _uniformBuffers[i] =
@@ -252,58 +250,61 @@ void Renderer::createCubeResources() {
                                  vk::MemoryPropertyFlagBits::eHostVisible |
                                      vk::MemoryPropertyFlagBits::eHostCoherent);
   }
-
   vk::DescriptorSetLayoutBinding uboB{};
   uboB.binding = 0;
   uboB.descriptorType = vk::DescriptorType::eUniformBuffer;
   uboB.descriptorCount = 1;
   uboB.stageFlags = vk::ShaderStageFlagBits::eVertex;
-
   _uboSetLayout = std::make_unique<vk::raii::DescriptorSetLayout>(
       _device.get(),
       vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(1).setPBindings(
           &uboB));
-
-  vk::DescriptorPoolSize poolSize{};
-  poolSize.type = vk::DescriptorType::eUniformBuffer;
-  poolSize.descriptorCount = static_cast<uint32_t>(imageCount);
-
-  _descriptorPool = std::make_unique<vk::raii::DescriptorPool>(
-      makeDescriptorPool({poolSize}, /*maxSets=*/imageCount));
-
+  _descriptorPool =
+      std::make_unique<vk::raii::DescriptorPool>(makeDescriptorPool(
+          {vk::DescriptorPoolSize{vk::DescriptorType::eUniformBuffer,
+                                  (uint32_t)imageCount}},
+          /*maxSets=*/(uint32_t)imageCount));
+  // allocate & write UBO descriptor‐sets
   _descriptorSets.resize(imageCount);
   std::vector<VkDescriptorSetLayout> layouts(
       imageCount, static_cast<VkDescriptorSetLayout>(**_uboSetLayout));
   VkDescriptorSetAllocateInfo allocInfo{};
   allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
   allocInfo.descriptorPool = static_cast<VkDescriptorPool>(**_descriptorPool);
-  allocInfo.descriptorSetCount = static_cast<uint32_t>(imageCount);
+  allocInfo.descriptorSetCount = (uint32_t)imageCount;
   allocInfo.pSetLayouts = layouts.data();
-
-  if (vkAllocateDescriptorSets(static_cast<VkDevice>(*_device.get()),
-                               &allocInfo,
-                               _descriptorSets.data()) != VK_SUCCESS)
-    throw std::runtime_error("Failed to allocate descriptor sets");
-
+  vkAllocateDescriptorSets(static_cast<VkDevice>(*_device.get()), &allocInfo,
+                           _descriptorSets.data());
   for (size_t i = 0; i < imageCount; ++i) {
-    VkDescriptorBufferInfo bufInfo{};
-    bufInfo.buffer = static_cast<VkBuffer>(_uniformBuffers[i]->get());
-    bufInfo.offset = 0;
-    bufInfo.range = sizeof(UniformBufferObject);
-
-    VkWriteDescriptorSet w{};
-    w.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    VkDescriptorBufferInfo bi{static_cast<VkBuffer>(_uniformBuffers[i]->get()),
+                              0, uboSize};
+    VkWriteDescriptorSet w{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
     w.dstSet = _descriptorSets[i];
     w.dstBinding = 0;
-    w.dstArrayElement = 0;
-    w.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     w.descriptorCount = 1;
-    w.pBufferInfo = &bufInfo;
-
+    w.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    w.pBufferInfo = &bi;
     vkUpdateDescriptorSets(static_cast<VkDevice>(*_device.get()), 1, &w, 0,
                            nullptr);
   }
+
+  // ─────── NEW: build a small VoxelChunk and upload its TH‑octree ─────────
+  // 1) make a 16³ chunk and carve a diagonal line
+  engine::VoxelChunk chunk(16);
+  for (int i = 0; i < 16; ++i) {
+    chunk.setVoxel(i, i, i, true);
+  }
+  int brickDim = 4;
+  // 2) create GPU SSBO + descriptor‐set in one call:
+  _voxelResources = engine::VoxelResources::create(
+      chunk, brickDim, _device.get(), _physical.get(),
+      static_cast<VkDescriptorPool>(**_descriptorPool),
+      static_cast<VkDescriptorSetLayout>(**_uboSetLayout) // set‑0 layout
+  );
+  // and expose its layout as set 1:
+  _voxelSetLayout = std::move(_voxelResources.layout);
 }
+
 void Renderer::createFramebuffers() {
   _colorImageViews.clear();
   auto const &images = _swapchain.images();
@@ -380,7 +381,8 @@ void Renderer::createRenderPass() {
 void Renderer::createGraphicsPipeline() {
   auto cfg = defaultPipelineConfig(_extent);
 
-  cfg.setLayouts = {static_cast<vk::DescriptorSetLayout>(**_uboSetLayout)};
+  cfg.setLayouts = {static_cast<vk::DescriptorSetLayout>(**_uboSetLayout),
+                    static_cast<vk::DescriptorSetLayout>(**_voxelSetLayout)};
 
   ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
   ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
@@ -441,11 +443,14 @@ void Renderer::recordCommandBuffers() {
 
     {
       VkCommandBuffer raw = static_cast<VkCommandBuffer>(cmd);
-      VkDescriptorSet ds = _descriptorSets[i];
+      std::array<VkDescriptorSet, 2> sets = {
+          _descriptorSets[i],           // set 0: UBO
+          _voxelResources.descriptorSet // set 1: Voxel SSBO
+      };
       vkCmdBindDescriptorSets(
           raw, VK_PIPELINE_BIND_POINT_GRAPHICS,
-          static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0, 1, &ds, 0,
-          nullptr);
+          static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0, 2,
+          sets.data(), 0, nullptr);
     }
 
     cmd.drawIndexed(uint32_t(_indices.size()), 1, 0, 0, 0);

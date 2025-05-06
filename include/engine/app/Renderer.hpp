@@ -17,6 +17,7 @@
 #include "engine/swapchain/ImageView.hpp"
 #include "engine/swapchain/Swapchain.hpp"
 #include "engine/ui/ImGuiLayer.hpp"
+#include "engine/voxel/VoxelResources.hpp"
 
 #include <array>
 #include <glm/glm.hpp>
@@ -97,11 +98,12 @@ private:
   std::unique_ptr<vk::raii::DescriptorSetLayout> _uboSetLayout;
   std::unique_ptr<vk::raii::DescriptorPool> _descriptorPool;
   std::vector<VkDescriptorSet> _descriptorSets;
-
+  std::unique_ptr<vk::raii::DescriptorSetLayout> _voxelSetLayout;
   GLFWwindow *_window;
   VkInstance _rawInstance;
   std::unique_ptr<ImGuiLayer> imguiLayer_;
   std::vector<ImageView> _colorImageViews;
+  VoxelResources _voxelResources;
 };
 
 } // namespace engine
