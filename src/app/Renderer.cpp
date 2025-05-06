@@ -424,7 +424,7 @@ void Renderer::recordCommandBuffers() {
     imguiLayer_->newFrame();
 
     // --- begin the command buffer properly via the wrapper ---
-    cmdWrapper.begin(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+    cmdWrapper.begin(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
 
     // --- begin render‑pass ---
     vk::RenderPassBeginInfo rp{};
