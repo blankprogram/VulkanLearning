@@ -6,16 +6,17 @@ namespace engine {
 Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
                    vk::Extent2D windowExtent, Queue::FamilyIndices queues)
     : _device(device), _physical(physical), _surface(surface),
-      _extent(windowExtent), _queues(queues),
+      _extent(windowExtent), _queues(queues)
+      // this builds your one-and-only swapchain
+      ,
       _swapchain(physical.get(), device.get(), surface.get(), windowExtent,
                  queues),
       _depth(physical.get(), device.get(), windowExtent),
       _renderPass(device.get(), _swapchain.imageFormat()),
       _cmdPool(device.get(), queues.graphics.value()) {
-  createSwapchain();
   createDepthBuffer();
   createRenderPass();
-  createGraphicsPipeline(); // <— now builds the real, non‐dummy pipeline
+  createGraphicsPipeline();
   createFramebuffers();
   createCommandPoolAndBuffers();
   createSyncObjects();
@@ -150,18 +151,18 @@ void Renderer::createRenderPass() {
 }
 
 void Renderer::createGraphicsPipeline() {
-  // 1) grab the default config for our viewport/vertex-input/etc
+  // 1) pull in all of our default pipeline-state (vertex input, assembly, etc)
   auto cfg = defaultPipelineConfig(_extent);
 
-  // 2) load & stage our shaders
+  // 2) load both shaders
   ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
   ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
   std::array<vk::PipelineShaderStageCreateInfo, 2> stages = {
       vert.stageInfo(vk::ShaderStageFlagBits::eVertex),
       frag.stageInfo(vk::ShaderStageFlagBits::eFragment)};
 
-  // 3) finally construct the pipeline with a real stageCount > 0,
-  //    proper viewportState, blend attachments, etc.
+  // 3) finally build the real pipeline with stageCount>0, viewportState, blend,
+  // etc
   _pipeline = std::make_unique<GraphicsPipeline>(
       _device.get(),
       PipelineLayout{_device.get(), cfg.setLayouts, cfg.pushConstants},
