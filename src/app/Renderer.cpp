@@ -188,18 +188,17 @@ void Renderer::drawFrame() {
 }
 
 void Renderer::createCubeResources() {
-  // — build a flat terrain instead of one cube —
-  const int width = 16;
-  const int depth = 16;
-  const int cubeSize = 1;
-  const int brickDim = 4;
+  // — 1) cube vertex/index setup in CPU memory —
+  _vertices = {
+      {{-0.5f, -0.5f, -0.5f}, {1, 0, 0}}, {{0.5f, -0.5f, -0.5f}, {0, 1, 0}},
+      {{0.5f, 0.5f, -0.5f}, {0, 0, 1}},   {{-0.5f, 0.5f, -0.5f}, {1, 1, 0}},
+      {{-0.5f, -0.5f, 0.5f}, {1, 0, 1}},  {{0.5f, -0.5f, 0.5f}, {0, 1, 1}},
+      {{0.5f, 0.5f, 0.5f}, {1, 1, 1}},    {{-0.5f, 0.5f, 0.5f}, {0, 0, 0}},
+  };
+  _indices = {0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4, 0, 1, 5, 5, 4, 0,
+              3, 2, 6, 6, 7, 3, 1, 2, 6, 6, 5, 1, 0, 3, 7, 7, 4, 0};
 
-  _terrain = TerrainGenerator::createFlatTerrain(
-      width, depth, cubeSize, brickDim, _device.get(), _physical.get(),
-      static_cast<VkDescriptorPool>(**_descriptorPool),
-      static_cast<VkDescriptorSetLayout>(**_uboSetLayout), *_vertexBuffer,
-      *_indexBuffer);
-  // — staging & copy to device local —
+  // — 2) staging & copy into device‑local vertex/index buffers —
   vk::DeviceSize vbSize = sizeof(Vertex) * _vertices.size();
   vk::DeviceSize ibSize = sizeof(uint16_t) * _indices.size();
   Buffer stagingVB(_physical.get(), _device.get(), vbSize,
@@ -211,7 +210,6 @@ void Renderer::createCubeResources() {
                    vk::BufferUsageFlagBits::eTransferSrc,
                    vk::MemoryPropertyFlagBits::eHostVisible |
                        vk::MemoryPropertyFlagBits::eHostCoherent);
-  stagingIB.copyFrom(_indices.data(), ibSize);
 
   _vertexBuffer =
       std::make_unique<Buffer>(_physical.get(), _device.get(), vbSize,
@@ -224,26 +222,14 @@ void Renderer::createCubeResources() {
                                    vk::BufferUsageFlagBits::eTransferDst,
                                vk::MemoryPropertyFlagBits::eDeviceLocal);
 
-  VkCommandBuffer copyCmd = beginSingleTimeCommands();
-  VkBufferCopy regionVB{0, 0, vbSize};
-  vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingVB.raw()),
-                  static_cast<VkBuffer>(_vertexBuffer->get()), 1, &regionVB);
-  VkBufferCopy regionIB{0, 0, ibSize};
-  vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingIB.raw()),
-                  static_cast<VkBuffer>(_indexBuffer->get()), 1, &regionIB);
-  endSingleTimeCommands(copyCmd);
+  VkCommandBuffer c = beginSingleTimeCommands();
+  VkBufferCopy r0{0, 0, vbSize};
+  vkCmdCopyBuffer(c, *stagingVB.raw(), _vertexBuffer->get(), 1, &r0);
+  VkBufferCopy r1{0, 0, ibSize};
+  vkCmdCopyBuffer(c, *stagingIB.raw(), _indexBuffer->get(), 1, &r1);
+  endSingleTimeCommands(c);
 
-  // — UBO setup (unchanged) —
-  size_t imageCount = _swapchain.images().size();
-  vk::DeviceSize uboSize = sizeof(UniformBufferObject);
-  _uniformBuffers.resize(imageCount);
-  for (size_t i = 0; i < imageCount; ++i) {
-    _uniformBuffers[i] =
-        std::make_unique<Buffer>(_physical.get(), _device.get(), uboSize,
-                                 vk::BufferUsageFlagBits::eUniformBuffer,
-                                 vk::MemoryPropertyFlagBits::eHostVisible |
-                                     vk::MemoryPropertyFlagBits::eHostCoherent);
-  }
+  // — 3) create UBO descriptor‑set‑layout (set 0) —
   vk::DescriptorSetLayoutBinding uboB{};
   uboB.binding = 0;
   uboB.descriptorType = vk::DescriptorType::eUniformBuffer;
@@ -254,53 +240,52 @@ void Renderer::createCubeResources() {
       vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(1).setPBindings(
           &uboB));
 
-  // — Descriptor‑pool must cover both UBO and SSBO —
-  vk::DescriptorPoolSize uboPool{};
-  uboPool.type = vk::DescriptorType::eUniformBuffer;
-  uboPool.descriptorCount = static_cast<uint32_t>(imageCount);
-
-  vk::DescriptorPoolSize ssboPool{};
-  ssboPool.type = vk::DescriptorType::eStorageBuffer;
-  ssboPool.descriptorCount = 1; // one voxel‐octree SSBO
-
+  // — 4) descriptor‑pool for UBO + SSBO (set 1) —
+  uint32_t imgCount = uint32_t(_swapchain.images().size());
+  vk::DescriptorPoolSize poolUBO{vk::DescriptorType::eUniformBuffer, imgCount};
+  vk::DescriptorPoolSize poolSSBO{vk::DescriptorType::eStorageBuffer, 1};
   _descriptorPool = std::make_unique<vk::raii::DescriptorPool>(
-      makeDescriptorPool({uboPool, ssboPool},
-                         /*maxSets=*/static_cast<uint32_t>(imageCount + 1)));
+      makeDescriptorPool({poolUBO, poolSSBO}, imgCount + 1));
 
-  // — allocate & write UBO descriptor sets —
-  _descriptorSets.resize(imageCount);
+  // allocate & write the UBO descriptor‑sets
+  _uniformBuffers.resize(imgCount);
+  for (size_t i = 0; i < imgCount; ++i) {
+    _uniformBuffers[i] = std::make_unique<Buffer>(
+        _physical.get(), _device.get(), sizeof(UniformBufferObject),
+        vk::BufferUsageFlagBits::eUniformBuffer,
+        vk::MemoryPropertyFlagBits::eHostVisible |
+            vk::MemoryPropertyFlagBits::eHostCoherent);
+  }
+  _descriptorSets.resize(imgCount);
   std::vector<VkDescriptorSetLayout> layouts(
-      imageCount, static_cast<VkDescriptorSetLayout>(**_uboSetLayout));
-  VkDescriptorSetAllocateInfo allocInfo{};
-  allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-  allocInfo.descriptorPool = static_cast<VkDescriptorPool>(**_descriptorPool);
-  allocInfo.descriptorSetCount = (uint32_t)imageCount;
-  allocInfo.pSetLayouts = layouts.data();
-  vkAllocateDescriptorSets(static_cast<VkDevice>(*_device.get()), &allocInfo,
-                           _descriptorSets.data());
-  for (size_t i = 0; i < imageCount; ++i) {
-    VkDescriptorBufferInfo bi{static_cast<VkBuffer>(_uniformBuffers[i]->get()),
-                              0, uboSize};
+      imgCount, VkDescriptorSetLayout(**_uboSetLayout));
+  VkDescriptorSetAllocateInfo ainfo{
+      VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
+  ainfo.descriptorPool = VkDescriptorPool(**_descriptorPool);
+  ainfo.descriptorSetCount = imgCount;
+  ainfo.pSetLayouts = layouts.data();
+  vkAllocateDescriptorSets(*_device.get(), &ainfo, _descriptorSets.data());
+  for (uint32_t i = 0; i < imgCount; ++i) {
+    VkDescriptorBufferInfo bi{_uniformBuffers[i]->get(), 0,
+                              sizeof(UniformBufferObject)};
     VkWriteDescriptorSet w{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET};
     w.dstSet = _descriptorSets[i];
     w.dstBinding = 0;
     w.descriptorCount = 1;
     w.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     w.pBufferInfo = &bi;
-    vkUpdateDescriptorSets(static_cast<VkDevice>(*_device.get()), 1, &w, 0,
-                           nullptr);
+    vkUpdateDescriptorSets(*_device.get(), 1, &w, 0, nullptr);
   }
 
-  // — build & upload a small VoxelChunk octree SSBO —
-  engine::VoxelChunk chunk(16);
-  for (int i = 0; i < 16; ++i)
-    chunk.setVoxel(i, i, i, true);
-  _voxelResources = engine::VoxelResources::create(
-      chunk, 4, _device.get(), _physical.get(),
-      static_cast<VkDescriptorPool>(**_descriptorPool),
-      static_cast<VkDescriptorSetLayout>(**_uboSetLayout) // set 0 layout
-  );
-  _voxelSetLayout = std::move(_voxelResources.layout);
+  // — 5) now that pool, layouts & buffers exist, build the terrain SSBO —
+  const int width = 16, depth = 16, cubeSize = 1, brickDim = 4;
+  _terrain = TerrainGenerator::createFlatTerrain(
+      width, depth, cubeSize, brickDim, _device.get(), _physical.get(),
+      VkDescriptorPool(**_descriptorPool),
+      VkDescriptorSetLayout(**_uboSetLayout), *_vertexBuffer, *_indexBuffer);
+
+  // grab the voxel‐set‐layout from what the terrain gave us
+  _voxelSetLayout = std::move(_terrain.voxelResources.layout);
 }
 
 void Renderer::createFramebuffers() {
