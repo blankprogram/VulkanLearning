@@ -458,7 +458,7 @@ void Renderer::recordCommandBuffers() {
         static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0,
         (uint32_t)sets.size(), sets.data(), 0, nullptr);
 
-    cmd.drawIndexed((uint32_t)_indices.size(), 1, 0, 0, 0);
+    cmd.drawIndexed((uint32_t)_indices.size(), _terrain.instanceCount, 0, 0, 0);
 
     // --- draw ImGui on top ---
     imguiLayer_->render(cmd);
