@@ -33,13 +33,8 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
 }
 
 void Renderer::recreateSwapchain() {
-  // Wait for the device to be idle before we start tearing down
   _device.get().waitIdle();
 
-  // (Optional) If you’re handling window resizing you’d
-  // poll for a non-zero framebuffer size here.
-
-  // Recreate every object that depends on the swapchain:
   createSwapchain();
   createDepthBuffer();
   createRenderPass();
@@ -50,12 +45,10 @@ void Renderer::recreateSwapchain() {
 }
 
 void Renderer::drawFrame() {
-  // 1) Wait + reset our per-frame fence
   VkFence fence = _inFlightFences[_currentFrame].get();
   vkWaitForFences(*_device.get(), 1, &fence, VK_TRUE, UINT64_MAX);
   _inFlightFences[_currentFrame].reset();
 
-  // 2) Acquire next swapchain image (raw handles!)
   uint32_t imageIndex;
   VkResult r = vkAcquireNextImageKHR(
       *_device.get(),    // unwrap vk::raii::Device -> VkDevice
