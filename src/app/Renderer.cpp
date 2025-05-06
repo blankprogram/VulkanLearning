@@ -32,7 +32,86 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
   recordCommandBuffers();
 }
 
-void Renderer::drawFrame() {}
+void Renderer::recreateSwapchain() {
+  // Wait for the device to be idle before we start tearing down
+  _device.get().waitIdle();
+
+  // (Optional) If you’re handling window resizing you’d
+  // poll for a non-zero framebuffer size here.
+
+  // Recreate every object that depends on the swapchain:
+  createSwapchain();
+  createDepthBuffer();
+  createRenderPass();
+  createGraphicsPipeline();
+  createFramebuffers();
+  createCommandPoolAndBuffers();
+  recordCommandBuffers();
+}
+
+void Renderer::drawFrame() {
+  // 1) Wait + reset our per-frame fence
+  VkFence fence = _inFlightFences[_currentFrame].get();
+  vkWaitForFences(*_device.get(), 1, &fence, VK_TRUE, UINT64_MAX);
+  _inFlightFences[_currentFrame].reset();
+
+  // 2) Acquire next swapchain image (raw handles!)
+  uint32_t imageIndex;
+  VkResult r = vkAcquireNextImageKHR(
+      *_device.get(),    // unwrap vk::raii::Device -> VkDevice
+      *_swapchain.get(), // unwrap vk::raii::SwapchainKHR -> VkSwapchainKHR
+      UINT64_MAX,
+      _imageAvailable[_currentFrame].get(), // VkSemaphore
+      VK_NULL_HANDLE, &imageIndex);
+
+  if (r == VK_ERROR_OUT_OF_DATE_KHR) {
+    recreateSwapchain();
+    return;
+  } else if (r != VK_SUCCESS && r != VK_SUBOPTIMAL_KHR) {
+    throw std::runtime_error("Failed to acquire swapchain image");
+  }
+
+  // 3) Submit our pre-recorded command buffer
+  VkSemaphore waitSemaphores[] = {_imageAvailable[_currentFrame].get()};
+  VkSemaphore signalSemaphores[] = {_renderFinished[_currentFrame].get()};
+  VkPipelineStageFlags waitStages[] = {
+      VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+  VkCommandBuffer cmdBuf = _cmdBuffers[imageIndex].get();
+
+  VkSubmitInfo submitInfo{};
+  submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submitInfo.waitSemaphoreCount = 1;
+  submitInfo.pWaitSemaphores = waitSemaphores;
+  submitInfo.pWaitDstStageMask = waitStages;
+  submitInfo.commandBufferCount = 1;
+  submitInfo.pCommandBuffers = &cmdBuf;
+  submitInfo.signalSemaphoreCount = 1;
+  submitInfo.pSignalSemaphores = signalSemaphores;
+
+  VkQueue graphicsQueue = *_device.graphicsQueue();
+  vkQueueSubmit(graphicsQueue, 1, &submitInfo, fence);
+
+  // 4) Present
+  VkPresentInfoKHR presentInfo{};
+  presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+  presentInfo.waitSemaphoreCount = 1;
+  presentInfo.pWaitSemaphores = signalSemaphores;
+  VkSwapchainKHR sc = *_swapchain.get();
+  presentInfo.swapchainCount = 1;
+  presentInfo.pSwapchains = &sc;
+  presentInfo.pImageIndices = &imageIndex;
+
+  VkQueue presentQueue = *_device.presentQueue();
+  VkResult presRes = vkQueuePresentKHR(presentQueue, &presentInfo);
+  if (presRes == VK_ERROR_OUT_OF_DATE_KHR || presRes == VK_SUBOPTIMAL_KHR) {
+    recreateSwapchain();
+  } else if (presRes != VK_SUCCESS) {
+    throw std::runtime_error("Failed to present swapchain image");
+  }
+
+  // 5) Advance frame
+  _currentFrame = (_currentFrame + 1) % _framebuffers.size();
+}
 
 void Renderer::createFramebuffers() {
   std::vector<ImageView> colorViews;
