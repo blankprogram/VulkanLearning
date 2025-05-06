@@ -5,7 +5,8 @@ namespace engine {
 
 class RenderPass {
 public:
-  RenderPass(const vk::raii::Device &device, vk::Format colorFormat);
+  RenderPass(const vk::raii::Device &device, vk::Format colorFormat,
+             vk::Format depthFormat);
 
   ~RenderPass() = default;
   RenderPass(const RenderPass &) = delete;

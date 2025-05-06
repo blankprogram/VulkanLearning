@@ -12,7 +12,7 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
       _swapchain(physical.get(), device.get(), surface.get(), windowExtent,
                  queues),
       _depth(physical.get(), device.get(), windowExtent),
-      _renderPass(device.get(), _swapchain.imageFormat()),
+      _renderPass(device.get(), _swapchain.imageFormat(), _depth.getFormat()),
       _cmdPool(device.get(), queues.graphics.value()) {
   createDepthBuffer();
   createRenderPass();
@@ -147,7 +147,8 @@ void Renderer::createDepthBuffer() {
 }
 
 void Renderer::createRenderPass() {
-  _renderPass = RenderPass(_device.get(), _swapchain.imageFormat());
+  _renderPass =
+      RenderPass(_device.get(), _swapchain.imageFormat(), _depth.getFormat());
 }
 
 void Renderer::createGraphicsPipeline() {
