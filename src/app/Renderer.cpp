@@ -309,35 +309,58 @@ void Renderer::createGraphicsPipeline() {
 }
 
 void Renderer::recordCommandBuffers() {
+  // make sure we have one command buffer per framebuffer
   for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
     auto cmd = _cmdBuffers[i].get();
 
-    // ... vkBeginCommandBuffer + vkCmdBeginRenderPass omitted for brevity ...
+    // 1) begin recording
+    vk::CommandBufferBeginInfo beginInfo{};
+    beginInfo.setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
+    cmd.begin(beginInfo);
 
-    // bind pipeline
+    // 2) begin the render pass
+    std::array<vk::ClearValue, 2> clearValues{};
+    clearValues[0].color =
+        vk::ClearColorValue(std::array<float, 4>{0.f, 0.f, 0.f, 1.f});
+    clearValues[1].depthStencil = vk::ClearDepthStencilValue{1.f, 0};
+
+    vk::RenderPassBeginInfo rpInfo{};
+    rpInfo.setRenderPass(*_renderPass.get())
+        .setFramebuffer(*_framebuffers[i].get())
+        .setRenderArea({{0, 0}, _extent})
+        .setClearValueCount(static_cast<uint32_t>(clearValues.size()))
+        .setPClearValues(clearValues.data());
+
+    cmd.beginRenderPass(rpInfo, vk::SubpassContents::eInline);
+
+    // 3) bind pipeline, vertex/index buffers
     cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
 
-    // bind vertex & index (FIXED)
-    vk::Buffer vertexBuffers[] = {_vertexBuffer->get()};
+    vk::Buffer vbs[] = {_vertexBuffer->get()};
     vk::DeviceSize offsets[] = {0};
-    cmd.bindVertexBuffers(0, 1, vertexBuffers, offsets);
+    cmd.bindVertexBuffers(0, 1, vbs, offsets);
     cmd.bindIndexBuffer(_indexBuffer->get(), 0, vk::IndexType::eUint16);
 
-    // bind descriptor sets (raw Vulkan, FIXED)
+    // 4) bind **one** descriptor set for this frame
     {
       VkCommandBuffer raw = static_cast<VkCommandBuffer>(cmd);
+      VkDescriptorSet set = _descriptorSets[i];
       vkCmdBindDescriptorSets(
           raw, VK_PIPELINE_BIND_POINT_GRAPHICS,
-          static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0,
-          static_cast<uint32_t>(_descriptorSets.size()), _descriptorSets.data(),
-          0, nullptr);
+          static_cast<VkPipelineLayout>(*_pipelineLayout->get()),
+          0,         // firstSet
+          1,         // descriptorCount
+          &set,      // pDescriptorSets
+          0, nullptr // dynamic offsets
+      );
     }
 
-    // draw
-    vkCmdDrawIndexed(static_cast<VkCommandBuffer>(cmd),
-                     static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
+    // 5) draw
+    cmd.drawIndexed(static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
 
-    // ... vkCmdEndRenderPass + vkEndCommandBuffer omitted for brevity ...
+    // 6) end render pass + finish recording
+    cmd.endRenderPass();
+    cmd.end();
   }
 }
 
