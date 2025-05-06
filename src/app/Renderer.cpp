@@ -368,54 +368,38 @@ void Renderer::createGraphicsPipeline() {
   cfg.setLayouts = {static_cast<vk::DescriptorSetLayout>(**_uboSetLayout),
                     static_cast<vk::DescriptorSetLayout>(**_voxelSetLayout)};
 
-  //
-  // — vertex‑input binding descriptions —
-  //
-  // binding 0 already populated by defaultPipelineConfig:
-  //   cfg.bindingDescriptions[0] = Vertex::getBindingDescription();
-  // now set up binding 1 for per‑instance mat4:
+  // — binding 1 for per‑instance mat4 (binding 0 already from default) —
   vk::VertexInputBindingDescription instBind{};
   instBind.binding = 1;
   instBind.stride = sizeof(glm::mat4);
   instBind.inputRate = vk::VertexInputRate::eInstance;
   cfg.bindingDescriptions[1] = instBind;
 
-  // now update the vertexInput create‑info to use both bindings:
+  // tell vertexInput about both bindings
   cfg.vertexInput.setVertexBindingDescriptionCount(2)
       .setPVertexBindingDescriptions(cfg.bindingDescriptions.data());
 
-  //
-  // — vertex‑input attribute descriptions —
-  //
-  // original per‑vertex attributes in cfg.attributeDescriptions
-  auto &origAttrs = cfg.attributeDescriptions;
-
-  // per‑instance mat4 → 4 × vec4 at locations 2,3,4,5
+  // — instance attributes at locations 2–5 —
+  auto &orig = cfg.attributeDescriptions;
   std::array<vk::VertexInputAttributeDescription, 4> instAttrs = {
-      {{/*location*/ 2, /*binding*/ 1, vk::Format::eR32G32B32A32Sfloat,
-        /*offset*/ 0},
+      {{2, 1, vk::Format::eR32G32B32A32Sfloat, 0},
        {3, 1, vk::Format::eR32G32B32A32Sfloat, sizeof(glm::vec4)},
        {4, 1, vk::Format::eR32G32B32A32Sfloat, 2 * sizeof(glm::vec4)},
        {5, 1, vk::Format::eR32G32B32A32Sfloat, 3 * sizeof(glm::vec4)}}};
+  std::vector<vk::VertexInputAttributeDescription> all;
+  all.reserve(orig.size() + instAttrs.size());
+  all.insert(all.end(), orig.begin(), orig.end());
+  all.insert(all.end(), instAttrs.begin(), instAttrs.end());
+  cfg.vertexInput.setVertexAttributeDescriptionCount((uint32_t)all.size())
+      .setPVertexAttributeDescriptions(all.data());
 
-  // merge them
-  std::vector<vk::VertexInputAttributeDescription> allAttrs;
-  allAttrs.reserve(origAttrs.size() + instAttrs.size());
-  allAttrs.insert(allAttrs.end(), origAttrs.begin(), origAttrs.end());
-  allAttrs.insert(allAttrs.end(), instAttrs.begin(), instAttrs.end());
-
-  // patch the create‑info
-  cfg.vertexInput.setVertexAttributeDescriptionCount((uint32_t)allAttrs.size())
-      .setPVertexAttributeDescriptions(allAttrs.data());
-
-  // — shaders —
+  // — shaders & create —
   ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
   ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
   std::array<vk::PipelineShaderStageCreateInfo, 2> stages = {
       vert.stageInfo(vk::ShaderStageFlagBits::eVertex),
       frag.stageInfo(vk::ShaderStageFlagBits::eFragment)};
 
-  // — layout & pipeline creation —
   _pipelineLayout = std::make_unique<PipelineLayout>(
       _device.get(), cfg.setLayouts, cfg.pushConstants);
   _pipeline = std::make_unique<GraphicsPipeline>(
@@ -432,34 +416,44 @@ void Renderer::recordCommandBuffers() {
   for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
     auto cmd = _cmdBuffers[i].get();
 
-    // 1) begin command‐buffer
-    vk::CommandBufferBeginInfo beginInfo{};
-    cmd.begin(beginInfo);
+    // — ImGui needs NewFrame before you render —
+    imguiLayer_->newFrame();
 
-    // 2) begin render‐pass
-    vk::RenderPassBeginInfo rpInfo{};
-    rpInfo.setRenderPass(*_renderPass.get())
+    // begin recording
+    cmd.begin({});
+
+    // begin render‑pass
+    vk::RenderPassBeginInfo rp{};
+    rp.setRenderPass(*_renderPass.get())
         .setFramebuffer(*_framebuffers[i].get())
-        .setRenderArea(vk::Rect2D{{0, 0}, _extent});
-    std::array<vk::ClearValue, 2> clears{};
+        .setRenderArea({{0, 0}, _extent});
+    std::array<vk::ClearValue, 2> clears;
     clears[0].color = vk::ClearColorValue(std::array<float, 4>{0, 0, 0, 1});
     clears[1].depthStencil = vk::ClearDepthStencilValue{1.0f, 0};
-    rpInfo.setClearValueCount((uint32_t)clears.size())
+    rp.setClearValueCount((uint32_t)clears.size())
         .setPClearValues(clears.data());
-    cmd.beginRenderPass(rpInfo, vk::SubpassContents::eInline);
+    cmd.beginRenderPass(rp, vk::SubpassContents::eInline);
 
-    // 3) bind pipeline
+    // bind the pipeline
     cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
 
-    // 4) bind vertex + instance buffers
+    // — because viewport & scissor are dynamic, we must set them now —
+    vk::Viewport vp{0.0f, 0.0f, float(_extent.width), float(_extent.height),
+                    0.0f, 1.0f};
+    cmd.setViewport(0, 1, &vp);
+
+    vk::Rect2D sc{{0, 0}, _extent};
+    cmd.setScissor(0, 1, &sc);
+
+    // bind vertex + instance buffers
     vk::Buffer vbs[] = {_vertexBuffer->get(), _terrain.instanceBuffer->get()};
     vk::DeviceSize offs[] = {0, 0};
     cmd.bindVertexBuffers(0, 2, vbs, offs);
 
-    // 5) bind index buffer
+    // bind index buffer
     cmd.bindIndexBuffer(_indexBuffer->get(), 0, vk::IndexType::eUint16);
 
-    // 6) bind descriptor sets (UBO = set 0, SSBO = set 1)
+    // bind descriptor sets
     std::array<VkDescriptorSet, 2> sets = {
         _descriptorSets[i], _terrain.voxelResources.descriptorSet};
     vkCmdBindDescriptorSets(
@@ -467,13 +461,13 @@ void Renderer::recordCommandBuffers() {
         static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0,
         (uint32_t)sets.size(), sets.data(), 0, nullptr);
 
-    // 7) draw instanced
+    // draw instanced
     cmd.drawIndexed((uint32_t)_indices.size(), _terrain.instanceCount, 0, 0, 0);
 
-    // 8) render ImGui on top
+    // render ImGui on top
     imguiLayer_->render(cmd);
 
-    // 9) end render‐pass + finish
+    // end
     cmd.endRenderPass();
     cmd.end();
   }
