@@ -12,6 +12,7 @@
 #include "engine/rendering/CommandPool.hpp"
 #include "engine/rendering/Fence.hpp"
 #include "engine/rendering/Semaphore.hpp"
+#include "engine/scene/Camera.hpp"
 #include "engine/swapchain/Depthbuffer.hpp"
 #include "engine/swapchain/Framebuffer.hpp"
 #include "engine/swapchain/ImageView.hpp"
@@ -32,7 +33,7 @@ class Renderer {
 public:
   Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
            vk::Extent2D windowExtent, Queue::FamilyIndices queues,
-           GLFWwindow *window, VkInstance rawInstance);
+           GLFWwindow *window, VkInstance rawInstance, Camera &camera);
 
   ~Renderer() = default;
   void drawFrame();
@@ -106,6 +107,7 @@ private:
   std::vector<ImageView> _colorImageViews;
   VoxelResources _voxelResources;
   TerrainData _terrain;
+  Camera &_camera;
 };
 
 } // namespace engine

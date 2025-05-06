@@ -34,6 +34,45 @@ void Application::initWindow() {
     auto app = reinterpret_cast<Application *>(glfwGetWindowUserPointer(win));
     app->onWindowResized(newW, newH);
   });
+
+  glfwSetKeyCallback(w, [](GLFWwindow *win, int key, int sc, int action,
+                           int m) {
+    if (action != GLFW_PRESS && action != GLFW_REPEAT)
+      return;
+    auto app = reinterpret_cast<Application *>(glfwGetWindowUserPointer(win));
+    const float step = 0.2f;
+    glm::vec3 delta{0.0f};
+    if (key == GLFW_KEY_W)
+      delta.z -= step;
+    if (key == GLFW_KEY_S)
+      delta.z += step;
+    if (key == GLFW_KEY_A)
+      delta.x -= step;
+    if (key == GLFW_KEY_D)
+      delta.x += step;
+    if (key == GLFW_KEY_Q)
+      delta.y -= step;
+    if (key == GLFW_KEY_E)
+      delta.y += step;
+    app->camera().processKeyboard(delta);
+  });
+
+  // mouse look
+  static bool firstMouse = true;
+  static double lastX = 0, lastY = 0;
+  glfwSetCursorPosCallback(w, [](GLFWwindow *win, double xpos, double ypos) {
+    auto app = reinterpret_cast<Application *>(glfwGetWindowUserPointer(win));
+    if (firstMouse) {
+      lastX = xpos;
+      lastY = ypos;
+      firstMouse = false;
+    }
+    float dx = float(xpos - lastX);
+    float dy = float(lastY - ypos);
+    lastX = xpos;
+    lastY = ypos;
+    app->camera().processMouse(dx, dy);
+  });
 }
 
 void Application::onWindowResized(int width, int height) {
@@ -54,13 +93,9 @@ void Application::initVulkan() {
 void Application::initRenderer() {
 
   renderer_ = std::make_unique<Renderer>(
-      *device_,                                  // engine::Device&
-      *physicalDevice_,                          // engine::PhysicalDevice&
-      *surface_,                                 // engine::Surface&
-      window_->getExtent(),                      // vk::Extent2D
-      queues_,                                   // Queue::FamilyIndices
-      window_->get(),                            // GLFWwindow*
-      static_cast<VkInstance>(*instance_->get()) // raw VkInstance
+      *device_, *physicalDevice_, *surface_, window_->getExtent(), queues_,
+      window_->get(), static_cast<VkInstance>(*instance_->get()),
+      camera_ // ← pass camera
   );
 }
 

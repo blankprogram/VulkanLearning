@@ -8,7 +8,7 @@
 #include "engine/core/PhysicalDevice.hpp"
 #include "engine/core/Queue.hpp"
 #include "engine/core/Surface.hpp"
-
+#include "engine/scene/Camera.hpp"
 #include <memory>
 
 namespace engine {
@@ -20,6 +20,7 @@ public:
 
   void run();
   void onWindowResized(int width, int height);
+  Camera &camera() { return camera_; }
 
 private:
   void initWindow();
@@ -34,6 +35,7 @@ private:
   std::unique_ptr<Surface> surface_;
   Queue::FamilyIndices queues_;
   std::unique_ptr<Renderer> renderer_;
+  Camera camera_{{0.0f, 0.0f, 5.0f}, -90.0f, 0.0f};
 };
 
 } // namespace engine
