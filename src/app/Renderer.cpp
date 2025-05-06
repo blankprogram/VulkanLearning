@@ -31,24 +31,69 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
 }
 
 void Renderer::recreateSwapchain() {
-  _device.get().waitIdle();
-
-  createSwapchain();
-  createDepthBuffer();
-  createRenderPass();
-  createGraphicsPipeline();
-  createFramebuffers();
-  createCommandPoolAndBuffers();
+  cleanupSwapchain();
+  createSwapchainResources();
   recordCommandBuffers();
 }
 
+void Renderer::createSwapchainResources() {
+  // 1) The Swapchain itself
+  _swapchain = Swapchain(_physical.get(), _device.get(), _surface.get(),
+                         _extent, _queues);
+
+  // 2) Depth buffer for the new size
+  _depth = DepthBuffer(_physical.get(), _device.get(), _extent);
+
+  // 3) RenderPass that matches color & depth formats
+  _renderPass =
+      RenderPass(_device.get(), _swapchain.imageFormat(), _depth.getFormat());
+
+  // 4) Graphics pipeline (layout + pipeline)
+  createGraphicsPipeline();
+
+  // 5) Framebuffers built against that renderPass + all swapchain images
+  createFramebuffers();
+
+  // 6) Command‐pool & one CommandBuffer per framebuffer
+  createCommandPoolAndBuffers();
+
+  // 7) Sync objects to drive acquire/submit/present for MAX_FRAMES_IN_FLIGHT
+  createSyncObjects();
+}
+
+void Renderer::cleanupSwapchain() {
+  // 1) Wait for GPU to finish on all resources
+  _device.get().waitIdle();
+
+  // 2) Destroy framebuffers & per‐frame command buffers
+  _framebuffers.clear();
+  _cmdBuffers.clear();
+
+  // 3) Destroy sync objects
+  _imageAvailable.clear();
+  _renderFinished.clear();
+  _inFlightFences.clear();
+  _imagesInFlight.clear();
+
+  // 4) Destroy the graphics pipeline & its layout
+  _pipeline.reset();
+  _pipelineLayout.reset();
+
+  // Note: the old _renderPass, _depth, and _swapchain will be torn down
+  // when we assign new ones in createSwapchainResources().
+}
+
 void Renderer::onWindowResized(int newWidth, int newHeight) {
+  // don't rebuild swapchain on minimize (w or h == 0)
+  if (newWidth == 0 || newHeight == 0)
+    return;
+
   _extent = vk::Extent2D{uint32_t(newWidth), uint32_t(newHeight)};
   _framebufferResized = true;
 }
 
 void Renderer::drawFrame() {
-  // if we got a resize event, rebuild swapchain now:
+
   if (_framebufferResized) {
     recreateSwapchain();
     _framebufferResized = false;

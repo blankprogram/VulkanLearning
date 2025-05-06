@@ -50,6 +50,10 @@ private:
   void recordCommandBuffers();
   void recreateSwapchain();
   void updateUniformBuffer(uint32_t currentImage);
+
+  void cleanupSwapchain();
+  void createSwapchainResources();
+
   struct Vertex {
     glm::vec3 pos, color;
   };
