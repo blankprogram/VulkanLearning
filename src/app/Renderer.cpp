@@ -39,8 +39,10 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
 
   vk::DescriptorPoolCreateInfo imguiPoolInfo;
   imguiPoolInfo
-      .setMaxSets(1000) // max total descriptor sets
-      .setPoolSizeCount(std::size(poolSizes))
+      .setFlags(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet) // ← allow
+                                                                      // free()
+      .setMaxSets(1000)
+      .setPoolSizeCount(static_cast<uint32_t>(poolSizes.size()))
       .setPPoolSizes(poolSizes.data());
 
   _imguiDescriptorPool =
