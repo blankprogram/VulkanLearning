@@ -188,16 +188,17 @@ void Renderer::drawFrame() {
 }
 
 void Renderer::createCubeResources() {
-  // — cube vertex/index setup —
-  _vertices = {
-      {{-0.5f, -0.5f, -0.5f}, {1, 0, 0}}, {{0.5f, -0.5f, -0.5f}, {0, 1, 0}},
-      {{0.5f, 0.5f, -0.5f}, {0, 0, 1}},   {{-0.5f, 0.5f, -0.5f}, {1, 1, 0}},
-      {{-0.5f, -0.5f, 0.5f}, {1, 0, 1}},  {{0.5f, -0.5f, 0.5f}, {0, 1, 1}},
-      {{0.5f, 0.5f, 0.5f}, {1, 1, 1}},    {{-0.5f, 0.5f, 0.5f}, {0, 0, 0}},
-  };
-  _indices = {0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4, 0, 1, 5, 5, 4, 0,
-              3, 2, 6, 6, 7, 3, 1, 2, 6, 6, 5, 1, 0, 3, 7, 7, 4, 0};
+  // — build a flat terrain instead of one cube —
+  const int width = 16;
+  const int depth = 16;
+  const int cubeSize = 1;
+  const int brickDim = 4;
 
+  _terrain = TerrainGenerator::createFlatTerrain(
+      width, depth, cubeSize, brickDim, _device.get(), _physical.get(),
+      static_cast<VkDescriptorPool>(**_descriptorPool),
+      static_cast<VkDescriptorSetLayout>(**_uboSetLayout), *_vertexBuffer,
+      *_indexBuffer);
   // — staging & copy to device local —
   vk::DeviceSize vbSize = sizeof(Vertex) * _vertices.size();
   vk::DeviceSize ibSize = sizeof(uint16_t) * _indices.size();
@@ -378,8 +379,44 @@ void Renderer::createRenderPass() {
 void Renderer::createGraphicsPipeline() {
   auto cfg = defaultPipelineConfig(_extent);
 
+  // set the two descriptor‑set layouts: 0=UBO, 1=voxel SSBO
   cfg.setLayouts = {static_cast<vk::DescriptorSetLayout>(**_uboSetLayout),
                     static_cast<vk::DescriptorSetLayout>(**_voxelSetLayout)};
+
+  // — new: add binding 1 for per‑instance mat4 —
+  vk::VertexInputBindingDescription instBind{};
+  instBind.binding = 1;
+  instBind.stride = sizeof(glm::mat4);
+  instBind.inputRate = vk::VertexInputRate::eInstance;
+
+  // four vec4 attributes to feed the mat4
+  std::array<vk::VertexInputAttributeDescription, 4> instAttrs = {
+      {// location 2,3,4,5
+       {/*location*/ 2, /*binding*/ 1, vk::Format::eR32G32B32A32Sfloat, 0},
+       {3, 1, vk::Format::eR32G32B32A32Sfloat, sizeof(glm::vec4)},
+       {4, 1, vk::Format::eR32G32B32A32Sfloat, sizeof(glm::vec4) * 2},
+       {5, 1, vk::Format::eR32G32B32A32Sfloat, sizeof(glm::vec4) * 3}}};
+
+  // merge with the existing vertex attributes
+  auto &origAttrs = cfg.attributeDescriptions;
+  std::vector<vk::VertexInputAttributeDescription> allAttrs;
+  allAttrs.reserve(origAttrs.size() + instAttrs.size());
+  allAttrs.insert(allAttrs.end(), origAttrs.begin(), origAttrs.end());
+  allAttrs.insert(allAttrs.end(), instAttrs.begin(), instAttrs.end());
+
+  // now patch the pipeline config
+  cfg.vertexInput.setVertexBindingDescriptionCount(2)
+      .setPVertexBindingDescriptions(
+          reinterpret_cast<vk::VertexInputBindingDescription *>(
+              &cfg.bindingDescription)) // first bindingDescription, then
+                                        // instBind in memory
+      .setVertexAttributeDescriptionCount(
+          static_cast<uint32_t>(allAttrs.size()))
+      .setPVertexAttributeDescriptions(allAttrs.data());
+
+  // we must also ensure the two bindings are laid out in memory:
+  // cfg.bindingDescription is already binding 0; we pass instBind alongside.
+  // (the reinterpret_cast above assumes they are laid out back‑to‑back)
 
   ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
   ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
@@ -404,53 +441,31 @@ void Renderer::createGraphicsPipeline() {
 void Renderer::recordCommandBuffers() {
   for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
     auto cmd = _cmdBuffers[i].get();
+    // … begin render pass, bind pipeline, viewport, scissor …
 
-    vk::CommandBufferBeginInfo bi{};
-    bi.setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
-    cmd.begin(bi);
+    // bind both the cube‑mesh VB (binding 0) and the instance‑buffer (binding
+    // 1)
+    vk::Buffer vbs[] = {_vertexBuffer->get(), _terrain.instanceBuffer->get()};
+    vk::DeviceSize offs[] = {0, 0};
+    cmd.bindVertexBuffers(0, 2, vbs, offs);
 
-    std::array<vk::ClearValue, 2> clears{};
-    clears[0].color =
-        vk::ClearColorValue(std::array<float, 4>{0.f, 0.f, 0.f, 1.f});
-    clears[1].depthStencil = vk::ClearDepthStencilValue{1.f, 0};
-
-    vk::RenderPassBeginInfo rpbi{};
-    rpbi.setRenderPass(*_renderPass.get())
-        .setFramebuffer(*_framebuffers[i].get())
-        .setRenderArea({{0, 0}, _extent})
-        .setClearValueCount(static_cast<uint32_t>(clears.size()))
-        .setPClearValues(clears.data());
-
-    imguiLayer_->newFrame();
-    cmd.beginRenderPass(rpbi, vk::SubpassContents::eInline);
-
-    cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
-
-    vk::Viewport vp{0.f, 0.f, float(_extent.width), float(_extent.height),
-                    0.f, 1.f};
-    cmd.setViewport(0, 1, &vp);
-
-    vk::Rect2D sc{{0, 0}, _extent};
-    cmd.setScissor(0, 1, &sc);
-
-    vk::Buffer vbs[] = {_vertexBuffer->get()};
-    vk::DeviceSize offs[] = {0};
-    cmd.bindVertexBuffers(0, 1, vbs, offs);
     cmd.bindIndexBuffer(_indexBuffer->get(), 0, vk::IndexType::eUint16);
 
-    {
-      VkCommandBuffer raw = static_cast<VkCommandBuffer>(cmd);
-      std::array<VkDescriptorSet, 2> sets = {
-          _descriptorSets[i],           // set 0: UBO
-          _voxelResources.descriptorSet // set 1: Voxel SSBO
-      };
-      vkCmdBindDescriptorSets(
-          raw, VK_PIPELINE_BIND_POINT_GRAPHICS,
-          static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0, 2,
-          sets.data(), 0, nullptr);
-    }
+    // bind UBO and voxel SSBO descriptor sets
+    VkCommandBuffer raw = static_cast<VkCommandBuffer>(cmd);
+    std::array<VkDescriptorSet, 2> sets = {
+        _descriptorSets[i],                   // set 0 = UBO
+        _terrain.voxelResources.descriptorSet // set 1 = voxel SSBO
+    };
+    vkCmdBindDescriptorSets(
+        raw, VK_PIPELINE_BIND_POINT_GRAPHICS,
+        static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0,
+        (uint32_t)sets.size(), sets.data(), 0, nullptr);
 
-    cmd.drawIndexed(uint32_t(_indices.size()), 1, 0, 0, 0);
+    // instanced draw: indexCount, instanceCount, firstIndex, vertexOffset,
+    // firstInstance
+    cmd.drawIndexed(static_cast<uint32_t>(_indices.size()),
+                    _terrain.instanceCount, 0, 0, 0);
     imguiLayer_->render(cmd);
     cmd.endRenderPass();
     cmd.end();

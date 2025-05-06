@@ -17,6 +17,7 @@
 #include "engine/swapchain/ImageView.hpp"
 #include "engine/swapchain/Swapchain.hpp"
 #include "engine/ui/ImGuiLayer.hpp"
+#include "engine/voxel/TerrainGenerator.hpp"
 #include "engine/voxel/VoxelResources.hpp"
 
 #include <array>
@@ -104,6 +105,7 @@ private:
   std::unique_ptr<ImGuiLayer> imguiLayer_;
   std::vector<ImageView> _colorImageViews;
   VoxelResources _voxelResources;
+  TerrainData _terrain;
 };
 
 } // namespace engine
