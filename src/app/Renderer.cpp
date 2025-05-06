@@ -37,56 +37,41 @@ void Renderer::recreateSwapchain() {
 }
 
 void Renderer::createSwapchainResources() {
-  // 1) The Swapchain itself
 
   VkSwapchainKHR oldSC = static_cast<VkSwapchainKHR>(*_swapchain.get());
   _swapchain = Swapchain(_physical.get(), _device.get(), _surface.get(),
                          _extent, _queues, oldSC);
 
-  // 2) Depth buffer for the new size
   _depth = DepthBuffer(_physical.get(), _device.get(), _extent);
 
-  // 3) RenderPass that matches color & depth formats
   _renderPass =
       RenderPass(_device.get(), _swapchain.imageFormat(), _depth.getFormat());
 
-  // 4) Graphics pipeline (layout + pipeline)
   createGraphicsPipeline();
 
-  // 5) Framebuffers built against that renderPass + all swapchain images
   createFramebuffers();
 
-  // 6) Command‐pool & one CommandBuffer per framebuffer
   createCommandPoolAndBuffers();
 
-  // 7) Sync objects to drive acquire/submit/present for MAX_FRAMES_IN_FLIGHT
   createSyncObjects();
 }
 
 void Renderer::cleanupSwapchain() {
-  // 1) Wait for GPU to finish on all resources
   _device.get().waitIdle();
 
-  // 2) Destroy framebuffers & per‐frame command buffers
   _framebuffers.clear();
   _cmdBuffers.clear();
 
-  // 3) Destroy sync objects
   _imageAvailable.clear();
   _renderFinished.clear();
   _inFlightFences.clear();
   _imagesInFlight.clear();
 
-  // 4) Destroy the graphics pipeline & its layout
   _pipeline.reset();
   _pipelineLayout.reset();
-
-  // Note: the old _renderPass, _depth, and _swapchain will be torn down
-  // when we assign new ones in createSwapchainResources().
 }
 
 void Renderer::onWindowResized(int newWidth, int newHeight) {
-  // don't rebuild swapchain on minimize (w or h == 0)
   if (newWidth == 0 || newHeight == 0)
     return;
 
@@ -101,12 +86,10 @@ void Renderer::drawFrame() {
     _framebufferResized = false;
   }
 
-  // 1) wait + reset
   VkFence fence = _inFlightFences[_currentFrame].get();
   vkWaitForFences(*_device.get(), 1, &fence, VK_TRUE, UINT64_MAX);
   _inFlightFences[_currentFrame].reset();
 
-  // 2) acquire next image
   uint32_t imageIndex;
   VkResult result = vkAcquireNextImageKHR(
       *_device.get(), *_swapchain.get(), UINT64_MAX,
@@ -118,10 +101,8 @@ void Renderer::drawFrame() {
     throw std::runtime_error("Failed to acquire swapchain image");
   }
 
-  // **NEW** 2a) update your UBO for this image
   updateUniformBuffer(imageIndex);
 
-  // 3) submit
   VkSemaphore waitSems[] = {_imageAvailable[_currentFrame].get()};
   VkSemaphore signalSems[] = {_renderFinished[_currentFrame].get()};
   VkPipelineStageFlags waitStages[] = {
@@ -142,7 +123,6 @@ void Renderer::drawFrame() {
 
   vkQueueSubmit(*_device.graphicsQueue(), 1, &submitInfo, fence);
 
-  // 4) present
   VkPresentInfoKHR presentInfo{};
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   presentInfo.waitSemaphoreCount = 1;
@@ -161,24 +141,15 @@ void Renderer::drawFrame() {
     throw std::runtime_error("Failed to present swapchain image");
   }
 
-  // 5) next frame
   _currentFrame = (_currentFrame + 1) % _inFlightFences.size();
 }
 void Renderer::createCubeResources() {
-  // ——— 1) FILL YOUR GEOMETRY ———
   _vertices = {
-      // back face (z = -0.5)
-      {{-0.5f, -0.5f, -0.5f}, {1, 0, 0}},
-      {{0.5f, -0.5f, -0.5f}, {0, 1, 0}},
-      {{0.5f, 0.5f, -0.5f}, {0, 0, 1}},
-      {{-0.5f, 0.5f, -0.5f}, {1, 1, 0}},
-      // front face (z = +0.5)
-      {{-0.5f, -0.5f, 0.5f}, {1, 0, 1}},
-      {{0.5f, -0.5f, 0.5f}, {0, 1, 1}},
-      {{0.5f, 0.5f, 0.5f}, {1, 1, 1}},
-      {{-0.5f, 0.5f, 0.5f}, {0, 0, 0}},
+      {{-0.5f, -0.5f, -0.5f}, {1, 0, 0}}, {{0.5f, -0.5f, -0.5f}, {0, 1, 0}},
+      {{0.5f, 0.5f, -0.5f}, {0, 0, 1}},   {{-0.5f, 0.5f, -0.5f}, {1, 1, 0}},
+      {{-0.5f, -0.5f, 0.5f}, {1, 0, 1}},  {{0.5f, -0.5f, 0.5f}, {0, 1, 1}},
+      {{0.5f, 0.5f, 0.5f}, {1, 1, 1}},    {{-0.5f, 0.5f, 0.5f}, {0, 0, 0}},
   };
-  // 2) 12 triangles, 36 indices
   _indices = {
       0, 1, 2, 2, 3, 0, // back
       4, 5, 6, 6, 7, 4, // front
@@ -191,7 +162,6 @@ void Renderer::createCubeResources() {
   vk::DeviceSize ibSize = sizeof(uint16_t) * _indices.size();
   vk::DeviceSize uboSize = sizeof(UniformBufferObject);
 
-  // ——— 2) STAGING BUFFERS ———
   Buffer stagingVB(_physical.get(), _device.get(), vbSize,
                    vk::BufferUsageFlagBits::eTransferSrc,
                    vk::MemoryPropertyFlagBits::eHostVisible |
@@ -204,7 +174,6 @@ void Renderer::createCubeResources() {
                        vk::MemoryPropertyFlagBits::eHostCoherent);
   stagingIB.copyFrom(_indices.data(), ibSize);
 
-  // ——— 3) DEVICE-LOCAL BUFFERS ———
   _vertexBuffer =
       std::make_unique<Buffer>(_physical.get(), _device.get(), vbSize,
                                vk::BufferUsageFlagBits::eVertexBuffer |
@@ -216,7 +185,6 @@ void Renderer::createCubeResources() {
                                    vk::BufferUsageFlagBits::eTransferDst,
                                vk::MemoryPropertyFlagBits::eDeviceLocal);
 
-  // ——— 4) COPY STAGING → DEVICE-LOCAL ———
   VkCommandBuffer copyCmd = beginSingleTimeCommands();
   {
     VkBufferCopy region{0, 0, vbSize};
@@ -230,10 +198,8 @@ void Renderer::createCubeResources() {
   }
   endSingleTimeCommands(copyCmd);
 
-  // ——— 5) UNIFORM BUFFERS & DESCRIPTORS ———
   size_t imageCount = _swapchain.images().size();
 
-  // a) one UBO per swapchain image
   _uniformBuffers.clear();
   _uniformBuffers.resize(imageCount);
   for (size_t i = 0; i < imageCount; ++i) {
@@ -244,7 +210,6 @@ void Renderer::createCubeResources() {
                                      vk::MemoryPropertyFlagBits::eHostCoherent);
   }
 
-  // b) descriptor‐set layout (unchanged)
   vk::DescriptorSetLayoutBinding uboB{};
   uboB.binding = 0;
   uboB.descriptorType = vk::DescriptorType::eUniformBuffer;
@@ -256,7 +221,6 @@ void Renderer::createCubeResources() {
       vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(1).setPBindings(
           &uboB));
 
-  // c) descriptor pool big enough for imageCount sets
   vk::DescriptorPoolSize poolSize{};
   poolSize.type = vk::DescriptorType::eUniformBuffer;
   poolSize.descriptorCount = static_cast<uint32_t>(imageCount);
@@ -267,7 +231,6 @@ void Renderer::createCubeResources() {
                          .setPoolSizeCount(1)
                          .setPPoolSizes(&poolSize));
 
-  // d) allocate & write descriptor‐sets
   _descriptorSets.resize(imageCount);
   std::vector<VkDescriptorSetLayout> layouts(
       imageCount, static_cast<VkDescriptorSetLayout>(**_uboSetLayout));
@@ -323,7 +286,6 @@ void Renderer::createFramebuffers() {
 }
 
 void Renderer::updateUniformBuffer(uint32_t currentImage) {
-  // keep a single start‐time for animation
   static auto startTime = std::chrono::high_resolution_clock::now();
   auto now = std::chrono::high_resolution_clock::now();
   float time = std::chrono::duration<float, std::chrono::seconds::period>(
@@ -331,18 +293,14 @@ void Renderer::updateUniformBuffer(uint32_t currentImage) {
                    .count();
 
   UniformBufferObject ubo{};
-  // rotate around Z at 90°/s
 
   ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f),
                           glm::vec3(1, 1, 0));
 
-  // simple camera
   ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f),
                          glm::vec3(0.0f, 0.0f, 1.0f));
-  // perspective
   ubo.proj = glm::perspective(
       glm::radians(45.0f), _extent.width / float(_extent.height), 0.1f, 10.0f);
-  // Vulkan’s clip Y is inverted
   ubo.proj[1][1] *= -1;
 
   // copy into the mapped buffer
@@ -408,12 +366,10 @@ void Renderer::recordCommandBuffers() {
   for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
     auto cmd = _cmdBuffers[i].get();
 
-    // 1) begin
     vk::CommandBufferBeginInfo bi{};
     bi.setFlags(vk::CommandBufferUsageFlagBits::eSimultaneousUse);
     cmd.begin(bi);
 
-    // 2) render pass begin
     std::array<vk::ClearValue, 2> clears{};
     clears[0].color =
         vk::ClearColorValue(std::array<float, 4>{0.f, 0.f, 0.f, 1.f});
@@ -427,7 +383,6 @@ void Renderer::recordCommandBuffers() {
         .setPClearValues(clears.data());
     cmd.beginRenderPass(rpbi, vk::SubpassContents::eInline);
 
-    // 3) bind pipeline + dynamic viewport/scissor
     cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
 
     vk::Viewport vp{0.f, 0.f, float(_extent.width), float(_extent.height),
@@ -437,13 +392,11 @@ void Renderer::recordCommandBuffers() {
     vk::Rect2D sc{{0, 0}, _extent};
     cmd.setScissor(0, 1, &sc);
 
-    // 4) bind vertex/index
     vk::Buffer vbs[] = {_vertexBuffer->get()};
     vk::DeviceSize offs[] = {0};
     cmd.bindVertexBuffers(0, 1, vbs, offs);
     cmd.bindIndexBuffer(_indexBuffer->get(), 0, vk::IndexType::eUint16);
 
-    // 5) bind descriptor-set for this image
     {
       VkCommandBuffer raw = static_cast<VkCommandBuffer>(cmd);
       VkDescriptorSet ds = _descriptorSets[i];
@@ -453,10 +406,8 @@ void Renderer::recordCommandBuffers() {
           nullptr);
     }
 
-    // 6) draw
     cmd.drawIndexed(uint32_t(_indices.size()), 1, 0, 0, 0);
 
-    // 7) end
     cmd.endRenderPass();
     cmd.end();
   }
@@ -470,7 +421,6 @@ void Renderer::createCommandPoolAndBuffers() {
 }
 
 VkCommandBuffer Renderer::beginSingleTimeCommands() {
-  // allocate one transient command buffer
   VkCommandBufferAllocateInfo allocInfo{};
   allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
   allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -480,7 +430,6 @@ VkCommandBuffer Renderer::beginSingleTimeCommands() {
   VkCommandBuffer cmd;
   vkAllocateCommandBuffers(*_device.get(), &allocInfo, &cmd);
 
-  // begin with ONE_TIME_SUBMIT
   VkCommandBufferBeginInfo beginInfo{};
   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
   beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -492,7 +441,6 @@ VkCommandBuffer Renderer::beginSingleTimeCommands() {
 void Renderer::endSingleTimeCommands(VkCommandBuffer cmd) {
   vkEndCommandBuffer(cmd);
 
-  // submit & wait
   VkSubmitInfo submit{};
   submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
   submit.commandBufferCount = 1;
@@ -501,7 +449,6 @@ void Renderer::endSingleTimeCommands(VkCommandBuffer cmd) {
   vkQueueSubmit(*_device.graphicsQueue(), 1, &submit, VK_NULL_HANDLE);
   vkQueueWaitIdle(*_device.graphicsQueue());
 
-  // free it
   vkFreeCommandBuffers(*_device.get(), *_cmdPool.get(), 1, &cmd);
 }
 

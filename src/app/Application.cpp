@@ -12,7 +12,6 @@ Application::Application() {
 }
 
 Application::~Application() {
-  // clean up in reverse order…
   renderer_.reset();
   device_.reset();
   surface_.reset();
@@ -30,7 +29,6 @@ void Application::initWindow() {
                                      windowConfig.name);
 
   GLFWwindow *w = window_->get();
-  // make sure we get notified of resize
   glfwSetWindowUserPointer(w, this);
   glfwSetFramebufferSizeCallback(w, [](GLFWwindow *win, int newW, int newH) {
     auto app = reinterpret_cast<Application *>(glfwGetWindowUserPointer(win));
