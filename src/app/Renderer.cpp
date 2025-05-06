@@ -186,8 +186,9 @@ void Renderer::drawFrame() {
 
   _currentFrame = (_currentFrame + 1) % _inFlightFences.size();
 }
+
 void Renderer::createCubeResources() {
-  // — existing cube vertex/index setup unchanged —
+  // — cube vertex/index setup —
   _vertices = {
       {{-0.5f, -0.5f, -0.5f}, {1, 0, 0}}, {{0.5f, -0.5f, -0.5f}, {0, 1, 0}},
       {{0.5f, 0.5f, -0.5f}, {0, 0, 1}},   {{-0.5f, 0.5f, -0.5f}, {1, 1, 0}},
@@ -197,7 +198,7 @@ void Renderer::createCubeResources() {
   _indices = {0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4, 0, 1, 5, 5, 4, 0,
               3, 2, 6, 6, 7, 3, 1, 2, 6, 6, 5, 1, 0, 3, 7, 7, 4, 0};
 
-  // — staging & device‐local copy (unchanged) —
+  // — staging & copy to device local —
   vk::DeviceSize vbSize = sizeof(Vertex) * _vertices.size();
   vk::DeviceSize ibSize = sizeof(uint16_t) * _indices.size();
   Buffer stagingVB(_physical.get(), _device.get(), vbSize,
@@ -209,8 +210,8 @@ void Renderer::createCubeResources() {
                    vk::BufferUsageFlagBits::eTransferSrc,
                    vk::MemoryPropertyFlagBits::eHostVisible |
                        vk::MemoryPropertyFlagBits::eHostCoherent);
-
   stagingIB.copyFrom(_indices.data(), ibSize);
+
   _vertexBuffer =
       std::make_unique<Buffer>(_physical.get(), _device.get(), vbSize,
                                vk::BufferUsageFlagBits::eVertexBuffer |
@@ -223,23 +224,15 @@ void Renderer::createCubeResources() {
                                vk::MemoryPropertyFlagBits::eDeviceLocal);
 
   VkCommandBuffer copyCmd = beginSingleTimeCommands();
-  VkBufferCopy copyRegionVB{};
-  copyRegionVB.srcOffset = 0;
-  copyRegionVB.dstOffset = 0;
-  copyRegionVB.size = vbSize;
+  VkBufferCopy regionVB{0, 0, vbSize};
   vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingVB.raw()),
-                  static_cast<VkBuffer>(_vertexBuffer->get()), 1,
-                  &copyRegionVB);
-
-  VkBufferCopy copyRegionIB{};
-  copyRegionIB.srcOffset = 0;
-  copyRegionIB.dstOffset = 0;
-  copyRegionIB.size = ibSize;
+                  static_cast<VkBuffer>(_vertexBuffer->get()), 1, &regionVB);
+  VkBufferCopy regionIB{0, 0, ibSize};
   vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingIB.raw()),
-                  static_cast<VkBuffer>(_indexBuffer->get()), 1, &copyRegionIB);
+                  static_cast<VkBuffer>(_indexBuffer->get()), 1, &regionIB);
   endSingleTimeCommands(copyCmd);
 
-  // — Uniform‐buffer setup (unchanged) —
+  // — UBO setup (unchanged) —
   size_t imageCount = _swapchain.images().size();
   vk::DeviceSize uboSize = sizeof(UniformBufferObject);
   _uniformBuffers.resize(imageCount);
@@ -259,12 +252,21 @@ void Renderer::createCubeResources() {
       _device.get(),
       vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(1).setPBindings(
           &uboB));
-  _descriptorPool =
-      std::make_unique<vk::raii::DescriptorPool>(makeDescriptorPool(
-          {vk::DescriptorPoolSize{vk::DescriptorType::eUniformBuffer,
-                                  (uint32_t)imageCount}},
-          /*maxSets=*/(uint32_t)imageCount));
-  // allocate & write UBO descriptor‐sets
+
+  // — Descriptor‑pool must cover both UBO and SSBO —
+  vk::DescriptorPoolSize uboPool{};
+  uboPool.type = vk::DescriptorType::eUniformBuffer;
+  uboPool.descriptorCount = static_cast<uint32_t>(imageCount);
+
+  vk::DescriptorPoolSize ssboPool{};
+  ssboPool.type = vk::DescriptorType::eStorageBuffer;
+  ssboPool.descriptorCount = 1; // one voxel‐octree SSBO
+
+  _descriptorPool = std::make_unique<vk::raii::DescriptorPool>(
+      makeDescriptorPool({uboPool, ssboPool},
+                         /*maxSets=*/static_cast<uint32_t>(imageCount + 1)));
+
+  // — allocate & write UBO descriptor sets —
   _descriptorSets.resize(imageCount);
   std::vector<VkDescriptorSetLayout> layouts(
       imageCount, static_cast<VkDescriptorSetLayout>(**_uboSetLayout));
@@ -288,20 +290,15 @@ void Renderer::createCubeResources() {
                            nullptr);
   }
 
-  // ─────── NEW: build a small VoxelChunk and upload its TH‑octree ─────────
-  // 1) make a 16³ chunk and carve a diagonal line
+  // — build & upload a small VoxelChunk octree SSBO —
   engine::VoxelChunk chunk(16);
-  for (int i = 0; i < 16; ++i) {
+  for (int i = 0; i < 16; ++i)
     chunk.setVoxel(i, i, i, true);
-  }
-  int brickDim = 4;
-  // 2) create GPU SSBO + descriptor‐set in one call:
   _voxelResources = engine::VoxelResources::create(
-      chunk, brickDim, _device.get(), _physical.get(),
+      chunk, 4, _device.get(), _physical.get(),
       static_cast<VkDescriptorPool>(**_descriptorPool),
-      static_cast<VkDescriptorSetLayout>(**_uboSetLayout) // set‑0 layout
+      static_cast<VkDescriptorSetLayout>(**_uboSetLayout) // set 0 layout
   );
-  // and expose its layout as set 1:
   _voxelSetLayout = std::move(_voxelResources.layout);
 }
 
