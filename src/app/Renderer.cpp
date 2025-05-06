@@ -58,13 +58,15 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
   //
   // — NEW: build everything else before first draw —
   //
+  createCubeResources();
+
+  // — now we have a valid _uboSetLayout, build the pipeline and friends —
   createGraphicsPipeline();
   createFramebuffers();
   createCommandPoolAndBuffers();
   createSyncObjects();
 
-  // now it’s safe to record, since _framebuffers, _cmdBuffers and
-  // _inFlightFences are all populated
+  // finally record your command‑buffers
   recordCommandBuffers();
 }
 void Renderer::recreateSwapchain() {
