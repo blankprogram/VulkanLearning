@@ -9,14 +9,9 @@ namespace engine {
 struct PipelineConfig {
   std::vector<vk::DescriptorSetLayout> setLayouts;
   std::vector<vk::PushConstantRange> pushConstants;
-  std::vector<vk::VertexInputBindingDescription> bindingDescriptions;
-  std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
-
-  // Owning containers for dynamic state and blend attachments
   std::vector<vk::DynamicState> dynamicStates;
   std::vector<vk::PipelineColorBlendAttachmentState> blendAttachments;
 
-  // Pipeline state create infos
   vk::PipelineVertexInputStateCreateInfo vertexInput{};
   vk::PipelineInputAssemblyStateCreateInfo inputAssembly{};
   vk::PipelineViewportStateCreateInfo viewportState{};
@@ -26,20 +21,15 @@ struct PipelineConfig {
   vk::PipelineColorBlendStateCreateInfo colorBlend{};
   vk::PipelineDynamicStateCreateInfo dynamicState{};
 
-  // Viewport and scissor
   vk::Viewport viewport;
   vk::Rect2D scissor;
   vk::Extent2D viewportExtent;
-
-  // MSAA samples
   vk::SampleCountFlagBits msaaSamples = vk::SampleCountFlagBits::e1;
 };
 
 inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
   PipelineConfig c;
 
-  c.setLayouts = {};
-  c.pushConstants = {};
   c.viewportExtent = extent;
   c.viewport = vk::Viewport{
       0.0f, 0.0f, float(extent.width), float(extent.height), 0.0f, 1.0f};
@@ -49,19 +39,18 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
       .setScissorCount(1)
       .setPScissors(&c.scissor);
 
-  // **No vertex‐buffers** (we use gl_VertexIndex in the shader)
-  c.bindingDescriptions.clear();
-  c.attributeDescriptions.clear();
-  c.vertexInput.setVertexBindingDescriptionCount(0)
-      .setPVertexBindingDescriptions(nullptr)
-      .setVertexAttributeDescriptionCount(0)
-      .setPVertexAttributeDescriptions(nullptr);
+  // Use our Vertex definitions:
+  auto binding = Vertex::getBindingDescription();
+  auto attributes = Vertex::getAttributeDescriptions();
+  c.vertexInput.setVertexBindingDescriptionCount(1)
+      .setPVertexBindingDescriptions(&binding)
+      .setVertexAttributeDescriptionCount(
+          static_cast<uint32_t>(attributes.size()))
+      .setPVertexAttributeDescriptions(attributes.data());
 
-  // Input assembly
   c.inputAssembly.setTopology(vk::PrimitiveTopology::eTriangleList)
       .setPrimitiveRestartEnable(VK_FALSE);
 
-  // Rasterizer
   c.rasterizer.setDepthClampEnable(VK_FALSE)
       .setRasterizerDiscardEnable(VK_FALSE)
       .setPolygonMode(vk::PolygonMode::eFill)
@@ -70,36 +59,24 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
       .setFrontFace(vk::FrontFace::eClockwise)
       .setDepthBiasEnable(VK_FALSE);
 
-  // Multisampling
   c.multisampling.setRasterizationSamples(c.msaaSamples)
       .setSampleShadingEnable(VK_FALSE);
 
-  // Depth / stencil
   c.depthStencil.setDepthTestEnable(VK_TRUE)
       .setDepthWriteEnable(VK_TRUE)
       .setDepthCompareOp(vk::CompareOp::eLess)
       .setDepthBoundsTestEnable(VK_FALSE)
       .setStencilTestEnable(VK_FALSE);
 
-  // Color blend attachment (no blending)
   vk::PipelineColorBlendAttachmentState blendAtt{};
-  blendAtt.setBlendEnable(VK_FALSE)
-      .setColorWriteMask(
-          vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
-          vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA)
-      .setSrcColorBlendFactor(vk::BlendFactor::eOne)
-      .setDstColorBlendFactor(vk::BlendFactor::eZero)
-      .setColorBlendOp(vk::BlendOp::eAdd)
-      .setSrcAlphaBlendFactor(vk::BlendFactor::eOne)
-      .setDstAlphaBlendFactor(vk::BlendFactor::eZero)
-      .setAlphaBlendOp(vk::BlendOp::eAdd);
+  blendAtt.setBlendEnable(VK_FALSE).setColorWriteMask(
+      vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
+      vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA);
   c.blendAttachments = {blendAtt};
-
   c.colorBlend.setLogicOpEnable(VK_FALSE)
       .setAttachmentCount(static_cast<uint32_t>(c.blendAttachments.size()))
       .setPAttachments(c.blendAttachments.data());
 
-  // Dynamic states (viewport + scissor)
   c.dynamicStates = {vk::DynamicState::eViewport, vk::DynamicState::eScissor};
   c.dynamicState
       .setDynamicStateCount(static_cast<uint32_t>(c.dynamicStates.size()))
@@ -107,7 +84,5 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
 
   return c;
 }
-
-inline const PipelineConfig pipelineConfig{};
 
 } // namespace engine
