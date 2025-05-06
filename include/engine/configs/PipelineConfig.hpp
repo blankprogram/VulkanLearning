@@ -76,11 +76,8 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
       .setSampleShadingEnable(VK_FALSE);
 
   // — depth/stencil —
-  c.depthStencil.setDepthTestEnable(VK_TRUE)
-      .setDepthWriteEnable(VK_TRUE)
-      .setDepthCompareOp(vk::CompareOp::eLess)
-      .setDepthBoundsTestEnable(VK_FALSE)
-      .setStencilTestEnable(VK_FALSE);
+
+  c.depthStencil.setDepthTestEnable(VK_FALSE).setDepthWriteEnable(VK_FALSE);
 
   // — color blend —
   vk::PipelineColorBlendAttachmentState blendAtt{};

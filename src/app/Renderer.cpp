@@ -318,9 +318,6 @@ void Renderer::updateUniformBuffer(uint32_t currentImage) {
 
   UniformBufferObject ubo{};
 
-  ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f),
-                          glm::vec3(1, 1, 0));
-
   ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f),
                          glm::vec3(0.0f, 0.0f, 1.0f));
   ubo.proj = glm::perspective(
@@ -461,7 +458,7 @@ void Renderer::recordCommandBuffers() {
         static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0,
         (uint32_t)sets.size(), sets.data(), 0, nullptr);
 
-    cmd.drawIndexed((uint32_t)_indices.size(), _terrain.instanceCount, 0, 0, 0);
+    cmd.drawIndexed((uint32_t)_indices.size(), 1, 0, 0, 0);
 
     // --- draw ImGui on top ---
     imguiLayer_->render(cmd);

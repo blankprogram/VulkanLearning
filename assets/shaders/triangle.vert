@@ -1,9 +1,7 @@
-
 #version 450
 
 layout(location=0) in vec3 inPos;
 layout(location=1) in vec3 inColor;
-// new: per‑instance transform
 layout(location=2) in vec4 iModelRow0;
 layout(location=3) in vec4 iModelRow1;
 layout(location=4) in vec4 iModelRow2;
@@ -21,4 +19,5 @@ void main() {
     gl_Position = ubo.proj * ubo.view * instanceModel * vec4(inPos, 1.0);
     fragColor   = inColor;
 }
+
 
