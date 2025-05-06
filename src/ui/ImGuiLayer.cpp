@@ -98,15 +98,13 @@ void ImGuiLayer::newFrame() {
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  // one‑time default size
   ImGui::SetNextWindowSize(ImVec2(300, 120), ImGuiCond_FirstUseEver);
+  // no inputs => we won’t steal mouse/keyboard focus
+  ImGui::Begin("Stats", nullptr, ImGuiWindowFlags_NoInputs);
 
-  ImGui::Begin("Stats");
   ImGuiIO &io = ImGui::GetIO();
-  ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-              1000.0f / io.Framerate, io.Framerate);
-
-  // show camera position
+  ImGui::Text("avg %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate,
+              io.Framerate);
   ImGui::Text("Camera Pos: %.2f, %.2f, %.2f", _cameraPos.x, _cameraPos.y,
               _cameraPos.z);
   ImGui::End();

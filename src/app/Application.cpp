@@ -7,6 +7,7 @@ namespace engine {
 
 Application::Application() {
   initWindow();
+  glfwSetInputMode(window_->get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   initVulkan();
   initRenderer();
 }
