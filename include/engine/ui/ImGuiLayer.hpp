@@ -17,6 +17,7 @@ public:
   void newFrame();
 
   void render(VkCommandBuffer cmd);
+  void recreate(uint32_t imageCount, VkRenderPass renderPass);
 
 private:
   void init();

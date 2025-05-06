@@ -88,13 +88,8 @@ void Renderer::createSwapchainResources() {
 
   uint32_t imgCount = static_cast<uint32_t>(_swapchain.images().size());
 
-  imguiLayer_ = std::make_unique<ImGuiLayer>(
-      _window, _rawInstance, static_cast<VkDevice>(*_device.get()),
-      static_cast<VkPhysicalDevice>(*_physical.get()), _queues.graphics.value(),
-      static_cast<VkQueue>(*_device.graphicsQueue()),
-      *_imguiDescriptorPool, // ← now the correct, full‑featured pool
-      static_cast<VkRenderPass>(*_renderPass.get()), imgCount);
-
+  imguiLayer_->recreate(imgCount,
+                        static_cast<VkRenderPass>(*_renderPass.get()));
   createGraphicsPipeline();
 
   createFramebuffers();
