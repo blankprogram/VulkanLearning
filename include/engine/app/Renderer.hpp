@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "engine/core/Device.hpp"
@@ -7,6 +6,7 @@
 #include "engine/core/Surface.hpp"
 #include "engine/memory/Buffer.hpp"
 #include "engine/pipeline/GraphicsPipeline.hpp"
+#include "engine/pipeline/PipelineLayout.hpp"
 #include "engine/pipeline/RenderPass.hpp"
 #include "engine/rendering/CommandBuffer.hpp"
 #include "engine/rendering/CommandPool.hpp"
@@ -17,9 +17,12 @@
 #include "engine/swapchain/ImageView.hpp"
 #include "engine/swapchain/Swapchain.hpp"
 #include "engine/utils/UniformBufferObject.hpp"
+
+#include <array>
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
+#include <vulkan/vulkan_raii.hpp>
 
 namespace engine {
 
@@ -34,6 +37,7 @@ public:
 private:
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
+  // setup helpers
   void createSwapchain();
   void createDepthBuffer();
   void createFramebuffers();
@@ -58,11 +62,9 @@ private:
   Swapchain _swapchain;
   DepthBuffer _depth;
   RenderPass _renderPass;
+  std::unique_ptr<PipelineLayout> _pipelineLayout;
   std::unique_ptr<GraphicsPipeline> _pipeline;
   std::vector<Framebuffer> _framebuffers;
-
-  std::vector<VkFence> _imagesInFlight;
-  std::vector<ImageView> _colorImageViews;
 
   CommandPool _cmdPool;
   std::vector<CommandBuffer> _cmdBuffers;
@@ -70,16 +72,22 @@ private:
   std::vector<Semaphore> _imageAvailable;
   std::vector<Semaphore> _renderFinished;
   std::vector<Fence> _inFlightFences;
+  std::vector<VkFence> _imagesInFlight;
   size_t _currentFrame = 0;
 
+  // cube mesh & UBO
   std::vector<Vertex> _vertices;
   std::vector<uint16_t> _indices;
-  Buffer _vertexBuffer;
-  Buffer _indexBuffer;
-  std::array<Buffer, MAX_FRAMES_IN_FLIGHT> _uniformBuffers;
-  vk::raii::DescriptorSetLayout _uboSetLayout;
-  vk::raii::DescriptorPool _descriptorPool;
-  std::vector<vk::raii::DescriptorSet> _descriptorSets;
+  std::unique_ptr<Buffer> _vertexBuffer;
+  std::unique_ptr<Buffer> _indexBuffer;
+  std::array<std::unique_ptr<Buffer>, MAX_FRAMES_IN_FLIGHT> _uniformBuffers;
+
+  std::unique_ptr<vk::raii::DescriptorSetLayout> _uboSetLayout;
+  std::unique_ptr<vk::raii::DescriptorPool> _descriptorPool;
+  std::vector<VkDescriptorSet> _descriptorSets;
+
+  // for color attachments
+  std::vector<ImageView> _colorImageViews;
 };
 
 } // namespace engine
