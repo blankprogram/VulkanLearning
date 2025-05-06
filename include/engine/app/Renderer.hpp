@@ -35,7 +35,8 @@ public:
 
 private:
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
-
+  VkCommandBuffer beginSingleTimeCommands();
+  void endSingleTimeCommands(VkCommandBuffer commandBuffer);
   // setup helpers
   void createSwapchain();
   void createDepthBuffer();

@@ -111,14 +111,20 @@ void Renderer::drawFrame() {
 }
 
 void Renderer::createCubeResources() {
-  // --- fill _vertices and _indices with your cube data ---
-  // e.g. _vertices = { ... }; _indices = { ... };
+  // ——— 1) FILL YOUR GEOMETRY ———
+  // For testing, here’s a single colored triangle:
+  _vertices = {
+      {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+      {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+      {{0.0f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+  };
+  _indices = {0, 1, 2};
 
   vk::DeviceSize vbSize = sizeof(Vertex) * _vertices.size();
   vk::DeviceSize ibSize = sizeof(uint16_t) * _indices.size();
   vk::DeviceSize uboSize = sizeof(UniformBufferObject);
 
-  // staging
+  // ——— 2) STAGING BUFFERS ———
   Buffer stagingVB(_physical.get(), _device.get(), vbSize,
                    vk::BufferUsageFlagBits::eTransferSrc,
                    vk::MemoryPropertyFlagBits::eHostVisible |
@@ -131,7 +137,7 @@ void Renderer::createCubeResources() {
                        vk::MemoryPropertyFlagBits::eHostCoherent);
   stagingIB.copyFrom(_indices.data(), ibSize);
 
-  // device-local
+  // ——— 3) DEVICE-LOCAL BUFFERS ———
   _vertexBuffer =
       std::make_unique<Buffer>(_physical.get(), _device.get(), vbSize,
                                vk::BufferUsageFlagBits::eVertexBuffer |
@@ -143,9 +149,21 @@ void Renderer::createCubeResources() {
                                    vk::BufferUsageFlagBits::eTransferDst,
                                vk::MemoryPropertyFlagBits::eDeviceLocal);
 
-  // (submit your one-time copy commands staging→device-local here)
+  // ——— 4) COPY STAGING → DEVICE-LOCAL ———
+  VkCommandBuffer copyCmd = beginSingleTimeCommands();
+  {
+    VkBufferCopy region{0, 0, vbSize};
+    vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingVB.raw()),
+                    static_cast<VkBuffer>(_vertexBuffer->get()), 1, &region);
+  }
+  {
+    VkBufferCopy region{0, 0, ibSize};
+    vkCmdCopyBuffer(copyCmd, static_cast<VkBuffer>(*stagingIB.raw()),
+                    static_cast<VkBuffer>(_indexBuffer->get()), 1, &region);
+  }
+  endSingleTimeCommands(copyCmd);
 
-  // uniform buffers
+  // ——— 5) UNIFORM BUFFERS & DESCRIPTORS (unchanged) ———
   for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; ++i) {
     _uniformBuffers[i] =
         std::make_unique<Buffer>(_physical.get(), _device.get(), uboSize,
@@ -153,7 +171,6 @@ void Renderer::createCubeResources() {
                                  vk::MemoryPropertyFlagBits::eHostVisible |
                                      vk::MemoryPropertyFlagBits::eHostCoherent);
   }
-
   // descriptor set layout
   vk::DescriptorSetLayoutBinding uboB{};
   uboB.binding = 0;
@@ -328,6 +345,42 @@ void Renderer::createCommandPoolAndBuffers() {
   for (size_t i = 0; i < _framebuffers.size(); ++i) {
     _cmdBuffers.emplace_back(_device.get(), _cmdPool.get());
   }
+}
+
+VkCommandBuffer Renderer::beginSingleTimeCommands() {
+  // allocate one transient command buffer
+  VkCommandBufferAllocateInfo allocInfo{};
+  allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+  allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+  allocInfo.commandPool = *_cmdPool.get();
+  allocInfo.commandBufferCount = 1;
+
+  VkCommandBuffer cmd;
+  vkAllocateCommandBuffers(*_device.get(), &allocInfo, &cmd);
+
+  // begin with ONE_TIME_SUBMIT
+  VkCommandBufferBeginInfo beginInfo{};
+  beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+  beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+  vkBeginCommandBuffer(cmd, &beginInfo);
+
+  return cmd;
+}
+
+void Renderer::endSingleTimeCommands(VkCommandBuffer cmd) {
+  vkEndCommandBuffer(cmd);
+
+  // submit & wait
+  VkSubmitInfo submit{};
+  submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+  submit.commandBufferCount = 1;
+  submit.pCommandBuffers = &cmd;
+
+  vkQueueSubmit(*_device.graphicsQueue(), 1, &submit, VK_NULL_HANDLE);
+  vkQueueWaitIdle(*_device.graphicsQueue());
+
+  // free it
+  vkFreeCommandBuffers(*_device.get(), *_cmdPool.get(), 1, &cmd);
 }
 
 } // namespace engine
