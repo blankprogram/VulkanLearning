@@ -1,56 +1,76 @@
 #pragma once
 
 #include "engine/utils/Vertex.hpp"
-#include <array>
 #include <vector>
 #include <vulkan/vulkan_raii.hpp>
 
 namespace engine {
 
 struct PipelineConfig {
-  std::vector<vk::DescriptorSetLayout> setLayouts;
-  std::vector<vk::PushConstantRange> pushConstants;
+  // Owning containers for vertex input
+  std::vector<vk::VertexInputBindingDescription> bindingDescriptions;
+  std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
+
+  // Owning containers for dynamic state and blend attachments
+  std::vector<vk::DynamicState> dynamicStates;
+  std::vector<vk::PipelineColorBlendAttachmentState> blendAttachments;
+
+  // Pipeline state create infos
   vk::PipelineVertexInputStateCreateInfo vertexInput{};
   vk::PipelineInputAssemblyStateCreateInfo inputAssembly{};
+  vk::PipelineViewportStateCreateInfo viewportState{};
   vk::PipelineRasterizationStateCreateInfo rasterizer{};
   vk::PipelineMultisampleStateCreateInfo multisampling{};
   vk::PipelineDepthStencilStateCreateInfo depthStencil{};
   vk::PipelineColorBlendStateCreateInfo colorBlend{};
-  std::vector<vk::PipelineShaderStageCreateInfo> shaderStages;
-  vk::Viewport viewport{};
-  vk::Rect2D scissor{};
-  vk::PipelineViewportStateCreateInfo viewportState{};
   vk::PipelineDynamicStateCreateInfo dynamicState{};
-  vk::Extent2D viewportExtent{};
+
+  // Viewport and scissor
+  vk::Viewport viewport;
+  vk::Rect2D scissor;
+  vk::Extent2D viewportExtent;
+
+  // MSAA samples
   vk::SampleCountFlagBits msaaSamples = vk::SampleCountFlagBits::e1;
 };
+
 inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
   PipelineConfig c;
+
+  // Viewport / scissor setup
   c.viewportExtent = extent;
+  c.viewport = vk::Viewport{
+      0.0f, 0.0f, float(extent.width), float(extent.height), 0.0f, 1.0f};
+  c.scissor = vk::Rect2D{{0, 0}, extent};
+  c.viewportState.setViewportCount(1)
+      .setPViewports(&c.viewport)
+      .setScissorCount(1)
+      .setPScissors(&c.scissor);
+
+  // Vertex input binding
   vk::VertexInputBindingDescription binding{};
-  binding.binding = 0;
-  binding.stride = sizeof(Vertex);
-  binding.inputRate = vk::VertexInputRate::eVertex;
+  binding.setBinding(0)
+      .setStride(sizeof(Vertex))
+      .setInputRate(vk::VertexInputRate::eVertex);
+  c.bindingDescriptions = {binding};
 
-  std::array<vk::VertexInputAttributeDescription, 2> attrs;
-  attrs[0].binding = 0;
-  attrs[0].location = 0;
-  attrs[0].format = vk::Format::eR32G32B32Sfloat;
-  attrs[0].offset = offsetof(Vertex, pos);
+  // Vertex input attributes (position + uv)
+  auto attrs = Vertex::getAttributeDescriptions();
+  c.attributeDescriptions = {attrs[0], attrs[2]};
 
-  attrs[1].binding = 0;
-  attrs[1].location = 1;
-  attrs[1].format = vk::Format::eR32G32Sfloat;
-  attrs[1].offset = offsetof(Vertex, uv);
+  c.vertexInput
+      .setVertexBindingDescriptionCount(
+          static_cast<uint32_t>(c.bindingDescriptions.size()))
+      .setPVertexBindingDescriptions(c.bindingDescriptions.data())
+      .setVertexAttributeDescriptionCount(
+          static_cast<uint32_t>(c.attributeDescriptions.size()))
+      .setPVertexAttributeDescriptions(c.attributeDescriptions.data());
 
-  c.vertexInput.setVertexBindingDescriptionCount(1)
-      .setPVertexBindingDescriptions(&binding)
-      .setVertexAttributeDescriptionCount(static_cast<uint32_t>(attrs.size()))
-      .setPVertexAttributeDescriptions(attrs.data());
-
+  // Input assembly
   c.inputAssembly.setTopology(vk::PrimitiveTopology::eTriangleList)
       .setPrimitiveRestartEnable(VK_FALSE);
 
+  // Rasterizer
   c.rasterizer.setDepthClampEnable(VK_FALSE)
       .setRasterizerDiscardEnable(VK_FALSE)
       .setPolygonMode(vk::PolygonMode::eFill)
@@ -59,37 +79,44 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
       .setFrontFace(vk::FrontFace::eClockwise)
       .setDepthBiasEnable(VK_FALSE);
 
+  // Multisampling
   c.multisampling.setRasterizationSamples(c.msaaSamples)
       .setSampleShadingEnable(VK_FALSE);
 
+  // Depth / stencil
   c.depthStencil.setDepthTestEnable(VK_TRUE)
       .setDepthWriteEnable(VK_TRUE)
       .setDepthCompareOp(vk::CompareOp::eLess)
       .setDepthBoundsTestEnable(VK_FALSE)
       .setStencilTestEnable(VK_FALSE);
 
+  // Color blend attachment (no blending)
   vk::PipelineColorBlendAttachmentState blendAtt{};
-  blendAtt
+  blendAtt.setBlendEnable(VK_FALSE)
       .setColorWriteMask(
           vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG |
           vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA)
-      .setBlendEnable(VK_FALSE);
-  c.colorBlend.setLogicOpEnable(VK_FALSE).setAttachmentCount(1).setPAttachments(
-      &blendAtt);
+      .setSrcColorBlendFactor(vk::BlendFactor::eOne)
+      .setDstColorBlendFactor(vk::BlendFactor::eZero)
+      .setColorBlendOp(vk::BlendOp::eAdd)
+      .setSrcAlphaBlendFactor(vk::BlendFactor::eOne)
+      .setDstAlphaBlendFactor(vk::BlendFactor::eZero)
+      .setAlphaBlendOp(vk::BlendOp::eAdd);
+  c.blendAttachments = {blendAtt};
 
-  c.viewport = vk::Viewport{0.0f,
-                            0.0f,
-                            static_cast<float>(extent.width),
-                            static_cast<float>(extent.height),
-                            0.0f,
-                            1.0f};
-  c.scissor = vk::Rect2D{{0, 0}, extent};
-  c.viewportState.setViewportCount(1)
-      .setPViewports(&c.viewport)
-      .setScissorCount(1)
-      .setPScissors(&c.scissor);
+  c.colorBlend.setLogicOpEnable(VK_FALSE)
+      .setAttachmentCount(static_cast<uint32_t>(c.blendAttachments.size()))
+      .setPAttachments(c.blendAttachments.data());
+
+  // Dynamic states (viewport + scissor)
+  c.dynamicStates = {vk::DynamicState::eViewport, vk::DynamicState::eScissor};
+  c.dynamicState
+      .setDynamicStateCount(static_cast<uint32_t>(c.dynamicStates.size()))
+      .setPDynamicStates(c.dynamicStates.data());
 
   return c;
 }
+
 inline const PipelineConfig pipelineConfig{};
+
 } // namespace engine
