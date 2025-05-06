@@ -22,9 +22,7 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
       _depth(physical.get(), device.get(), windowExtent),
       _renderPass(device.get(), _swapchain.imageFormat(), _depth.getFormat()),
       _cmdPool(device.get(), queues.graphics.value()) {
-  //
-  // — ImGui descriptor‐pool & layer setup (unchanged) —
-  //
+
   std::vector<vk::DescriptorPoolSize> poolSizes = {
       {vk::DescriptorType::eSampler, 1000u},
       {vk::DescriptorType::eCombinedImageSampler, 1000u},
@@ -38,14 +36,8 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
       {vk::DescriptorType::eStorageBufferDynamic, 1000u},
       {vk::DescriptorType::eInputAttachment, 1000u}};
 
-  vk::DescriptorPoolCreateInfo imguiPoolInfo;
-  imguiPoolInfo.setFlags(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet)
-      .setMaxSets(1000)
-      .setPoolSizeCount(static_cast<uint32_t>(poolSizes.size()))
-      .setPPoolSizes(poolSizes.data());
-
-  _imguiDescriptorPool =
-      std::make_unique<vk::raii::DescriptorPool>(_device.get(), imguiPoolInfo);
+  _imguiDescriptorPool = std::make_unique<vk::raii::DescriptorPool>(
+      makeDescriptorPool(poolSizes, /*maxSets=*/1000u));
 
   uint32_t imgCount = static_cast<uint32_t>(_swapchain.images().size());
 
@@ -277,10 +269,7 @@ void Renderer::createCubeResources() {
   poolSize.descriptorCount = static_cast<uint32_t>(imageCount);
 
   _descriptorPool = std::make_unique<vk::raii::DescriptorPool>(
-      _device.get(), vk::DescriptorPoolCreateInfo{}
-                         .setMaxSets(static_cast<uint32_t>(imageCount))
-                         .setPoolSizeCount(1)
-                         .setPPoolSizes(&poolSize));
+      makeDescriptorPool({poolSize}, /*maxSets=*/imageCount));
 
   _descriptorSets.resize(imageCount);
   std::vector<VkDescriptorSetLayout> layouts(
@@ -503,6 +492,17 @@ void Renderer::endSingleTimeCommands(VkCommandBuffer cmd) {
   vkQueueWaitIdle(*_device.graphicsQueue());
 
   vkFreeCommandBuffers(*_device.get(), *_cmdPool.get(), 1, &cmd);
+}
+
+vk::raii::DescriptorPool Renderer::makeDescriptorPool(
+    const std::vector<vk::DescriptorPoolSize> &poolSizes, uint32_t maxSets) {
+  vk::DescriptorPoolCreateInfo info;
+  info.setFlags(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet)
+      .setPoolSizeCount(static_cast<uint32_t>(poolSizes.size()))
+      .setPPoolSizes(poolSizes.data())
+      .setMaxSets(maxSets);
+
+  return vk::raii::DescriptorPool{_device.get(), info};
 }
 
 } // namespace engine

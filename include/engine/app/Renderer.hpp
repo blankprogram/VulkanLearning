@@ -56,6 +56,10 @@ private:
   void cleanupSwapchain();
   void createSwapchainResources();
   void buildFrameResources();
+
+  vk::raii::DescriptorPool
+  makeDescriptorPool(const std::vector<vk::DescriptorPoolSize> &poolSizes,
+                     uint32_t maxSets);
   struct Vertex {
     glm::vec3 pos, color;
   };
