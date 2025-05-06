@@ -34,21 +34,22 @@ VoxelResources VoxelResources::create(const VoxelChunk &chunk, int brickDim,
       vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(1).setPBindings(
           &binding));
 
-  VkDescriptorSetLayout rawLayouts[2] = {
-      uboLayout, static_cast<VkDescriptorSetLayout>(**R.layout)};
+  // --- only allocate the SSBO (set‑1) descriptor set ---
+  VkDescriptorSetLayout ssboOnlyLayout =
+      static_cast<VkDescriptorSetLayout>(**R.layout);
 
   VkDescriptorSetAllocateInfo allocInfo{};
   allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
   allocInfo.descriptorPool = descriptorPool;
-  allocInfo.descriptorSetCount = 2;
-  allocInfo.pSetLayouts = rawLayouts;
+  allocInfo.descriptorSetCount = 1;
+  allocInfo.pSetLayouts = &ssboOnlyLayout;
 
-  VkDescriptorSet rawSets[2];
+  VkDescriptorSet rawSet;
   if (vkAllocateDescriptorSets(static_cast<VkDevice>(*device), &allocInfo,
-                               rawSets) != VK_SUCCESS) {
-    throw std::runtime_error("failed to allocate voxel descriptor set");
+                               &rawSet) != VK_SUCCESS) {
+    throw std::runtime_error("failed to allocate voxel SSBO descriptor set");
   }
-  R.descriptorSet = rawSets[1];
+  R.descriptorSet = rawSet;
 
   // --- write the SSBO binding into that set ---
   VkDescriptorBufferInfo bufInfo{};
