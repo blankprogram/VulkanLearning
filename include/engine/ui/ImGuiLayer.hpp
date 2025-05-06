@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
+#include <glm/ext/vector_float3.hpp>
 #include <vulkan/vulkan.h>
 #include <vulkan/vulkan_raii.hpp>
 
@@ -18,6 +19,7 @@ public:
 
   void render(VkCommandBuffer cmd);
   void recreate(uint32_t imageCount, VkRenderPass renderPass);
+  void setCameraPosition(const glm::vec3 &pos);
 
 private:
   void init();
@@ -34,6 +36,7 @@ private:
 
   double _lastTime = 0.0;
   int _frameCount = 0;
+  glm::vec3 _cameraPos{0.0f, 0.0f, 0.0f};
 };
 
 } // namespace engine

@@ -416,7 +416,7 @@ void Renderer::recordCommandBuffers() {
     CommandBuffer &cmdWrapper = _cmdBuffers[i];
     // get the raw handle for recording draws, binding, etc.
     vk::CommandBuffer cmd = cmdWrapper.get();
-
+    imguiLayer_->setCameraPosition(_camera.getPosition());
     // ImGui wants NewFrame before you record any UI draw calls
     imguiLayer_->newFrame();
 

@@ -15,7 +15,7 @@ public:
 
   /// Get view matrix (to put into UBO.view)
   glm::mat4 getViewMatrix() const;
-
+  glm::vec3 getPosition() const { return position_; }
   /// Move camera in local axes: x = right, y = up, z = forward
   void processKeyboard(const glm::vec3 &delta);
 
