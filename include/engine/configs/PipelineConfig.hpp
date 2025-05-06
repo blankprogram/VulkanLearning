@@ -77,7 +77,7 @@ inline PipelineConfig defaultPipelineConfig(vk::Extent2D extent) {
 
   // — depth/stencil —
 
-  c.depthStencil.setDepthTestEnable(VK_FALSE).setDepthWriteEnable(VK_FALSE);
+  c.depthStencil.setDepthTestEnable(VK_TRUE).setDepthWriteEnable(VK_TRUE);
 
   // — color blend —
   vk::PipelineColorBlendAttachmentState blendAtt{};

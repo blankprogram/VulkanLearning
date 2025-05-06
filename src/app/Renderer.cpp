@@ -224,10 +224,10 @@ void Renderer::createCubeResources() {
                                vk::MemoryPropertyFlagBits::eDeviceLocal);
 
   VkCommandBuffer c = beginSingleTimeCommands();
-  VkBufferCopy r0{0, 0, vbSize};
-  vkCmdCopyBuffer(c, *stagingVB.raw(), _vertexBuffer->get(), 1, &r0);
-  VkBufferCopy r1{0, 0, ibSize};
-  vkCmdCopyBuffer(c, *stagingIB.raw(), _indexBuffer->get(), 1, &r1);
+  VkBufferCopy copy0{0, 0, vbSize};
+  vkCmdCopyBuffer(c, *stagingVB.raw(), _vertexBuffer->get(), 1, &copy0);
+  VkBufferCopy copy1{0, 0, ibSize};
+  vkCmdCopyBuffer(c, *stagingIB.raw(), _indexBuffer->get(), 1, &copy1);
   endSingleTimeCommands(c);
 
   // — 3) create UBO descriptor‑set‑layout (set 0) —
@@ -248,6 +248,18 @@ void Renderer::createCubeResources() {
   _descriptorPool = std::make_unique<vk::raii::DescriptorPool>(
       makeDescriptorPool({poolUBO, poolSSBO}, imgCount + 1));
 
+  // — 4.5) create SSBO descriptor‑set‑layout (binding 1) —
+  vk::DescriptorSetLayoutBinding ssboB{};
+  ssboB.binding = 1;
+  ssboB.descriptorType = vk::DescriptorType::eStorageBuffer;
+  ssboB.descriptorCount = 1;
+  ssboB.stageFlags =
+      vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
+  _voxelSetLayout = std::make_unique<vk::raii::DescriptorSetLayout>(
+      _device.get(),
+      vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(1).setPBindings(
+          &ssboB));
+
   // allocate & write the UBO descriptor‑sets
   _uniformBuffers.resize(imgCount);
   for (size_t i = 0; i < imgCount; ++i) {
@@ -258,13 +270,13 @@ void Renderer::createCubeResources() {
             vk::MemoryPropertyFlagBits::eHostCoherent);
   }
   _descriptorSets.resize(imgCount);
-  std::vector<VkDescriptorSetLayout> layouts(
+  std::vector<VkDescriptorSetLayout> uboLayouts(
       imgCount, VkDescriptorSetLayout(**_uboSetLayout));
   VkDescriptorSetAllocateInfo ainfo{
       VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
   ainfo.descriptorPool = VkDescriptorPool(**_descriptorPool);
   ainfo.descriptorSetCount = imgCount;
-  ainfo.pSetLayouts = layouts.data();
+  ainfo.pSetLayouts = uboLayouts.data();
   vkAllocateDescriptorSets(*_device.get(), &ainfo, _descriptorSets.data());
   for (uint32_t i = 0; i < imgCount; ++i) {
     VkDescriptorBufferInfo bi{_uniformBuffers[i]->get(), 0,
@@ -283,10 +295,12 @@ void Renderer::createCubeResources() {
   _terrain = TerrainGenerator::createFlatTerrain(
       width, depth, cubeSize, brickDim, _device.get(), _physical.get(),
       VkDescriptorPool(**_descriptorPool),
-      VkDescriptorSetLayout(**_uboSetLayout), *_vertexBuffer, *_indexBuffer);
+      VkDescriptorSetLayout(**_voxelSetLayout), // ← pass SSBO layout here
+      *_vertexBuffer, *_indexBuffer);
 
-  // grab the voxel‐set‐layout from what the terrain gave us
-  _voxelSetLayout = std::move(_terrain.voxelResources.layout);
+  // grab the voxel‑set‑layout back out (for pipeline binding)
+  // (we already have it in _voxelSetLayout, so this is optional)
+  // _voxelSetLayout = std::move(_terrain.voxelResources.layout);
 }
 
 void Renderer::createFramebuffers() {
