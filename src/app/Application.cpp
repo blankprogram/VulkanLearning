@@ -52,8 +52,16 @@ void Application::initVulkan() {
 }
 
 void Application::initRenderer() {
-  renderer_ = std::make_unique<Renderer>(*device_, *physicalDevice_, *surface_,
-                                         window_->getExtent(), queues_);
+
+  renderer_ = std::make_unique<Renderer>(
+      *device_,                                  // engine::Device&
+      *physicalDevice_,                          // engine::PhysicalDevice&
+      *surface_,                                 // engine::Surface&
+      window_->getExtent(),                      // vk::Extent2D
+      queues_,                                   // Queue::FamilyIndices
+      window_->get(),                            // GLFWwindow*
+      static_cast<VkInstance>(*instance_->get()) // raw VkInstance
+  );
 }
 
 void Application::run() {

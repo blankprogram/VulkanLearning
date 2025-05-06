@@ -12,24 +12,32 @@
 namespace engine {
 
 Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
-                   vk::Extent2D windowExtent, Queue::FamilyIndices queues)
+                   vk::Extent2D windowExtent, Queue::FamilyIndices queues,
+                   GLFWwindow *window, VkInstance rawInstance)
     : _device(device), _physical(physical), _surface(surface),
-      _extent(windowExtent), _queues(queues),
+      _extent(windowExtent), _queues(queues), _window(window),
+      _rawInstance(rawInstance),
       _swapchain(physical.get(), device.get(), surface.get(), windowExtent,
                  queues),
       _depth(physical.get(), device.get(), windowExtent),
       _renderPass(device.get(), _swapchain.imageFormat(), _depth.getFormat()),
       _cmdPool(device.get(), queues.graphics.value()) {
-  createCubeResources();
-  createDepthBuffer();
-  createRenderPass();
-  createGraphicsPipeline();
-  createFramebuffers();
-  createCommandPoolAndBuffers();
-  createSyncObjects();
+  // … your existing setup calls …
+
+  // create ImGuiLayer — note the correct casts and member names:
+  uint32_t imgCount = static_cast<uint32_t>(_swapchain.images().size());
+  imguiLayer_ = std::make_unique<ImGuiLayer>(
+      _window, _rawInstance,
+      static_cast<VkDevice>(*_device.get()),           // raw VkDevice
+      static_cast<VkPhysicalDevice>(*_physical.get()), // raw VkPhysicalDevice
+      _queues.graphics.value(),
+      static_cast<VkQueue>(*_device.graphicsQueue()), // raw VkQueue
+      *_descriptorPool,                               // raII descriptor pool
+      static_cast<VkRenderPass>(*_renderPass.get()),  // raw VkRenderPass
+      imgCount);
+
   recordCommandBuffers();
 }
-
 void Renderer::recreateSwapchain() {
   cleanupSwapchain();
   createSwapchainResources();
@@ -46,6 +54,17 @@ void Renderer::createSwapchainResources() {
 
   _renderPass =
       RenderPass(_device.get(), _swapchain.imageFormat(), _depth.getFormat());
+
+  uint32_t imgCount = static_cast<uint32_t>(_swapchain.images().size());
+  imguiLayer_ = std::make_unique<ImGuiLayer>(
+      _window, _rawInstance,
+      static_cast<VkDevice>(*_device.get()),           // raw VkDevice
+      static_cast<VkPhysicalDevice>(*_physical.get()), // raw VkPhysicalDevice
+      _queues.graphics.value(),
+      static_cast<VkQueue>(*_device.graphicsQueue()), // raw VkQueue
+      *_descriptorPool,                               // raII descriptor pool
+      static_cast<VkRenderPass>(*_renderPass.get()),  // raw VkRenderPass
+      imgCount);
 
   createGraphicsPipeline();
 
@@ -381,6 +400,8 @@ void Renderer::recordCommandBuffers() {
         .setRenderArea({{0, 0}, _extent})
         .setClearValueCount(static_cast<uint32_t>(clears.size()))
         .setPClearValues(clears.data());
+
+    imguiLayer_->newFrame();
     cmd.beginRenderPass(rpbi, vk::SubpassContents::eInline);
 
     cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
@@ -407,7 +428,7 @@ void Renderer::recordCommandBuffers() {
     }
 
     cmd.drawIndexed(uint32_t(_indices.size()), 1, 0, 0, 0);
-
+    imguiLayer_->render(cmd);
     cmd.endRenderPass();
     cmd.end();
   }

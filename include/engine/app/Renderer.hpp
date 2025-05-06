@@ -16,6 +16,7 @@
 #include "engine/swapchain/Framebuffer.hpp"
 #include "engine/swapchain/ImageView.hpp"
 #include "engine/swapchain/Swapchain.hpp"
+#include "engine/ui/ImGuiLayer.hpp"
 
 #include <array>
 #include <glm/glm.hpp>
@@ -28,7 +29,8 @@ namespace engine {
 class Renderer {
 public:
   Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
-           vk::Extent2D windowExtent, Queue::FamilyIndices queues);
+           vk::Extent2D windowExtent, Queue::FamilyIndices queues,
+           GLFWwindow *window, VkInstance rawInstance);
 
   ~Renderer() = default;
   void drawFrame();
@@ -92,7 +94,9 @@ private:
   std::unique_ptr<vk::raii::DescriptorPool> _descriptorPool;
   std::vector<VkDescriptorSet> _descriptorSets;
 
-  // for color attachments
+  GLFWwindow *_window;
+  VkInstance _rawInstance;
+  std::unique_ptr<ImGuiLayer> imguiLayer_;
   std::vector<ImageView> _colorImageViews;
 };
 

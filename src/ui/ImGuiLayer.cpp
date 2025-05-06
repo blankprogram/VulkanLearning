@@ -4,7 +4,7 @@
 #include <imgui.h>
 #include <stdexcept>
 
-using namespace engine::ui;
+using namespace engine;
 
 ImGuiLayer::ImGuiLayer(GLFWwindow *window, VkInstance instance, VkDevice device,
                        VkPhysicalDevice physicalDevice,

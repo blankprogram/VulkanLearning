@@ -5,7 +5,6 @@
 #include <vulkan/vulkan_raii.hpp>
 
 namespace engine {
-namespace ui {
 
 class ImGuiLayer {
 public:
@@ -36,5 +35,4 @@ private:
   int _frameCount = 0;
 };
 
-} // namespace ui
 } // namespace engine
