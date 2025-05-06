@@ -1,15 +1,15 @@
+
 #include "engine/app/Renderer.hpp"
 #include "engine/configs/PipelineConfig.hpp"
 #include "engine/pipeline/ShaderModule.hpp"
+#include "engine/utils/UniformBufferObject.hpp"
 
-#include <chrono>
 #include <cstring> // memcpy
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>
 #include <vulkan/vulkan_raii.hpp>
 
 namespace engine {
-using namespace std::chrono;
 
 Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
                    vk::Extent2D windowExtent, Queue::FamilyIndices queues)
@@ -52,7 +52,6 @@ void Renderer::drawFrame() {
   VkResult r = vkAcquireNextImageKHR(
       *_device.get(), *_swapchain.get(), UINT64_MAX,
       _imageAvailable[_currentFrame].get(), VK_NULL_HANDLE, &imageIndex);
-
   if (r == VK_ERROR_OUT_OF_DATE_KHR) {
     recreateSwapchain();
     return;
@@ -167,7 +166,7 @@ void Renderer::createCubeResources() {
       vk::DescriptorSetLayoutCreateInfo{}.setBindingCount(1).setPBindings(
           &uboB));
 
-  // pool
+  // descriptor pool
   vk::DescriptorPoolSize poolSize{};
   poolSize.type = vk::DescriptorType::eUniformBuffer;
   poolSize.descriptorCount = MAX_FRAMES_IN_FLIGHT;
@@ -183,11 +182,10 @@ void Renderer::createCubeResources() {
   {
     std::vector<VkDescriptorSetLayout> layouts(
         MAX_FRAMES_IN_FLIGHT,
-        static_cast<VkDescriptorSetLayout>(*_uboSetLayout->operator*()));
+        static_cast<VkDescriptorSetLayout>(**_uboSetLayout));
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-    allocInfo.descriptorPool =
-        static_cast<VkDescriptorPool>(*_descriptorPool->operator*());
+    allocInfo.descriptorPool = static_cast<VkDescriptorPool>(**_descriptorPool);
     allocInfo.descriptorSetCount = MAX_FRAMES_IN_FLIGHT;
     allocInfo.pSetLayouts = layouts.data();
 
@@ -232,8 +230,8 @@ void Renderer::createFramebuffers() {
   _framebuffers.clear();
   _framebuffers.reserve(images.size());
   for (size_t i = 0; i < images.size(); ++i) {
-    std::array<vk::ImageView, 2> atts = {*(_colorImageViews[i].get()),
-                                         *(_depth.getView())};
+    std::array<vk::ImageView, 2> atts = {*_colorImageViews[i].get(),
+                                         *_depth.getView()};
     _framebuffers.emplace_back(
         _device.get(), _renderPass.get(), _extent,
         std::vector<vk::ImageView>{atts.begin(), atts.end()});
@@ -300,30 +298,27 @@ void Renderer::recordCommandBuffers() {
     // bind pipeline
     cmd.bindPipeline(vk::PipelineBindPoint::eGraphics, *_pipeline->get());
 
-    // bind vertex
-    VkBuffer vbs[] = {static_cast<VkBuffer>(_vertexBuffer->get())};
-    VkDeviceSize offs[] = {0};
-    cmd.bindVertexBuffers(0, vbs, offs);
+    // bind vertex & index (FIXED)
+    vk::Buffer vertexBuffers[] = {_vertexBuffer->get()};
+    vk::DeviceSize offsets[] = {0};
+    cmd.bindVertexBuffers(0, 1, vertexBuffers, offsets);
+    cmd.bindIndexBuffer(_indexBuffer->get(), 0, vk::IndexType::eUint16);
 
-    // bind index
-    cmd.bindIndexBuffer(static_cast<VkBuffer>(_indexBuffer->get()), 0,
-                        vk::IndexType::eUint16);
-
-    // bind descriptor sets
+    // bind descriptor sets (raw Vulkan, FIXED)
     {
       VkCommandBuffer raw = static_cast<VkCommandBuffer>(cmd);
       vkCmdBindDescriptorSets(
           raw, VK_PIPELINE_BIND_POINT_GRAPHICS,
-          static_cast<VkPipelineLayout>(*(_pipelineLayout->get().operator*())),
-          0, static_cast<uint32_t>(_descriptorSets.size()),
-          _descriptorSets.data(), 0, nullptr);
+          static_cast<VkPipelineLayout>(*_pipelineLayout->get()), 0,
+          static_cast<uint32_t>(_descriptorSets.size()), _descriptorSets.data(),
+          0, nullptr);
     }
 
     // draw
     vkCmdDrawIndexed(static_cast<VkCommandBuffer>(cmd),
                      static_cast<uint32_t>(_indices.size()), 1, 0, 0, 0);
 
-    // ... vkCmdEndRenderPass + vkEndCommandBuffer omitted ...
+    // ... vkCmdEndRenderPass + vkEndCommandBuffer omitted for brevity ...
   }
 }
 

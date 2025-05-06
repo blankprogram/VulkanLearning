@@ -16,7 +16,6 @@
 #include "engine/swapchain/Framebuffer.hpp"
 #include "engine/swapchain/ImageView.hpp"
 #include "engine/swapchain/Swapchain.hpp"
-#include "engine/utils/UniformBufferObject.hpp"
 
 #include <array>
 #include <glm/glm.hpp>
