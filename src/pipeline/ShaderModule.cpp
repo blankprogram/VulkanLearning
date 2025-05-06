@@ -3,34 +3,36 @@
 #include <stdexcept>
 #include <vector>
 
-namespace {
+namespace engine {
 
-static std::vector<uint32_t> loadFile(const std::string &filename) {
+static std::vector<char> readSPIRV(const std::string &filename) {
   std::ifstream file(filename, std::ios::ate | std::ios::binary);
   if (!file) {
     throw std::runtime_error("Failed to open shader file: " + filename);
   }
-  size_t size = file.tellg();
-  std::vector<uint32_t> buffer(size / sizeof(uint32_t));
+
+  size_t fileSize = static_cast<size_t>(file.tellg());
+  if (fileSize == 0 || (fileSize % 4) != 0) {
+    throw std::runtime_error("SPIR-V file size not a multiple of 4: " +
+                             filename);
+  }
+
+  std::vector<char> buffer(fileSize);
   file.seekg(0);
-  file.read(reinterpret_cast<char *>(buffer.data()), size);
+  file.read(buffer.data(), fileSize);
   return buffer;
 }
 
-static vk::raii::ShaderModule createModule(const vk::raii::Device &device,
-                                           const std::string &filename) {
-  auto code = loadFile(filename);
-  vk::ShaderModuleCreateInfo ci({}, code.size(), code.data());
-  return vk::raii::ShaderModule(device, ci);
-}
-
-} // anonymous namespace
-
-namespace engine {
-
 ShaderModule::ShaderModule(const vk::raii::Device &device,
                            const std::string &filename)
-    : module_{createModule(device, filename)} {}
+    : module_{[&]() {
+        auto codeBytes = readSPIRV(filename);
+        vk::ShaderModuleCreateInfo createInfo{};
+        createInfo.setCodeSize(codeBytes.size());
+        createInfo.setPCode(
+            reinterpret_cast<const uint32_t *>(codeBytes.data()));
+        return vk::raii::ShaderModule(device, createInfo);
+      }()} {}
 
 vk::PipelineShaderStageCreateInfo
 ShaderModule::stageInfo(vk::ShaderStageFlagBits stage) const {
