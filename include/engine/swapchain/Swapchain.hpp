@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "engine/core/Queue.hpp"
@@ -14,10 +15,17 @@ public:
     vk::Extent2D extent;
   };
 
+  // First-time creation
   Swapchain(const vk::raii::PhysicalDevice &physical,
             const vk::raii::Device &device, const vk::raii::SurfaceKHR &surface,
             const vk::Extent2D &windowExtent,
             const Queue::FamilyIndices &indices);
+
+  // Re-creation, passing your old handle so Vulkan can recycle it
+  Swapchain(const vk::raii::PhysicalDevice &physical,
+            const vk::raii::Device &device, const vk::raii::SurfaceKHR &surface,
+            const vk::Extent2D &windowExtent,
+            const Queue::FamilyIndices &indices, VkSwapchainKHR oldSwapchain);
 
   ~Swapchain() = default;
   Swapchain(const Swapchain &) = delete;
@@ -31,14 +39,16 @@ public:
   const std::vector<vk::Image> &images() const { return images_; }
 
 private:
-  /// Delegating constructor taking a pre-built Bundle.
+  // Delegating constructor that takes the fully prepared Bundle
   Swapchain(Bundle &&bundle);
-  /// Helper to build the Bundle (swapchain handle + format + extent).
+
+  // Helper builds the Bundle; on first call oldSwapchain will be VK_NULL_HANDLE
   static Bundle createBundle(const vk::raii::PhysicalDevice &physical,
                              const vk::raii::Device &device,
                              const vk::raii::SurfaceKHR &surface,
                              const vk::Extent2D &windowExtent,
-                             const Queue::FamilyIndices &indices);
+                             const Queue::FamilyIndices &indices,
+                             VkSwapchainKHR oldSwapchain = VK_NULL_HANDLE);
 
   vk::raii::SwapchainKHR swapchain_;
   std::vector<vk::Image> images_;

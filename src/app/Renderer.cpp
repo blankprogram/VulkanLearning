@@ -38,8 +38,10 @@ void Renderer::recreateSwapchain() {
 
 void Renderer::createSwapchainResources() {
   // 1) The Swapchain itself
+
+  VkSwapchainKHR oldSC = static_cast<VkSwapchainKHR>(*_swapchain.get());
   _swapchain = Swapchain(_physical.get(), _device.get(), _surface.get(),
-                         _extent, _queues);
+                         _extent, _queues, oldSC);
 
   // 2) Depth buffer for the new size
   _depth = DepthBuffer(_physical.get(), _device.get(), _extent);
