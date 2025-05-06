@@ -3,9 +3,10 @@
 
 namespace engine {
 
-static vk::raii::CommandBuffer makeSingleBuffer(const vk::raii::Device &device,
-                                                vk::raii::CommandPool &pool,
-                                                vk::CommandBufferLevel level) {
+static vk::raii::CommandBuffer
+makeSingleBuffer(const vk::raii::Device &device,
+                 const vk::raii::CommandPool &pool,
+                 vk::CommandBufferLevel level) {
   vk::CommandBufferAllocateInfo allocInfo{};
   allocInfo.setCommandPool(*pool).setLevel(level).setCommandBufferCount(1);
 
@@ -17,7 +18,7 @@ static vk::raii::CommandBuffer makeSingleBuffer(const vk::raii::Device &device,
 }
 
 CommandBuffer::CommandBuffer(const vk::raii::Device &device,
-                             vk::raii::CommandPool &pool,
+                             const vk::raii::CommandPool &pool,
                              vk::CommandBufferLevel level)
     : buffer_{makeSingleBuffer(device, pool, level)} {}
 

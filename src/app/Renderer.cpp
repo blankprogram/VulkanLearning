@@ -1,5 +1,6 @@
 #include "engine/app/Renderer.hpp"
 #include "engine/configs/PipelineConfig.hpp"
+#include "engine/pipeline/ShaderModule.hpp"
 namespace engine {
 
 Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
@@ -28,6 +29,7 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
   createFramebuffers();
   createCommandPoolAndBuffers();
   createSyncObjects();
+  recordCommandBuffers();
 }
 
 void Renderer::drawFrame() {}
@@ -89,19 +91,52 @@ void Renderer::createRenderPass() {
 void Renderer::createGraphicsPipeline() {
   auto cfg = defaultPipelineConfig(_extent);
 
-  cfg.shaderStages = {
-      /* vertShaderStageInfo, fragShaderStageInfo, … */
-  };
+  ShaderModule vert{_device.get(), "shaders/triangle.vert.spv"};
+  ShaderModule frag{_device.get(), "shaders/triangle.frag.spv"};
 
-  PipelineLayout layout{_device.get(), cfg.setLayouts, cfg.pushConstants};
+  std::array<vk::PipelineShaderStageCreateInfo, 2> stages = {
+      vert.stageInfo(vk::ShaderStageFlagBits::eVertex),
+      frag.stageInfo(vk::ShaderStageFlagBits::eFragment)};
 
   _pipeline = GraphicsPipeline(
-      _device.get(), layout, _renderPass.get(), cfg.vertexInput,
-      cfg.inputAssembly, cfg.rasterizer, cfg.multisampling, cfg.depthStencil,
-      cfg.colorBlend, cfg.shaderStages,
+      _device.get(),
+      PipelineLayout{_device.get(), cfg.setLayouts, cfg.pushConstants},
+      _renderPass.get(), cfg.vertexInput, cfg.inputAssembly, cfg.rasterizer,
+      cfg.multisampling, cfg.depthStencil, cfg.colorBlend,
+      {stages[0], stages[1]},
       std::vector<vk::PipelineViewportStateCreateInfo>{cfg.viewportState},
       cfg.dynamicState,
       GraphicsPipeline::Config{cfg.viewportExtent, cfg.msaaSamples});
 }
 
+void Renderer::recordCommandBuffers() {
+  for (size_t i = 0; i < _cmdBuffers.size(); ++i) {
+    auto cmd = _cmdBuffers[i].get();
+    vk::CommandBufferBeginInfo bi{};
+    cmd.begin(bi);
+
+    vk::RenderPassBeginInfo rpbi{};
+    rpbi.setRenderPass(*_renderPass.get())
+        .setFramebuffer(*_framebuffers[i].get())
+        .setRenderArea({{0, 0}, _extent})
+        .setClearValueCount(1)
+        .setPClearValues(std::array<vk::ClearValue, 1>{
+            {vk::ClearColorValue{std::array<float, 4>{0.1f, 0.2f, 0.3f, 1.0f}}}}
+                             .data());
+
+    cmd.beginRenderPass(rpbi, vk::SubpassContents::eInline);
+    // no draw calls yet
+    cmd.endRenderPass();
+    cmd.end();
+  }
+}
+
+void Renderer::createCommandPoolAndBuffers() {
+  _cmdBuffers.clear();
+  _cmdBuffers.reserve(_framebuffers.size());
+  for (size_t i = 0; i < _framebuffers.size(); ++i) {
+    // this constructor will internally allocate one vk::CommandBuffer
+    _cmdBuffers.emplace_back(_device.get(), _cmdPool.get());
+  }
+}
 } // namespace engine

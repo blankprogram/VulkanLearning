@@ -7,7 +7,7 @@ namespace engine {
 class CommandBuffer {
 public:
   CommandBuffer(
-      const vk::raii::Device &device, vk::raii::CommandPool &pool,
+      const vk::raii::Device &device, const vk::raii::CommandPool &pool,
       vk::CommandBufferLevel level = vk::CommandBufferLevel::ePrimary);
 
   ~CommandBuffer() = default;

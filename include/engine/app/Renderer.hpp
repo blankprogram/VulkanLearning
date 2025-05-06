@@ -33,7 +33,8 @@ private:
   void createGraphicsPipeline();
   void createCommandPoolAndBuffers();
   void createSyncObjects();
-
+  void recordCommandBuffers();
+  void recreateSwapchain();
   Device &_device;
   PhysicalDevice &_physical;
   Surface &_surface;
