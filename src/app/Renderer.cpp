@@ -146,7 +146,7 @@ void Renderer::drawFrame() {
   }
 
   updateUniformBuffer(imageIndex);
-
+  recordCommandBuffers();
   VkSemaphore waitSems[] = {_imageAvailable[_currentFrame].get()};
   VkSemaphore signalSems[] = {_renderFinished[_currentFrame].get()};
   VkPipelineStageFlags waitStages[] = {

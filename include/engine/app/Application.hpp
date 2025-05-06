@@ -35,7 +35,7 @@ private:
   std::unique_ptr<Surface> surface_;
   Queue::FamilyIndices queues_;
   std::unique_ptr<Renderer> renderer_;
-  Camera camera_{{0.0f, 0.0f, 5.0f}, -90.0f, 0.0f};
+  Camera camera_{{0.0f, 0.0f, 5.0f}, 90.0f, 0.0f};
 };
 
 } // namespace engine

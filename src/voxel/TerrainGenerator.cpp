@@ -29,7 +29,7 @@ TerrainData TerrainGenerator::createFlatTerrain(
   for (int z = 0; z < depth; ++z) {
     for (int x = 0; x < width; ++x) {
       glm::mat4 M = glm::translate(glm::mat4(1.0f),
-                                   glm::vec3(x * cubeSize, z * cubeSize, 0.0f));
+                                   glm::vec3(x * cubeSize, 0.0f, z * cubeSize));
 
       mats.push_back(M);
     }
