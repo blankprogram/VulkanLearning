@@ -37,10 +37,12 @@ void Renderer::recreateSwapchain() {
 }
 
 void Renderer::drawFrame() {
-  VkFence fence = _inFlightFences[_currentFrame].get();
-  vkWaitForFences(*_device.get(), 1, &fence, VK_TRUE, UINT64_MAX);
+  // 1) wait for *this frame’s* fence and then reset it
+  VkFence currentFence = _inFlightFences[_currentFrame].get();
+  vkWaitForFences(*_device.get(), 1, &currentFence, VK_TRUE, UINT64_MAX);
   _inFlightFences[_currentFrame].reset();
 
+  // 2) acquire next image
   uint32_t imageIndex;
   VkResult r = vkAcquireNextImageKHR(
       *_device.get(), *_swapchain.get(), UINT64_MAX,
@@ -53,11 +55,21 @@ void Renderer::drawFrame() {
     throw std::runtime_error("Failed to acquire swapchain image");
   }
 
+  // === NEW BLOCK #1 ===
+  // if that image is already in flight, wait on its associated fence
+  if (_imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
+    vkWaitForFences(*_device.get(), 1, &_imagesInFlight[imageIndex], VK_TRUE,
+                    UINT64_MAX);
+  }
+  // now mark this image as being “in flight” on our current fence
+  _imagesInFlight[imageIndex] = currentFence;
+  // ===================
+
+  // 3) submit
   VkSemaphore waitSemaphores[] = {_imageAvailable[_currentFrame].get()};
   VkSemaphore signalSemaphores[] = {_renderFinished[_currentFrame].get()};
   VkPipelineStageFlags waitStages[] = {
       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-  VkCommandBuffer cmdBuf = _cmdBuffers[imageIndex].get();
 
   VkSubmitInfo submitInfo{};
   submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -65,12 +77,14 @@ void Renderer::drawFrame() {
   submitInfo.pWaitSemaphores = waitSemaphores;
   submitInfo.pWaitDstStageMask = waitStages;
   submitInfo.commandBufferCount = 1;
-  submitInfo.pCommandBuffers = &cmdBuf;
+  VkCommandBuffer rawCmdBuf = _cmdBuffers[imageIndex].get();
+  submitInfo.pCommandBuffers = &rawCmdBuf;
   submitInfo.signalSemaphoreCount = 1;
   submitInfo.pSignalSemaphores = signalSemaphores;
 
-  vkQueueSubmit(*_device.graphicsQueue(), 1, &submitInfo, fence);
+  vkQueueSubmit(*_device.graphicsQueue(), 1, &submitInfo, currentFence);
 
+  // 4) present
   VkPresentInfoKHR presentInfo{};
   presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
   presentInfo.waitSemaphoreCount = 1;
@@ -87,7 +101,8 @@ void Renderer::drawFrame() {
     throw std::runtime_error("Failed to present swapchain image");
   }
 
-  _currentFrame = (_currentFrame + 1) % _framebuffers.size();
+  // 5) advance to next “frame index”
+  _currentFrame = (_currentFrame + 1) % _inFlightFences.size();
 }
 
 void Renderer::createFramebuffers() {
@@ -128,6 +143,7 @@ void Renderer::createSyncObjects() {
     _imageAvailable.emplace_back(_device.get());
     _renderFinished.emplace_back(_device.get());
     _inFlightFences.emplace_back(_device.get(), true);
+    _imagesInFlight.assign(n, VK_NULL_HANDLE);
   }
 }
 

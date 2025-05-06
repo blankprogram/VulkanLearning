@@ -51,7 +51,7 @@ private:
   RenderPass _renderPass;
   std::unique_ptr<GraphicsPipeline> _pipeline;
   std::vector<Framebuffer> _framebuffers;
-
+  std::vector<VkFence> _imagesInFlight;
   std::vector<ImageView> _colorImageViews;
 
   CommandPool _cmdPool;
