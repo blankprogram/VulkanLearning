@@ -48,7 +48,7 @@ private:
   void createCubeResources();
   void recordCommandBuffers();
   void recreateSwapchain();
-
+  void updateUniformBuffer(uint32_t currentImage);
   struct Vertex {
     glm::vec3 pos, color;
   };

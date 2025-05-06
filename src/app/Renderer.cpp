@@ -4,11 +4,11 @@
 #include "engine/pipeline/ShaderModule.hpp"
 #include "engine/utils/UniformBufferObject.hpp"
 
+#include <chrono>
 #include <cstring> // memcpy
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdexcept>
 #include <vulkan/vulkan_raii.hpp>
-
 namespace engine {
 
 Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
@@ -59,12 +59,8 @@ void Renderer::drawFrame() {
     throw std::runtime_error("Failed to acquire swapchain image");
   }
 
-  // 2a) if already in flight, wait
-  if (_imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
-    vkWaitForFences(*_device.get(), 1, &_imagesInFlight[imageIndex], VK_TRUE,
-                    UINT64_MAX);
-  }
-  _imagesInFlight[imageIndex] = fence;
+  // **NEW** 2a) update your UBO for this image
+  updateUniformBuffer(imageIndex);
 
   // 3) submit
   VkSemaphore waitSems[] = {_imageAvailable[_currentFrame].get()};
@@ -109,7 +105,6 @@ void Renderer::drawFrame() {
   // 5) next frame
   _currentFrame = (_currentFrame + 1) % _inFlightFences.size();
 }
-
 void Renderer::createCubeResources() {
   // ——— 1) FILL YOUR GEOMETRY ———
   _vertices = {
@@ -252,6 +247,33 @@ void Renderer::createFramebuffers() {
         _device.get(), _renderPass.get(), _extent,
         std::vector<vk::ImageView>{atts.begin(), atts.end()});
   }
+}
+
+void Renderer::updateUniformBuffer(uint32_t currentImage) {
+  // keep a single start‐time for animation
+  static auto startTime = std::chrono::high_resolution_clock::now();
+  auto now = std::chrono::high_resolution_clock::now();
+  float time = std::chrono::duration<float, std::chrono::seconds::period>(
+                   now - startTime)
+                   .count();
+
+  UniformBufferObject ubo{};
+  // rotate around Z at 90°/s
+  ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f),
+                          glm::vec3(0.0f, 0.0f, 1.0f));
+  // simple camera
+  ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f),
+                         glm::vec3(0.0f, 0.0f, 1.0f));
+  // perspective
+  ubo.proj = glm::perspective(
+      glm::radians(45.0f), _extent.width / float(_extent.height), 0.1f, 10.0f);
+  // Vulkan’s clip Y is inverted
+  ubo.proj[1][1] *= -1;
+
+  // copy into the mapped buffer
+  void *data = _uniformBuffers[currentImage]->map();
+  std::memcpy(data, &ubo, sizeof(ubo));
+  _uniformBuffers[currentImage]->unmap();
 }
 
 void Renderer::createSyncObjects() {
