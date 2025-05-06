@@ -32,6 +32,7 @@ Renderer::Renderer(Device &device, PhysicalDevice &physical, Surface &surface,
 
 void Renderer::recreateSwapchain() {
   _device.get().waitIdle();
+
   createSwapchain();
   createDepthBuffer();
   createRenderPass();
@@ -41,21 +42,32 @@ void Renderer::recreateSwapchain() {
   recordCommandBuffers();
 }
 
+void Renderer::onWindowResized(int newWidth, int newHeight) {
+  _extent = vk::Extent2D{uint32_t(newWidth), uint32_t(newHeight)};
+  _framebufferResized = true;
+}
+
 void Renderer::drawFrame() {
+  // if we got a resize event, rebuild swapchain now:
+  if (_framebufferResized) {
+    recreateSwapchain();
+    _framebufferResized = false;
+  }
+
   // 1) wait + reset
   VkFence fence = _inFlightFences[_currentFrame].get();
   vkWaitForFences(*_device.get(), 1, &fence, VK_TRUE, UINT64_MAX);
   _inFlightFences[_currentFrame].reset();
 
-  // 2) acquire
+  // 2) acquire next image
   uint32_t imageIndex;
-  VkResult r = vkAcquireNextImageKHR(
+  VkResult result = vkAcquireNextImageKHR(
       *_device.get(), *_swapchain.get(), UINT64_MAX,
       _imageAvailable[_currentFrame].get(), VK_NULL_HANDLE, &imageIndex);
-  if (r == VK_ERROR_OUT_OF_DATE_KHR) {
+  if (result == VK_ERROR_OUT_OF_DATE_KHR) {
     recreateSwapchain();
     return;
-  } else if (r != VK_SUCCESS && r != VK_SUBOPTIMAL_KHR) {
+  } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
     throw std::runtime_error("Failed to acquire swapchain image");
   }
 

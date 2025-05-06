@@ -11,7 +11,16 @@ Application::Application() {
   initRenderer();
 }
 
-Application::~Application() { glfwTerminate(); }
+Application::~Application() {
+  // clean up in reverse order…
+  renderer_.reset();
+  device_.reset();
+  surface_.reset();
+  instance_.reset();
+  context_.reset();
+  window_.reset();
+  glfwTerminate();
+}
 
 void Application::initWindow() {
   if (!glfwInit())
@@ -19,8 +28,21 @@ void Application::initWindow() {
 
   window_ = std::make_unique<Window>(windowConfig.width, windowConfig.height,
                                      windowConfig.name);
+
+  GLFWwindow *w = window_->get();
+  // make sure we get notified of resize
+  glfwSetWindowUserPointer(w, this);
+  glfwSetFramebufferSizeCallback(w, [](GLFWwindow *win, int newW, int newH) {
+    auto app = reinterpret_cast<Application *>(glfwGetWindowUserPointer(win));
+    app->onWindowResized(newW, newH);
+  });
 }
 
+void Application::onWindowResized(int width, int height) {
+  if (renderer_) {
+    renderer_->onWindowResized(width, height);
+  }
+}
 void Application::initVulkan() {
   context_ = std::make_unique<Context>();
   instance_ = std::make_unique<Instance>(context_->get());

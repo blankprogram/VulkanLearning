@@ -19,6 +19,7 @@ public:
   ~Application();
 
   void run();
+  void onWindowResized(int width, int height);
 
 private:
   void initWindow();

@@ -32,6 +32,7 @@ public:
 
   ~Renderer() = default;
   void drawFrame();
+  void onWindowResized(int newWidth, int newHeight);
 
 private:
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
@@ -57,6 +58,7 @@ private:
   PhysicalDevice &_physical;
   Surface &_surface;
   vk::Extent2D _extent;
+  bool _framebufferResized = false;
   Queue::FamilyIndices _queues;
 
   Swapchain _swapchain;
